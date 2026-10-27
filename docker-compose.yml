@@ -1,0 +1,17 @@
+services:
+  vuln-guardian-web:
+    build: .
+    container_name: vuln-guardian-web
+    ports:
+      - "3400:3400"
+    restart: unless-stopped
+    volumes:
+      - ./src/data:/app/src/data
+
+  vuln-guardian-daemon:
+    build: .
+    container_name: vuln-guardian-daemon
+    command: ["node", ".agents/skills/vuln-guardian/scripts/scan-cli.mjs", "daemon"]
+    restart: unless-stopped
+    volumes:
+      - ./src/data:/app/src/data

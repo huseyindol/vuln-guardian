@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+:root {
+  --bg-canvas: #0b0c0e;
+  --bg-surface: #121418;
+  --bg-elevated: #181b21;
+  --border-subtle: #232730;
+  --border-strong: #323846;
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --accent-vermilion: #d83a26;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Modern Web Guidance: prevent-page-scroll-under-modal-dialog */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgba(5, 6, 8, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+/* Modern Web Guidance: responsive-table */
+.table-wrapper {
+  overflow: auto;
+  max-inline-size: 100%;
+  max-block-size: min(560px, 75vh);
+  container-type: inline-size;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
+  background: var(--bg-surface);
+}
+
+.table-wrapper table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  font-size: 0.875rem;
+  --label-1: "Paket";
+  --label-2: "Kategori";
+  --label-3: "Mevcut Versiyon";
+  --label-4: "Safe Versiyon";
+  --label-5: "Güvenlik Durumu";
+  --label-6: "Aksiyon";
+}
+
+.table-wrapper thead {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  background: #161920;
+}
+
+.table-wrapper thead th {
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.table-wrapper tbody tr {
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background-color 120ms ease;
+}
+
+.table-wrapper tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.025);
+}
+
+.table-wrapper tbody th {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  background: var(--bg-surface);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.table-wrapper tbody td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+@container (width < 600px) {
+  .table-wrapper table,
+  .table-wrapper thead,
+  .table-wrapper tbody,
+  .table-wrapper tr,
+  .table-wrapper th,
+  .table-wrapper td {
+    display: block;
+  }
+
+  .table-wrapper thead {
+    display: none;
+  }
+
+  .table-wrapper tbody tr {
+    margin-block-end: 1rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .table-wrapper tbody th {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 2;
+    background: #181b22;
+  }
+
+  .table-wrapper td:nth-child(2)::before {
+    content: var(--label-2) ": ";
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .table-wrapper td:nth-child(3)::before {
+    content: var(--label-3) ": ";
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .table-wrapper td:nth-child(4)::before {
+    content: var(--label-4) ": ";
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .table-wrapper td:nth-child(5)::before {
+    content: var(--label-5) ": ";
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .table-wrapper td:nth-child(6)::before {
+    content: var(--label-6) ": ";
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+}

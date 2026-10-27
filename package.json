@@ -1,0 +1,38 @@
+{
+  "name": "vuln-guardian-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VulnGuardian — Autonomous Vulnerability Intelligence, Safe-Version Auto-Remediation & Continuous Deploy Skill + Command Center",
+  "scripts": {
+    "dev": "next dev --port 3400",
+    "build": "next build",
+    "start": "next start --port 3400",
+    "type-check": "tsc --noEmit",
+    "guardian:scan": "node .agents/skills/vuln-guardian/scripts/scan-cli.mjs scan",
+    "guardian:news": "node .agents/skills/vuln-guardian/scripts/scan-cli.mjs news",
+    "guardian:remediate": "node .agents/skills/vuln-guardian/scripts/scan-cli.mjs remediate",
+    "guardian:daemon": "node .agents/skills/vuln-guardian/scripts/scan-cli.mjs daemon",
+    "guardian:list": "node .agents/skills/vuln-guardian/scripts/scan-cli.mjs list",
+    "guardian:init": "node .agents/skills/vuln-guardian/scripts/scan-cli.mjs init",
+    "guardian:add": "node .agents/skills/vuln-guardian/scripts/scan-cli.mjs add",
+    "guardian:remove": "node .agents/skills/vuln-guardian/scripts/scan-cli.mjs remove",
+    "guardian:discover": "node .agents/skills/vuln-guardian/scripts/scan-cli.mjs discover",
+    "skill:install": "bash scripts/install-skill.sh"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.52.0",
+    "next": "16.3.8",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.3"
+  }
+}
