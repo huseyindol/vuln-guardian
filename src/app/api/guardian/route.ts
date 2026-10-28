@@ -516,6 +516,7 @@ export async function POST(request: Request) {
         name,
         description,
         repoUrl,
+        githubToken,
         path: localPath,
         ecosystem = "npm",
         manifestFile,
@@ -553,7 +554,8 @@ export async function POST(request: Request) {
         const gh = await fetchManifestFromGithub(
           repoUrl,
           finalManifestFile,
-          "main"
+          "main",
+          githubToken
         );
         if (gh?.content) {
           resolvedManifest = gh.content;

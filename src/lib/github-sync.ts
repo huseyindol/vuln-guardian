@@ -31,13 +31,13 @@ export function extractGithubRepoSlug(repoUrl?: string): string | null {
   return null;
 }
 
-function getGithubHeaders(): Record<string, string> {
+function getGithubHeaders(customToken?: string): Record<string, string> {
   const headers: Record<string, string> = {
     Accept: "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28",
     "User-Agent": "Elly-VulnGuardian-Studio",
   };
-  const token = process.env.GITHUB_TOKEN;
+  const token = customToken?.trim() || process.env.GITHUB_TOKEN;
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
@@ -47,7 +47,8 @@ function getGithubHeaders(): Record<string, string> {
 export async function fetchManifestFromGithub(
   repoUrl: string | undefined,
   manifestFile: string,
-  branch = "main"
+  branch = "main",
+  customToken?: string
 ): Promise<GithubFileResult | null> {
   const slug = extractGithubRepoSlug(repoUrl);
   if (!slug) return null;
@@ -60,7 +61,7 @@ export async function fetchManifestFromGithub(
         manifestFile
       )}?ref=${encodeURIComponent(b)}`;
       const resp = await fetch(url, {
-        headers: getGithubHeaders(),
+        headers: getGithubHeaders(customToken),
         cache: "no-store",
       });
       if (resp.ok) {

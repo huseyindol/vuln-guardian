@@ -201,6 +201,7 @@ export default function GuardianDashboard({ initialState }: Props) {
   const addProjectDialogRef = useRef<HTMLDialogElement | null>(null);
   const [newProjEco, setNewProjEco] = useState<Ecosystem>("npm");
   const [newProjRepoUrl, setNewProjRepoUrl] = useState<string>("");
+  const [newProjGithubToken, setNewProjGithubToken] = useState<string>("");
   const [newProjName, setNewProjName] = useState<string>("");
   const [newProjDesc, setNewProjDesc] = useState<string>("");
   const [newProjPath, setNewProjPath] = useState<string>("");
@@ -2060,7 +2061,7 @@ export default function GuardianDashboard({ initialState }: Props) {
 
             <div className="sm:col-span-2">
               <label className="block font-semibold text-zinc-200 mb-1">
-                2. GitHub Repo URL&apos;si (Public veya GITHUB_TOKEN ile Private)
+                2. GitHub Repo URL&apos;si
               </label>
               <input
                 type="url"
@@ -2079,6 +2080,23 @@ export default function GuardianDashboard({ initialState }: Props) {
                 placeholder="https://github.com/kullanici/proje-adi"
                 className="w-full px-3 py-2 rounded bg-[#0b0c0e] border border-[#2c313d] text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
               />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block font-semibold text-zinc-200 mb-1">
+                3. GitHub Token (İsteğe Bağlı — Private Repo İçin)
+              </label>
+              <input
+                type="password"
+                value={newProjGithubToken}
+                onChange={(e) => setNewProjGithubToken(e.target.value)}
+                placeholder="Boş bırakırsanız Vercel'deki varsayılan GITHUB_TOKEN kullanılır (veya ghp_... / github_pat_... girin)"
+                className="w-full px-3 py-2 rounded bg-[#0b0c0e] border border-[#2c313d] text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+              />
+              <span className="block text-[11px] text-zinc-400 mt-1">
+                Public repolar için gerekmez. Kendi private repolarınız için sunucudaki{" "}
+                <code className="text-emerald-400">GITHUB_TOKEN</code> otomatik kullanılır; farklı bir hesaba ait private repo ekliyorsanız buraya token girebilirsiniz.
+              </span>
             </div>
 
             <div>
@@ -2149,35 +2167,26 @@ export default function GuardianDashboard({ initialState }: Props) {
 
             <div className="sm:col-span-2">
               <label className="block font-semibold text-zinc-200 mb-1">
-                Yerel Dizin Yolu (İsteğe Bağlı) veya Açıklama
+                Proje Açıklaması (İsteğe Bağlı)
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  value={newProjPath}
-                  onChange={(e) => setNewProjPath(e.target.value)}
-                  placeholder="/path/to/local/repo (İsteğe bağlı)"
-                  className="w-full px-3 py-2 rounded bg-[#0b0c0e] border border-[#2c313d] text-white font-mono text-xs"
-                />
-                <input
-                  type="text"
-                  value={newProjDesc}
-                  onChange={(e) => setNewProjDesc(e.target.value)}
-                  placeholder="Proje açıklaması (İsteğe bağlı)"
-                  className="w-full px-3 py-2 rounded bg-[#0b0c0e] border border-[#2c313d] text-white text-xs"
-                />
-              </div>
+              <input
+                type="text"
+                value={newProjDesc}
+                onChange={(e) => setNewProjDesc(e.target.value)}
+                placeholder="örn. Ödeme Servisi / Yönetim Paneli (İsteğe bağlı)"
+                className="w-full px-3 py-2 rounded bg-[#0b0c0e] border border-[#2c313d] text-white text-xs"
+              />
             </div>
 
             <div className="sm:col-span-2">
               <label className="block font-semibold text-zinc-200 mb-1">
-                Manifest İçeriğini Doğrudan Yapıştır (İsteğe Bağlı — GitHub URL yoksa)
+                Alternatif: GitHub Repo URL Yoksa Manifest İçeriğini Yapıştır (İsteğe Bağlı)
               </label>
               <textarea
                 rows={4}
                 value={newProjManifestRaw}
                 onChange={(e) => setNewProjManifestRaw(e.target.value)}
-                placeholder="GitHub URL girdiyseniz otomatik çekilir; dilerseniz package.json / pom.xml / requirements.txt içeriğini buraya doğrudan yapıştırabilirsiniz..."
+                placeholder="GitHub Repo URL girdiyseniz bu alanı boş bırakın (otomatik çekilir). Yalnızca GitHub URL vermek istemiyorsanız package.json / pom.xml içeriğini buraya yapıştırın..."
                 className="w-full p-2.5 rounded bg-[#0b0c0e] border border-[#2c313d] text-zinc-200 font-mono text-[11px] focus:outline-none focus:border-emerald-500"
               />
             </div>
@@ -2201,6 +2210,7 @@ export default function GuardianDashboard({ initialState }: Props) {
                     name: newProjName,
                     description: newProjDesc,
                     repoUrl: newProjRepoUrl,
+                    githubToken: newProjGithubToken || undefined,
                     path: newProjPath,
                     ecosystem: newProjEco,
                     manifestFile: newProjManifestFile,
@@ -2221,6 +2231,7 @@ export default function GuardianDashboard({ initialState }: Props) {
                     setSelectedProjectId(lastAdded.id);
                   }
                   setNewProjRepoUrl("");
+                  setNewProjGithubToken("");
                   setNewProjName("");
                   setNewProjDesc("");
                   setNewProjPath("");
