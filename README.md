@@ -2,6 +2,12 @@
 
 **[🇹🇷 Türkçe](./README.md)** · **[🇬🇧 English](./README.en.md)**
 
+[![GitHub Release](https://img.shields.io/github/v/release/huseyindol/vuln-guardian?style=flat-square&color=10b981)](https://github.com/huseyindol/vuln-guardian/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Agent Skill](https://img.shields.io/badge/Agent_Skill-Antigravity_%26_Claude_Code-f97316?style=flat-square)](./.agents/skills/vuln-guardian/SKILL.md)
+[![OSV.dev Live](https://img.shields.io/badge/Advisory_Engine-Google_OSV.dev_%2B_GHSA-ef4444?style=flat-square)](https://osv.dev)
+[![Next.js 16](https://img.shields.io/badge/Dashboard-Next.js_16-black?style=flat-square)](https://nextjs.org)
+
 </div>
 
 # 🛡️ VulnGuardian — Autonomous Vulnerability Intelligence, Single-Batch Safe-Version Patcher & Deploy Skill
