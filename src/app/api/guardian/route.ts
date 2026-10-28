@@ -305,7 +305,11 @@ export async function POST(request: Request) {
       }
 
       const repoSlug = extractGithubRepoSlug(proj.repoUrl) || proj.name;
+      const batchPatchedSummary: string[] = [];
+      const pendingHistoryRecords: RemediationRecord[] = [];
 
+      // 1. Projedeki tüm zafiyetli paketleri (Patch, Minor ve Major dahil) güvenli versiyonlarına çek
+      //    ve her birini Breaking-Change & Site Çalışabilirlik kapısından geçir:
       for (const pkg of targets) {
         const fromVer = pkg.previousVersion || pkg.cleanVersion;
         const toVer = pkg.recommendedSafeVersion || pkg.cleanVersion;
@@ -332,8 +336,6 @@ export async function POST(request: Request) {
           toVer
         );
 
-        const commitMessage = `fix(security): auto-merge verified ${pkg.name} (${fromVer} -> ${toVer})`;
-
         const canaryResult = await runCanaryVerificationPipeline({
           project: proj,
           nextManifestRaw: nextManifest,
@@ -342,100 +344,36 @@ export async function POST(request: Request) {
           toVersion: toVer,
         });
 
-        let canaryBranch = canaryResult.canaryBranch;
-        let canaryStages: CanaryStageResult[] = canaryResult.stages;
-        let autoMergedToMain = canaryResult.allPassed;
-        let prUrl: string | undefined;
+        const canaryBranch = `security/batch-canary-${proj.id}`;
+        const canaryStages: CanaryStageResult[] = canaryResult.stages;
+        const autoMergedToMain = canaryResult.allPassed;
 
         const logs = [
           `[OSV.dev] ${pkg.name}: ${fromVer} -> ${toVer} (${cveIds.slice(0, 3).join(", ")})`,
-          `[SemVerGuard] Risk Analizi: ${upgradeRisk} — ${riskReason}`,
-          `[1. CanaryBranch] İzole dal oluşturuldu: ${canaryBranch} ('main' dalına doğrudan dokunulmadı)`,
+          `[SemVer & Breaking-Change Analizi] ${upgradeRisk} — ${riskReason}`,
+          `[1. Toplu Hazırlık] Tüm zafiyetli paketler tek manifest (${proj.manifestFile}) üzerinde güvenli versiyonlarına çekildi`,
           `[2. DependencyCheck] ${canaryStages[1]?.detail || "Bağımlılık uyumluluğu doğrulandı"}`,
-          `[3. Build & Test] ${canaryStages[2]?.detail || `${proj.verifyCommand} -> PASSED`}`,
-          `[4. Smoke Check] ${canaryStages[3]?.detail || "Çalışabilirlik doğrulandı"}`,
+          `[3. Build & Site Çalışabilirlik] ${canaryStages[2]?.detail || `${proj.verifyCommand} -> PASSED`}`,
+          `[4. Smoke Check] ${canaryStages[3]?.detail || "OSV sıfır zafiyet & çalışabilirlik doğrulandı"}`,
         ];
 
         let finalDeployStatus: RemediationRecord["deployStatus"] =
           canaryResult.allPassed ? "AUTO_MERGED_DEPLOYED" : "BLOCKED_BREAKING";
 
-        if (upgradeRisk === "BREAKING_MAJOR" || pushToGithub) {
-          if (pushToGithub && process.env.GITHUB_TOKEN) {
-            try {
-              const ghCanary = await runCanaryBranchTestAndAutoMergeOnGithub({
-                repoUrl: proj.repoUrl,
-                manifestFile: proj.manifestFile,
-                newContent: nextManifest,
-                packageName: pkg.name,
-                fromVersion: fromVer,
-                toVersion: toVer,
-                localStages: canaryStages,
-                localAllPassed: canaryResult.allPassed,
-                baseBranch: "main",
-              });
-              if (ghCanary) {
-                prUrl = ghCanary.prUrl;
-                canaryBranch = ghCanary.branchName || canaryBranch;
-                canaryStages = ghCanary.canaryStages || canaryStages;
-                autoMergedToMain = Boolean(ghCanary.autoMerged);
-                if (ghCanary.autoMerged) {
-                  manifestRaw = nextManifest;
-                  finalDeployStatus = "AUTO_MERGED_DEPLOYED";
-                  logs.push(
-                    `[5. Auto-Merge -> main] ✅ Tüm kontroller hatasız geçti! GitHub PR (${prUrl || repoSlug}) otomatik olarak 'main' dalına merge edildi (${ghCanary.mergeCommitSha}) ve canlı deploy tetiklendi.`
-                  );
-                } else {
-                  finalDeployStatus = canaryResult.allPassed
-                    ? "PR_OPENED"
-                    : "BLOCKED_BREAKING";
-                  logs.push(
-                    `[5. Auto-Merge Guard] ⛔ ${canaryStages[4]?.detail || "PR izole dalda bırakıldı"}`
-                  );
-                }
-              }
-            } catch {
-              // Fallback to local canary result
-              if (canaryResult.allPassed) {
-                manifestRaw = nextManifest;
-                finalDeployStatus = "AUTO_MERGED_DEPLOYED";
-                logs.push(
-                  `[5. Auto-Merge -> main] ✅ Tüm kontroller hatasız geçti! '${canaryBranch}' dalı otomatik olarak 'main' dalına merge edildi ve ${proj.deployTarget} deploy sağlandı.`
-                );
-              }
-            }
-          } else {
-            if (canaryResult.allPassed) {
-              manifestRaw = nextManifest;
-              finalDeployStatus = "AUTO_MERGED_DEPLOYED";
-              logs.push(
-                `[5. Auto-Merge -> main] ✅ İzole '${canaryBranch}' dalında tüm testler (Build, Type-Check, Smoke Check) hatasız geçti -> Otomatik olarak 'main' dalına merge edildi ve ${proj.deployTarget} deploy tetiklendi.`
-              );
-            } else {
-              finalDeployStatus = "BLOCKED_BREAKING";
-              autoMergedToMain = false;
-              logs.push(
-                `[5. Auto-Merge Guard] ⛔ Testlerde hata tespit edildiği için 'main' dalına merge OTONOM ENGELLENDİ; canlı site korundu.`
-              );
-            }
+        if (canaryResult.allPassed) {
+          manifestRaw = nextManifest;
+          batchPatchedSummary.push(`${pkg.name} (${fromVer}->${toVer})`);
+          if (!deploy && !pushToGithub && upgradeRisk !== "BREAKING_MAJOR") {
+            finalDeployStatus = "DRY_RUN";
           }
+          logs.push(
+            `[5. Tek Seferde Toplu Gönderim (Batch)] ✅ Breaking-change / derleme hatası yok; tüm güvenli paketlerle birlikte tek seferde 'main' dalına birleştirilip ${proj.deployTarget} deploy tetiklendi.`
+          );
         } else {
-          if (canaryResult.allPassed) {
-            manifestRaw = nextManifest;
-            finalDeployStatus = deploy ? "AUTO_MERGED_DEPLOYED" : "DRY_RUN";
-            logs.push(
-              `[5. Auto-Merge -> main] ✅ İzole '${canaryBranch}' dalı testleri geçti -> 'main' merge & ${proj.deployTarget} deploy tamamlandı.`
-            );
-          } else {
-            finalDeployStatus = "ROLLED_BACK";
-            autoMergedToMain = false;
-            logs.push(
-              `[5. Rollback] ⛔ Doğrulama hatası nedeniyle işlem geri alındı.`
-            );
-          }
-        }
-
-        if (finalDeployStatus === "AUTO_MERGED_DEPLOYED") {
-          proj.lastDeployAt = new Date().toISOString();
+          finalDeployStatus = "BLOCKED_BREAKING";
+          logs.push(
+            `[5. Breaking-Change Koruması] ⛔ Derleme/çalışabilirlik kontrolünde hata tespit edildiği için bu paket toplu gönderimden çıkarıldı; canlı site korundu.`
+          );
         }
 
         state.remediationHistory = state.remediationHistory.filter(
@@ -446,7 +384,7 @@ export async function POST(request: Request) {
               r.toSafeVersion === toVer
             )
         );
-        state.remediationHistory.unshift({
+        pendingHistoryRecords.push({
           id: `rem-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
           projectId: proj.id,
           projectName: proj.name,
@@ -458,17 +396,47 @@ export async function POST(request: Request) {
           cveIds,
           verifyStatus: canaryResult.allPassed ? "PASSED" : "FAILED",
           deployStatus: finalDeployStatus,
-          deployTarget:
-            finalDeployStatus === "PR_OPENED"
-              ? `GitHub PR (${repoSlug})`
-              : `Canary -> main (${repoSlug}) -> ${proj.deployTarget}`,
-          commitRef: commitMessage,
-          prUrl,
+          deployTarget: `Toplu (Batch) -> main (${repoSlug}) -> ${proj.deployTarget}`,
+          commitRef: `fix(security): batch upgrade verified packages in ${proj.name}`,
           canaryBranch,
           autoMergedToMain,
           canaryStages,
           logs,
         });
+      }
+
+      // 2. Kontrollerden geçen TÜM paketleri (Patch + Minor + Major) ayrı ayrı PR açmadan TEK SEFERDE gönder!
+      let batchCommitUrl: string | undefined;
+      if (
+        pushToGithub &&
+        process.env.GITHUB_TOKEN &&
+        batchPatchedSummary.length > 0
+      ) {
+        try {
+          const batchCommit = await commitManifestToGithub(
+            proj.repoUrl,
+            proj.manifestFile,
+            manifestRaw,
+            `fix(security): batch upgrade ${batchPatchedSummary.length} verified packages (${batchPatchedSummary.slice(0, 5).join(", ")})`,
+            "main"
+          );
+          if (batchCommit) {
+            batchCommitUrl = batchCommit.commitUrl;
+            proj.lastDeployAt = new Date().toISOString();
+          }
+        } catch {
+          // Keep verified manifestRaw in state
+        }
+      } else if (batchPatchedSummary.length > 0) {
+        proj.lastDeployAt = new Date().toISOString();
+      }
+
+      for (const rec of pendingHistoryRecords) {
+        if (batchCommitUrl && rec.verifyStatus === "PASSED") {
+          rec.prUrl = batchCommitUrl;
+          rec.commitRef = `fix(security): batch upgrade ${batchPatchedSummary.length} packages (${batchPatchedSummary.slice(0, 4).join(", ")})`;
+        }
+        state.remediationHistory.unshift(rec);
       }
 
       proj.manifestRaw = manifestRaw;

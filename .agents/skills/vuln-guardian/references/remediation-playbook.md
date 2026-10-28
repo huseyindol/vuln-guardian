@@ -31,18 +31,18 @@ Bu referans dokümanı, farklı ekosistemlerde zafiyetli paketlerin güvenli (`s
 
 ---
 
-## 2. Otonom Canary Branch → 4 Aşamalı Doğrulama Kapısı → Otomatik `main` Merge & Deploy (Major Güncellemeler)
+## 2. Tek Seferde Toplu (Single-Batch) Safe-Version, Breaking-Change Kontrolü & Otomatik Deploy (Patch, Minor ve Major Dahil)
 
-Major (`BREAKING_MAJOR`) veya yüksek riskli paket güncellemelerinde canlı `main` dalını asla doğrudan riske atmadan tamamen otonom doğrulama ve birleştirme akışı uygulanır:
+Bir projede kaç adet zafiyetli paket tespit edilirse edilsin (**her paket için ayrı PR açılmaz**); Patch, Minor ve Major (`BREAKING_MAJOR`) güncellemelerin tamamı tek bir toplu akışta doğrulanıp gönderilir:
 
-1. **Aşama 1 — İzole Canary Dalı & PR (`BRANCH_ISOLATION`):**
-   - `main` dalından `security/canary-<paket>-<hedefVersiyon>` adında izole bir dal oluşturulur ve manifest güncellemesi bu dala commitlenerek PR açılır.
+1. **Aşama 1 — Tüm Zafiyetli Paketlerin Güvenli Versiyona Çekilmesi (`BATCH_PREPARATION`):**
+   - Projedeki tüm zafiyetli paketler (`SAFE_PATCH`, `MINOR_VERIFY` ve `BREAKING_MAJOR` dahil) tek bir manifest (`package.json`, `pom.xml`, `pubspec.yaml` vb.) üzerinde önerilen güvenli (`safe`) versiyonlarına çekilir.
 2. **Aşama 2 — Bağımlılık & Peer Uyumluluk Kontrolü (`DEPENDENCY_COMPAT`):**
-   - `package.json` / `pom.xml` / `pubspec.yaml` sözdizimi ve peer-dependency / framework uyumluluğu doğrulanır.
-3. **Aşama 3 — Derleme, Type-Check & Lint Kapısı (`BUILD_AND_TEST`):**
-   - Projenin `verifyCommand` komutu (`bun run lint && bun run type-check && bun run test:ci`, `./mvnw -q -DskipTests compile`, `flutter analyze && flutter test`) ve GitHub Check Suites çalıştırılır.
+   - Manifest sözdizimi ve peer-dependency / framework uyumluluğu doğrulanır.
+3. **Aşama 3 — Breaking-Change, Derleme, Type-Check & Lint Kapısı (`BUILD_AND_TEST`):**
+   - Projenin `verifyCommand` komutu (`bun run lint && bun run type-check && bun run test:ci`, `./mvnw -q -DskipTests compile`, `flutter analyze && flutter test`) çalıştırılarak özellikle Major sürüm geçişlerinde herhangi bir breaking-change olup olmadığı ve sitenin hatasız derlendiği kontrol edilir.
 4. **Aşama 4 — Çalışabilirlik & OSV Zero-CVE Smoke Kontrolü (`SMOKE_HEALTH_CHECK`):**
-   - Hedef versiyonda (`<paket>@<hedefVersiyon>`) OSV.dev üzerinde 0 aktif zafiyet kaldığı, GitHub Commit Status/Check Runs kontrollerinin yeşil olduğu ve derleme çıktısının hatasız üretildiği doğrulanır.
-5. **Aşama 5 — Otomatik `main` Merge & Deploy VEYA Rollback (`AUTO_MERGE_DEPLOY`):**
-   - **Hata Yoksa (`ALL PASSED`):** GitHub Pull Request Merge API (`PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge`, `merge_method: "squash"`) çağrılarak izole canary dalı **otomatik olarak `main` dalına merge edilir**, geçici canary dalı silinir ve canlı deploy (`AUTO_MERGED_DEPLOYED`) tetiklenir.
-   - **En Ufak Bir Hata Varsa (`FAILED`):** `main` dalına merge **otomatik olarak engellenir** (`BLOCKED_BREAKING` / `ROLLED_BACK`), canlı site korunur ve izole dal/PR hata raporuyla birlikte açık bırakılır.
+   - Hedef versiyonlarda OSV.dev üzerinde 0 aktif zafiyet kaldığı ve uygulamanın çalışabilir (smoke check) durumda olduğu doğrulanır.
+5. **Aşama 5 — Tek Seferde Toplu Gönderim & Deploy (`AUTO_MERGE_DEPLOY`):**
+   - **Hata Yoksa (`ALL PASSED`):** Doğrulamadan geçen tüm paketler (Major güncellemeler dahil) **tek bir toplu commit (`fix(security): batch upgrade verified packages`)** ile `main` dalına gönderilir ve canlı deploy (`AUTO_MERGED_DEPLOYED`) tek seferde tetiklenir.
+   - **Breaking-Change Varsa (`FAILED`):** Sitenin çalışmasını veya derlemeyi bozan paket toplu gönderimden otomatik olarak çıkarılır (`BLOCKED_BREAKING`), canlı site korunur; diğer sağlam paketler güvenle gönderilir.

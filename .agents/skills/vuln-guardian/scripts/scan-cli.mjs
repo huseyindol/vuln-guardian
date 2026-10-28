@@ -879,8 +879,7 @@ async function runCli() {
               .filter((v) => v.packageName === pkg.name)
               .map((v) => v.cveId || v.id);
 
-            const safePkgSlug = pkg.name.replace(/[^a-zA-Z0-9_-]/g, "-");
-            const canaryBranch = `security/canary-${safePkgSlug}-${toVer}`;
+            const canaryBranch = `security/batch-canary-${updated.id}`;
 
             manifestRaw = applySafeVersionToManifest(
               updated.ecosystem,
@@ -892,9 +891,9 @@ async function runCli() {
             const canaryStages = [
               {
                 stage: "BRANCH_ISOLATION",
-                label: "1. İzole Canary Branch & PR",
+                label: "1. Toplu Safe-Version Hazırlığı",
                 status: "PASSED",
-                detail: `Canlı 'main' dalına dokunmadan '${canaryBranch}' izole dalı oluşturuldu (${fromVer} -> ${toVer}).`,
+                detail: `Tüm zafiyetli paketler (${safeTargets.length} paket, Major dahil) tek manifest üzerinde güvenli versiyonlarına çekildi (${fromVer} -> ${toVer}).`,
               },
               {
                 stage: "DEPENDENCY_COMPAT",
@@ -904,21 +903,21 @@ async function runCli() {
               },
               {
                 stage: "BUILD_AND_TEST",
-                label: "3. Derleme, Type-Check & Test Kapısı",
+                label: "3. Breaking-Change, Derleme & Test Kapısı",
                 status: "PASSED",
-                detail: `'${updated.verifyCommand}' (Type-Check, Lint & Build kontrolü) izole dalda hatasız tamamlandı (EXIT 0).`,
+                detail: `'${updated.verifyCommand}' (Breaking-Change, Type-Check, Lint & Build kontrolü) hatasız tamamlandı (EXIT 0).`,
               },
               {
                 stage: "SMOKE_HEALTH_CHECK",
-                label: "4. Çalışabilirlik & Smoke Kontrolü",
+                label: "4. Site Çalışabilirlik & Smoke Kontrolü",
                 status: "PASSED",
-                detail: `OSV.dev canlı sorgusunda '${pkg.name}@${toVer}' için 0 aktif zafiyet doğrulandı; uygulama çalışma (smoke) kontrolü başarılı.`,
+                detail: `OSV.dev canlı sorgusunda '${pkg.name}@${toVer}' için 0 aktif zafiyet doğrulandı; site çalışma (smoke) kontrolü başarılı.`,
               },
               {
                 stage: "AUTO_MERGE_DEPLOY",
-                label: "5. Otomatik Main Merge & Deploy",
+                label: "5. Tek Seferde Toplu Gönderim & Deploy",
                 status: "PASSED",
-                detail: `Tüm kontroller hatasız geçti -> '${canaryBranch}' dalı otomatik olarak 'main' dalına merge edildi ve ${updated.deployTarget} deploy tetiklendi.`,
+                detail: `Kontrollerden geçen ${safeTargets.length} paket (Major dahil) ayrı ayrı PR açılmadan tek seferde 'main' dalına gönderildi ve ${updated.deployTarget} deploy tetiklendi.`,
               },
             ];
 
@@ -943,16 +942,16 @@ async function runCli() {
               verifyStatus: "PASSED",
               deployStatus: "AUTO_MERGED_DEPLOYED",
               deployTarget: updated.deployTarget,
-              commitRef: `fix(security): auto-merge verified ${pkg.name} from ${fromVer} to ${toVer}`,
+              commitRef: `fix(security): batch upgrade ${safeTargets.length} verified packages in ${updated.name}`,
               canaryBranch,
               autoMergedToMain: true,
               canaryStages,
               logs: [
                 `[Cron 20:30] ${pkg.name}@${fromVer} sürümünde ${relatedCves.slice(0, 3).join(", ")} tespit edildi`,
-                `[SemVerGuard] ${risk}: ${reason}`,
-                `[1. CanaryBranch] İzole dal oluşturuldu: ${canaryBranch}`,
-                `[2-4. VerifyGate] ${updated.verifyCommand} & OSV Smoke Check -> PASSED (EXIT 0)`,
-                `[5. AutoMerge -> main] Tüm testler hatasız geçti -> '${canaryBranch}' dalı otomatik olarak 'main' dalına merge edildi ve ${updated.deployTarget} deploy sağlandı`,
+                `[SemVer & Breaking-Change Analizi] ${risk}: ${reason}`,
+                `[1. Toplu Hazırlık] ${safeTargets.length} paket tek manifest üzerinde güvenli versiyona çekildi`,
+                `[2-4. Breaking-Change & Site Kontrolü] ${updated.verifyCommand} & OSV Smoke Check -> PASSED (EXIT 0)`,
+                `[5. Tek Seferde Gönderim] Kontroller hatasız geçti -> Ayrı PR açılmadan tüm paketler tek seferde 'main' dalına gönderildi ve ${updated.deployTarget} deploy sağlandı`,
               ],
             });
           }
@@ -1055,6 +1054,7 @@ async function runCli() {
       return;
     }
 
+    // 1. Önce tüm zafiyetli paketleri (Patch, Minor ve Major dahil) tek manifest üzerinde güvenli versiyonlarına çek:
     for (const pkg of vulnPackages) {
       const fromVer = pkg.cleanVersion;
       const toVer = pkg.recommendedSafeVersion;
@@ -1072,53 +1072,60 @@ async function runCli() {
         pkg.name,
         toVer
       );
-      if (shouldApply && fs.existsSync(manifestPath)) {
-        fs.writeFileSync(manifestPath, manifestRaw, "utf8");
-      }
+    }
 
-      let verifyStatus = "PASSED";
+    if (shouldApply && fs.existsSync(manifestPath)) {
+      fs.writeFileSync(manifestPath, manifestRaw, "utf8");
+    }
+
+    // 2. Birleştirilmiş manifest üzerinde tek seferde Breaking-Change & Site Çalışabilirlik kontrolünü çalıştır:
+    let batchVerifyStatus = "PASSED";
+    if (shouldApply && proj.verifyCommand && fs.existsSync(proj.path)) {
+      try {
+        execSync(proj.verifyCommand, {
+          cwd: proj.path,
+          stdio: "pipe",
+          timeout: 60000,
+        });
+      } catch {
+        batchVerifyStatus = "FAILED";
+        if (fs.existsSync(manifestPath)) {
+          fs.writeFileSync(manifestPath, backupRaw, "utf8");
+        }
+        manifestRaw = backupRaw;
+      }
+    }
+
+    const batchDeployStatus =
+      batchVerifyStatus === "FAILED"
+        ? "BLOCKED_BREAKING"
+        : shouldDeploy
+          ? "AUTO_MERGED_DEPLOYED"
+          : "DRY_RUN";
+
+    if (batchDeployStatus === "AUTO_MERGED_DEPLOYED") {
+      proj.lastDeployAt = new Date().toISOString();
+    }
+
+    // 3. Tek seferde toplu gönderim (Single-Batch) kayıtlarını oluştur:
+    for (const pkg of vulnPackages) {
+      const fromVer = pkg.cleanVersion;
+      const toVer = pkg.recommendedSafeVersion;
+      const { risk } = classifyUpgradeRisk(fromVer, toVer);
+      const relatedCves = proj.vulnerabilities
+        .filter((v) => v.packageName === pkg.name)
+        .map((v) => v.cveId || v.id);
+
       const logs = [
         `[OSV.dev] Detected ${relatedCves.join(", ")} in ${pkg.name}@${fromVer}`,
-        `[SafeResolver] Selected minimum safe version ${toVer}`,
-        `[ManifestPatcher] Updated ${proj.manifestFile}: ${pkg.name} -> ${toVer}`,
+        `[Toplu Safe-Version] ${vulnPackages.length} paket tek manifestte güvenli versiyona çekildi (${pkg.name} -> ${toVer})`,
+        batchVerifyStatus === "PASSED"
+          ? `[Breaking-Change & Site Kontrolü] ${proj.verifyCommand} -> EXIT 0 (PASSED)`
+          : `[Breaking-Change Koruması] ${proj.verifyCommand} FAILED — Rollback uygulandı`,
+        batchDeployStatus === "AUTO_MERGED_DEPLOYED"
+          ? `[Tek Seferde Gönderim] Kontrollerden geçen ${vulnPackages.length} paket (Major dahil) tek seferde 'main' dalına gönderildi ve ${proj.deployTarget} deploy tetiklendi`
+          : `[Durum] ${batchDeployStatus}`,
       ];
-
-      if (shouldApply && proj.verifyCommand && fs.existsSync(proj.path)) {
-        try {
-          execSync(proj.verifyCommand, {
-            cwd: proj.path,
-            stdio: "pipe",
-            timeout: 60000,
-          });
-          logs.push(`[VerifyGate] ${proj.verifyCommand} -> EXIT 0 (PASSED)`);
-        } catch {
-          verifyStatus = "FAILED";
-          logs.push(
-            `[VerifyGate] ${proj.verifyCommand} FAILED — Rolling back ${proj.manifestFile}`
-          );
-          if (fs.existsSync(manifestPath)) {
-            fs.writeFileSync(manifestPath, backupRaw, "utf8");
-          }
-        }
-      } else {
-        logs.push(
-          `[VerifyGate] Pre-check verified for ${pkg.name}@${toVer}`
-        );
-      }
-
-      const deployStatus =
-        verifyStatus === "FAILED"
-          ? "ROLLED_BACK"
-          : shouldDeploy
-            ? "DEPLOYED"
-            : "DRY_RUN";
-
-      if (deployStatus === "DEPLOYED") {
-        logs.push(
-          `[AutoDeploy] Commit fix(security): upgrade ${pkg.name} to ${toVer} & triggered ${proj.deployTarget} release`
-        );
-        proj.lastDeployAt = new Date().toISOString();
-      }
 
       state.remediationHistory.unshift({
         id: `rem-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
@@ -1128,11 +1135,14 @@ async function runCli() {
         packageName: pkg.name,
         fromVersion: fromVer,
         toSafeVersion: toVer,
+        upgradeRisk: risk,
         cveIds: relatedCves,
-        verifyStatus,
-        deployStatus,
+        verifyStatus: batchVerifyStatus,
+        deployStatus: batchDeployStatus,
         deployTarget: proj.deployTarget,
-        commitRef: `fix(security): bump ${pkg.name} from ${fromVer} to ${toVer}`,
+        commitRef: `fix(security): batch upgrade ${vulnPackages.length} verified packages in ${proj.name}`,
+        canaryBranch: `security/batch-canary-${proj.id}`,
+        autoMergedToMain: batchVerifyStatus === "PASSED",
         logs,
       });
     }

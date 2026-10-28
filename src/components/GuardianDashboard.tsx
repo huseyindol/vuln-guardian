@@ -836,7 +836,7 @@ export default function GuardianDashboard({ initialState }: Props) {
                               onlySafeSemver: false,
                             },
                             `remediate-all-${selectedProject.id}`,
-                            `${selectedProject.name}: İzole Canary Branch açıldı, derleme/type-check/smoke kontrolleri çalıştırıldı ve hatasız geçen paketler otomatik olarak 'main' dalına merge edilip deploy tetiklendi!`
+                            `${selectedProject.name}: Tüm zafiyetli paketler (Major dahil) güvenli versiyonlarına çekildi, breaking-change ve site çalışabilirlik kontrolleri tamamlandı ve ayrı PR açılmadan tek seferde 'main' dalına gönderilip deploy tetiklendi!`
                           )
                         }
                         disabled={loadingAction !== null}
@@ -845,8 +845,8 @@ export default function GuardianDashboard({ initialState }: Props) {
                         <Rocket className="w-3.5 h-3.5" />
                         {loadingAction ===
                         `remediate-all-${selectedProject.id}`
-                          ? "Canary Branch Test & Merge Çalışıyor..."
-                          : `Canary Branch Test -> Auto-Merge (main) & Deploy`}
+                          ? "Toplu Doğrulama & Gönderim Çalışıyor..."
+                          : `Tümünü Safe Versiyona Çek, Doğrula & Tekte Gönder`}
                       </button>
 
                       {state.projects.length > 1 && (

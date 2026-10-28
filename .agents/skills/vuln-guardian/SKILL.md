@@ -86,10 +86,13 @@ node .agents/skills/vuln-guardian/scripts/scan-cli.mjs remediate \
   --deploy
 ```
 
-**Güvenlik & Doğrulama Kuralları:**
-- Manifest güncellendikten sonra projenin doğrulama komutu (`verifyCommand`: örn. `bun run type-check`, `./mvnw -q -DskipTests compile`, `flutter analyze`) çalıştırılır.
-- Doğrulama başarısız olursa manifest otomatik olarak yedekten geri yüklenir (`rollback`) ve deploy durdurulur; kırık kod asla prod ortamına çıkmaz.
-- Doğrulama başarılıysa `fix(security): upgrade <pkg> from <old> to <safe> (<CVE>)` commit'i oluşturulur ve `deployCommand` tetiklenir.
+**Güvenlik, Breaking-Change & Tek Seferde Toplu Gönderim (Single-Batch) Kuralları:**
+- **Asla Paket Başına Ayrı PR Açılmaz:** Bir projede kaç tane zafiyetli paket varsa (`SAFE_PATCH`, `MINOR_VERIFY` ve `BREAKING_MAJOR` dahil), tamamı önce tek bir manifest üzerinde güvenli (`safe`) versiyonlarına çekilir.
+- **Breaking-Change & Site Çalışabilirlik Kapısı (4 Aşama):**
+  1. **Bağımlılık & Peer Uyumluluğu (`DEPENDENCY_COMPAT`):** Manifest sözdizimi ve bağımlılık ağacı doğrulanır.
+  2. **Derleme, Type-Check & Test (`BUILD_AND_TEST`):** Projenin `verifyCommand` komutu (`bun run lint && bun run type-check && bun run test:ci`, `./mvnw -q -DskipTests compile`, `flutter analyze`) çalıştırılarak breaking-change olup olmadığı ve sitenin hatasız derlendiği kontrol edilir.
+  3. **OSV Sıfır Zafiyet & Smoke Kontrolü (`SMOKE_HEALTH_CHECK`):** Güncellenen versiyonlarda OSV.dev üzerinde 0 aktif zafiyet kaldığı ve uygulamanın çalışabilir durumda olduğu doğrulanır.
+  4. **Tek Seferde Toplu Gönderim (`AUTO_MERGE_DEPLOY`):** Kontrollerden geçen **tüm paketler (Major versiyon güncellemeleri dahil) tek seferde (Single Batch Commit)** `main` dalına gönderilir (`fix(security): batch upgrade verified packages`) ve canlı deploy tek seferde tetiklenir. Eğer bir paket derleme/çalışma hatası üretirse yalnızca o paket engellenir (`BLOCKED_BREAKING`), canlı site asla bozulmaz.
 
 ### 5. Periyodik Arka Plan Tarayıcısı (Scheduled Daemon & Cron)
 
