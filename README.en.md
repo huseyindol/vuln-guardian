@@ -64,9 +64,11 @@ This automatically links `~/.gemini/config/skills/vuln-guardian` (Google Antigra
 
 ```bash
 cp .env.example .env.local
-# Add your GITHUB_TOKEN for private repositories and autonomous batch-canary verification + main merge
+# Set GITHUB_TOKEN, GITHUB_OWNER, and/or GUARDIAN_ADMIN_PASSWORD
 bun run dev
 ```
+
+> **🔒 Read-Only Community Mode & Admin Login:** The Web Command Center opens in **Read-Only** mode by default so visitors can explore ecosystems and CVE reports without triggering real GitHub/deployment mutations. Mutating actions require signing in via the **Admin Login Modal** using either **GitHub (`GITHUB_OWNER` token verification)** or the setup password (**`GUARDIAN_ADMIN_PASSWORD`**).
 
 Open `http://localhost:3400` in your browser, or deploy directly to your own Vercel account:
 

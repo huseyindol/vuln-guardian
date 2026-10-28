@@ -17,6 +17,7 @@ import {
   fetchManifestFromGithub,
   verifyAndMergeBatchCanaryBranchOnGithub,
 } from "@/lib/github-sync";
+import { verifyRequestAdminAuth } from "@/lib/auth";
 import type {
   CanaryStageResult,
   Ecosystem,
@@ -186,6 +187,18 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const auth = verifyRequestAdminAuth(request);
+    if (!auth.authorized) {
+      return NextResponse.json(
+        {
+          error:
+            "Yetkisiz İşlem: Bu işlem gerçek GitHub repolarını ve canlı sunucuyu etkiler. İşlem yapmak için lütfen Yönetici Girişi (GitHub veya Kurulum Şifresi) yapın.",
+          requiresAuth: true,
+        },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { action } = body;
     const state = getGuardianState();

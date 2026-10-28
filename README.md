@@ -62,9 +62,11 @@ Bu komut `~/.gemini/config/skills/vuln-guardian` ve `~/.claude/skills/vuln-guard
 
 ```bash
 cp .env.example .env.local
-# Private GitHub repoları ve otonom batch-canary doğrulama + main merge için GITHUB_TOKEN ekleyin
+# GITHUB_TOKEN, GITHUB_OWNER ve/veya GUARDIAN_ADMIN_PASSWORD değerlerini tanımlayın
 bun run dev
 ```
+
+> **🔒 Salt Okunur Topluluk Modu & Yönetici Girişi:** Web Komut Merkezi varsayılan olarak **Salt Okunur (Read-Only)** modda açılır; ziyaretçiler tüm ekosistemleri ve CVE raporlarını inceleyebilir ancak gerçek GitHub/deploy aksiyonlarını tetikleyemez. İşlem yapmak için sağ üstteki **Yönetici Girişi** modalından **GitHub Token (`GITHUB_OWNER`)** veya kurulum sırasında belirlenen **`GUARDIAN_ADMIN_PASSWORD`** ile giriş yapılır.
 
 Yerelde test için `http://localhost:3400` adresini açabilir veya doğrudan kendi Vercel hesabınıza yayınlayabilirsiniz:
 

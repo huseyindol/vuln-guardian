@@ -26,6 +26,10 @@ import {
   CalendarClock,
   Plus,
   Trash2,
+  Lock,
+  Unlock,
+  KeyRound,
+  LogOut,
 } from "lucide-react";
 import type {
   Ecosystem,
@@ -199,6 +203,26 @@ export default function GuardianDashboard({ initialState }: Props) {
 
   // Modal dialog for adding any GitHub repository or local project
   const addProjectDialogRef = useRef<HTMLDialogElement | null>(null);
+  const authDialogRef = useRef<HTMLDialogElement | null>(null);
+  const [authState, setAuthState] = useState<{
+    authenticated: boolean;
+    user: string | null;
+    method: string | null;
+    ownerHint: string;
+  }>({
+    authenticated: false,
+    user: null,
+    method: null,
+    ownerHint: "@huseyindol",
+  });
+  const [authTab, setAuthTab] = useState<"github" | "password">("github");
+  const [loginGithubToken, setLoginGithubToken] = useState<string>("");
+  const [loginPassword, setLoginPassword] = useState<string>("");
+  const [authLoading, setAuthLoading] = useState<boolean>(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [pendingActionNotice, setPendingActionNotice] = useState<string | null>(
+    null
+  );
   const [newProjEco, setNewProjEco] = useState<Ecosystem>("npm");
   const [newProjRepoUrl, setNewProjRepoUrl] = useState<string>("");
   const [newProjGithubToken, setNewProjGithubToken] = useState<string>("");
@@ -348,11 +372,94 @@ export default function GuardianDashboard({ initialState }: Props) {
     });
   }
 
+  function promptAdminLogin(actionName?: string) {
+    const msg = actionName
+      ? `🔒 Yetkili Değilsiniz: "${actionName}" işlemi gerçek GitHub repolarını ve canlı sunucuyu etkiler. İşlem yapmak için lütfen Yönetici Girişi yapın.`
+      : "🔒 Yetkili Değilsiniz: Bu işlem gerçek GitHub repolarını ve canlı sunucuyu etkiler. İşlem yapmak için lütfen Yönetici Girişi yapın.";
+    setPendingActionNotice(msg);
+    setAuthError(null);
+    setBannerMessage({
+      type: "error",
+      text: msg,
+    });
+    authDialogRef.current?.showModal();
+  }
+
+  async function handleLoginSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setAuthLoading(true);
+    setAuthError(null);
+    try {
+      const resp = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "login",
+          method: authTab,
+          githubToken: authTab === "github" ? loginGithubToken : undefined,
+          password: authTab === "password" ? loginPassword : undefined,
+        }),
+      });
+      const data = await resp.json();
+      if (!resp.ok || !data.authenticated) {
+        setAuthError(
+          data.error || "Yetkilendirme başarısız. Bilgilerinizi kontrol edin."
+        );
+        return;
+      }
+      setAuthState({
+        authenticated: true,
+        user: data.user,
+        method: data.method,
+        ownerHint: authState.ownerHint,
+      });
+      setLoginGithubToken("");
+      setLoginPassword("");
+      setPendingActionNotice(null);
+      authDialogRef.current?.close();
+      setBannerMessage({
+        type: "success",
+        text: `🔓 Yönetici oturumu açıldı (${data.user}). Artık tarama, yamalama ve GitHub deploy işlemlerini tetikleyebilirsiniz.`,
+      });
+    } catch {
+      setAuthError("Sunucu ile bağlantı kurulamadı.");
+    } finally {
+      setAuthLoading(false);
+    }
+  }
+
+  async function handleLogout() {
+    try {
+      await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "logout" }),
+      });
+      setAuthState((prev) => ({
+        ...prev,
+        authenticated: false,
+        user: null,
+        method: null,
+      }));
+      setBannerMessage({
+        type: "success",
+        text: "🔒 Yönetici oturumu kapatıldı. Panel tekrar Salt Okunur (Topluluk Korumalı) moda alındı.",
+      });
+    } catch {
+      // Ignore logout network error
+    }
+  }
+
   async function callApi(
     payload: Record<string, unknown>,
     loadingKey: string,
     successText?: string
   ) {
+    if (!authState.authenticated) {
+      promptAdminLogin(String(payload.action || "Yönetici İşlemi"));
+      return null;
+    }
+
     setLoadingAction(loadingKey);
     setBannerMessage(null);
     try {
@@ -362,6 +469,16 @@ export default function GuardianDashboard({ initialState }: Props) {
         body: JSON.stringify(payload),
       });
       const data = await resp.json();
+      if (resp.status === 401 || data.requiresAuth) {
+        setAuthState((prev) => ({
+          ...prev,
+          authenticated: false,
+          user: null,
+          method: null,
+        }));
+        promptAdminLogin(String(payload.action || "Yönetici İşlemi"));
+        return null;
+      }
       if (!resp.ok) {
         throw new Error(data.error || "İşlem başarısız oldu");
       }
@@ -386,12 +503,59 @@ export default function GuardianDashboard({ initialState }: Props) {
     LANGUAGE_GROUPS.find((l) => l.ecosystem === selectedProject?.ecosystem) ||
     LANGUAGE_GROUPS[0];
 
+  // Load initial authentication session and attach closedby="any" fallback (Modern Web Guidance: dialog)
+  useEffect(() => {
+    fetch("/api/auth", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d) {
+          setAuthState({
+            authenticated: Boolean(d.authenticated),
+            user: d.user || null,
+            method: d.method || null,
+            ownerHint: d.ownerHint || "@huseyindol",
+          });
+        }
+      })
+      .catch(() => {});
+
+    if (
+      typeof window !== "undefined" &&
+      !("closedBy" in HTMLDialogElement.prototype)
+    ) {
+      const outside = (e: PointerEvent, dialog: HTMLDialogElement) => {
+        const r = dialog.getBoundingClientRect();
+        return (
+          e.clientX < r.left ||
+          e.clientX > r.right ||
+          e.clientY < r.top ||
+          e.clientY > r.bottom
+        );
+      };
+      for (const dialog of document.querySelectorAll<HTMLDialogElement>(
+        'dialog[closedby="any"]'
+      )) {
+        let pressedOutside = false;
+        dialog.addEventListener("pointerdown", (e) => {
+          pressedOutside = outside(e, dialog);
+        });
+        dialog.addEventListener("pointerup", (e) => {
+          if (pressedOutside && outside(e, dialog)) dialog.close();
+        });
+      }
+    }
+  }, []);
+
   // Auto-watch for 20:30 scheduled scan and periodic state sync
   useEffect(() => {
     const timer = setInterval(async () => {
       try {
         const nextIso = state.projects[0]?.nextScanAt;
-        if (nextIso && Date.now() >= new Date(nextIso).getTime()) {
+        if (
+          authState.authenticated &&
+          nextIso &&
+          Date.now() >= new Date(nextIso).getTime()
+        ) {
           const cronResp = await fetch("/api/cron/scan", { cache: "no-store" });
           if (cronResp.ok) {
             const cronData = await cronResp.json();
@@ -417,7 +581,7 @@ export default function GuardianDashboard({ initialState }: Props) {
       }
     }, 15000);
     return () => clearInterval(timer);
-  }, [state.lastGlobalScanAt, state.projects]);
+  }, [authState.authenticated, state.lastGlobalScanAt, state.projects]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0b0c0e] text-[#f3f4f6]">
@@ -450,12 +614,60 @@ export default function GuardianDashboard({ initialState }: Props) {
               <span>Son Tarama: {formatDateTime(state.lastGlobalScanAt)}</span>
             </div>
 
+            {authState.authenticated ? (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/15 text-emerald-300 text-xs font-mono">
+                <Unlock className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Yönetici: {authState.user}</span>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  title="Yönetici Oturumunu Kapat"
+                  className="ml-1 inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-950/80 hover:bg-red-950/80 text-zinc-200 hover:text-red-300 border border-emerald-500/30 transition cursor-pointer"
+                >
+                  <LogOut className="w-3 h-3" />
+                  Çıkış
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setPendingActionNotice(null);
+                  setAuthError(null);
+                  authDialogRef.current?.showModal();
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-md border border-amber-500/40 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 transition cursor-pointer"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                Salt Okunur Mod · Yönetici Girişi Yap
+              </button>
+            )}
+
             <button
               type="button"
-              onClick={() => addProjectDialogRef.current?.showModal()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-md border border-emerald-500/40 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 transition cursor-pointer"
+              onClick={() => {
+                if (!authState.authenticated) {
+                  promptAdminLogin("Yeni Proje / GitHub Repo Ekle");
+                  return;
+                }
+                addProjectDialogRef.current?.showModal();
+              }}
+              title={
+                authState.authenticated
+                  ? "Yeni Proje veya GitHub Reposu Ekle"
+                  : "Pasif (Yönetici Girişi Gerektirir — Tıklayarak Giriş Yapın)"
+              }
+              className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-md border transition cursor-pointer ${
+                authState.authenticated
+                  ? "border-emerald-500/40 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300"
+                  : "border-[#323846] bg-[#161920] text-zinc-400 opacity-75 hover:opacity-100"
+              }`}
             >
-              <Plus className="w-3.5 h-3.5" />
+              {authState.authenticated ? (
+                <Plus className="w-3.5 h-3.5" />
+              ) : (
+                <Lock className="w-3.5 h-3.5 text-amber-400" />
+              )}
               Yeni Proje / GitHub Repo Ekle
             </button>
 
@@ -469,13 +681,26 @@ export default function GuardianDashboard({ initialState }: Props) {
                 )
               }
               disabled={loadingAction !== null}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md bg-[#d83a26] hover:bg-[#c0301d] text-white transition disabled:opacity-50 cursor-pointer"
+              title={
+                authState.authenticated
+                  ? "Tüm Projeleri Şimdi Tara"
+                  : "Pasif (Yönetici Girişi Gerektirir — Tıklayarak Giriş Yapın)"
+              }
+              className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md transition disabled:opacity-50 cursor-pointer ${
+                authState.authenticated
+                  ? "bg-[#d83a26] hover:bg-[#c0301d] text-white"
+                  : "border border-[#323846] bg-[#161920] text-zinc-400 opacity-75 hover:opacity-100"
+              }`}
             >
-              <RefreshCw
-                className={`w-3.5 h-3.5 ${
-                  loadingAction === "scan-all" ? "animate-spin" : ""
-                }`}
-              />
+              {authState.authenticated ? (
+                <RefreshCw
+                  className={`w-3.5 h-3.5 ${
+                    loadingAction === "scan-all" ? "animate-spin" : ""
+                  }`}
+                />
+              ) : (
+                <Lock className="w-3.5 h-3.5 text-amber-400" />
+              )}
               {loadingAction === "scan-all"
                 ? "Projeler Taranıyor..."
                 : "Tüm Projeleri Şimdi Tara"}
@@ -728,15 +953,28 @@ export default function GuardianDashboard({ initialState }: Props) {
                           )
                         }
                         disabled={loadingAction !== null}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-md border border-[#323846] bg-[#181b22] hover:bg-[#222630] text-white transition disabled:opacity-50 cursor-pointer"
+                        title={
+                          authState.authenticated
+                            ? `${selectedProject.name} Şimdi Tara`
+                            : "Pasif (Yönetici Girişi Gerektirir)"
+                        }
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-md border transition disabled:opacity-50 cursor-pointer ${
+                          authState.authenticated
+                            ? "border-[#323846] bg-[#181b22] hover:bg-[#222630] text-white"
+                            : "border-[#2c313d] bg-[#14171d] text-zinc-400 opacity-75 hover:opacity-100"
+                        }`}
                       >
-                        <RefreshCw
-                          className={`w-3.5 h-3.5 ${
-                            loadingAction === `scan-${selectedProject.id}`
-                              ? "animate-spin"
-                              : ""
-                          }`}
-                        />
+                        {authState.authenticated ? (
+                          <RefreshCw
+                            className={`w-3.5 h-3.5 ${
+                              loadingAction === `scan-${selectedProject.id}`
+                                ? "animate-spin"
+                                : ""
+                            }`}
+                          />
+                        ) : (
+                          <Lock className="w-3.5 h-3.5 text-amber-400" />
+                        )}
                         {selectedProject.name} Şimdi Tara
                       </button>
 
@@ -757,11 +995,25 @@ export default function GuardianDashboard({ initialState }: Props) {
                         }
                         disabled={
                           loadingAction !== null ||
-                          remediationCandidatesCount === 0
+                          (authState.authenticated &&
+                            remediationCandidatesCount === 0)
                         }
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-md border border-emerald-500/40 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 transition disabled:opacity-40 cursor-pointer"
+                        title={
+                          authState.authenticated
+                            ? "Uyumlu Olanları Hazırla"
+                            : "Pasif (Yönetici Girişi Gerektirir)"
+                        }
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-md border transition disabled:opacity-40 cursor-pointer ${
+                          authState.authenticated
+                            ? "border-emerald-500/40 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300"
+                            : "border-[#2c313d] bg-[#14171d] text-zinc-400 opacity-75 hover:opacity-100"
+                        }`}
                       >
-                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        {authState.authenticated ? (
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        ) : (
+                          <Lock className="w-3.5 h-3.5 text-amber-400" />
+                        )}
                         Uyumlu Olanları Hazırla ({remediationCandidatesCount} Patch/Minor)
                       </button>
 
@@ -781,9 +1033,22 @@ export default function GuardianDashboard({ initialState }: Props) {
                           )
                         }
                         disabled={loadingAction !== null}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md bg-emerald-600 hover:bg-emerald-500 text-white transition disabled:opacity-40 cursor-pointer"
+                        title={
+                          authState.authenticated
+                            ? "Tümünü Safe Versiyona Çek, Doğrula & Tekte Gönder"
+                            : "Pasif (Yönetici Girişi Gerektirir)"
+                        }
+                        className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md transition disabled:opacity-40 cursor-pointer ${
+                          authState.authenticated
+                            ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                            : "border border-[#2c313d] bg-[#14171d] text-zinc-400 opacity-75 hover:opacity-100"
+                        }`}
                       >
-                        <Rocket className="w-3.5 h-3.5" />
+                        {authState.authenticated ? (
+                          <Rocket className="w-3.5 h-3.5" />
+                        ) : (
+                          <Lock className="w-3.5 h-3.5 text-amber-400" />
+                        )}
                         {loadingAction ===
                         `remediate-all-${selectedProject.id}`
                           ? "Toplu Doğrulama & Gönderim Çalışıyor..."
@@ -793,7 +1058,11 @@ export default function GuardianDashboard({ initialState }: Props) {
                       {state.projects.length > 1 && (
                         <button
                           type="button"
-                          title="Projeyi İzlemeden Kaldır"
+                          title={
+                            authState.authenticated
+                              ? "Projeyi İzlemeden Kaldır"
+                              : "Pasif (Yönetici Girişi Gerektirir)"
+                          }
                           onClick={async () => {
                             const removedName = selectedProject.name;
                             const nextState = await callApi(
@@ -809,7 +1078,11 @@ export default function GuardianDashboard({ initialState }: Props) {
                             }
                           }}
                           disabled={loadingAction !== null}
-                          className="inline-flex items-center gap-1 px-2.5 py-2 text-xs font-medium rounded-md border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-300 transition disabled:opacity-40 cursor-pointer"
+                          className={`inline-flex items-center gap-1 px-2.5 py-2 text-xs font-medium rounded-md border transition disabled:opacity-40 cursor-pointer ${
+                            authState.authenticated
+                              ? "border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-300"
+                              : "border-[#2c313d] bg-[#14171d] text-zinc-400 opacity-75 hover:opacity-100"
+                          }`}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -2248,6 +2521,153 @@ export default function GuardianDashboard({ initialState }: Props) {
             </button>
           </div>
         </div>
+      </dialog>
+
+      {/* Native Modal Dialog for Admin Authentication (GitHub Login or Setup Password) */}
+      <dialog
+        ref={authDialogRef}
+        aria-labelledby="auth-dialog-title"
+        closedby="any"
+        className="m-auto w-full max-w-md rounded-xl border border-[#323846] bg-[#121418] text-[#f3f4f6] p-0 shadow-2xl"
+      >
+        <form onSubmit={handleLoginSubmit} className="p-6 flex flex-col gap-4">
+          <div className="flex items-start justify-between border-b border-[#232730] pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                <Lock className="w-4 h-4" />
+              </div>
+              <div>
+                <h2
+                  id="auth-dialog-title"
+                  className="text-sm font-bold text-white"
+                >
+                  Yönetici Girişi Gerekli
+                </h2>
+                <p className="text-[11px] text-[#9ca3af]">
+                  Canlı GitHub repolarını ve sunucuyu korumak için işlem yetkisi doğrulaması
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              aria-label="Pencereyi Kapat"
+              onClick={() => authDialogRef.current?.close()}
+              className="p-1.5 rounded hover:bg-[#232730] text-zinc-400 hover:text-white cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {pendingActionNotice && (
+            <div className="p-3 rounded-lg border border-amber-500/40 bg-amber-950/30 text-amber-200 text-xs leading-relaxed">
+              {pendingActionNotice}
+            </div>
+          )}
+
+          {/* Method Tabs: 1. GitHub ile Giriş | 2. Kurulum Şifresi */}
+          <div className="grid grid-cols-2 gap-1.5 p-1 rounded-lg bg-[#0b0c0e] border border-[#232730] text-xs">
+            <button
+              type="button"
+              onClick={() => {
+                setAuthTab("github");
+                setAuthError(null);
+              }}
+              className={`py-2 px-3 rounded-md font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                authTab === "github"
+                  ? "bg-[#1b202b] text-white border border-emerald-500/40"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              <KeyRound className="w-3.5 h-3.5 text-emerald-400" />
+              GitHub ile Giriş
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setAuthTab("password");
+                setAuthError(null);
+              }}
+              className={`py-2 px-3 rounded-md font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                authTab === "password"
+                  ? "bg-[#1b202b] text-white border border-emerald-500/40"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              <Lock className="w-3.5 h-3.5 text-sky-400" />
+              Kurulum Şifresi
+            </button>
+          </div>
+
+          {authTab === "github" ? (
+            <div className="flex flex-col gap-2 text-xs">
+              <label
+                htmlFor="guardian-github-login-input"
+                className="font-semibold text-zinc-200"
+              >
+                GitHub Personal Access Token ({authState.ownerHint})
+              </label>
+              <input
+                id="guardian-github-login-input"
+                type="password"
+                autoFocus
+                value={loginGithubToken}
+                onChange={(e) => setLoginGithubToken(e.target.value)}
+                placeholder="ghp_... veya github_pat_..."
+                className="w-full px-3 py-2 rounded bg-[#0b0c0e] border border-[#2c313d] text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+              />
+              <p className="text-[11px] text-zinc-400 leading-relaxed">
+                GitHub API üzerinden kimliğiniz doğrulanır. Yalnızca bu komuta merkezinin yetkili GitHub sahibi (
+                <code className="text-emerald-400">{authState.ownerHint}</code>) gerçek tarama ve yamalama işlemlerini tetikleyebilir.
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2 text-xs">
+              <label
+                htmlFor="guardian-password-login-input"
+                className="font-semibold text-zinc-200"
+              >
+                Kurulum Yönetici Şifresi (GUARDIAN_ADMIN_PASSWORD)
+              </label>
+              <input
+                id="guardian-password-login-input"
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="Kurulum sırasında belirlenen yönetici şifresi..."
+                className="w-full px-3 py-2 rounded bg-[#0b0c0e] border border-[#2c313d] text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+              />
+              <p className="text-[11px] text-zinc-400 leading-relaxed">
+                GitHub kullanmayan veya kendi sunucusunda şifreli koruma tercih eden kurulumlar için{" "}
+                <code className="text-sky-400">GUARDIAN_ADMIN_PASSWORD</code> ortam değişkeniyle giriş yapılabilir.
+              </p>
+            </div>
+          )}
+
+          {authError && (
+            <div className="p-2.5 rounded border border-red-500/40 bg-red-950/40 text-red-300 text-xs flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+              <span>{authError}</span>
+            </div>
+          )}
+
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#232730]">
+            <button
+              type="button"
+              onClick={() => authDialogRef.current?.close()}
+              className="px-3.5 py-2 text-xs font-medium rounded border border-[#323846] text-zinc-300 hover:text-white cursor-pointer"
+            >
+              Salt Okunur Modda Kal
+            </button>
+            <button
+              type="submit"
+              disabled={authLoading}
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded bg-emerald-600 hover:bg-emerald-500 text-white transition disabled:opacity-50 cursor-pointer"
+            >
+              <Unlock className="w-3.5 h-3.5" />
+              {authLoading ? "Doğrulanıyor..." : "Giriş Yap & Kilidi Aç"}
+            </button>
+          </div>
+        </form>
       </dialog>
     </div>
   );

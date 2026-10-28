@@ -14,8 +14,28 @@ import {
   fetchManifestFromGithub,
   verifyAndMergeBatchCanaryBranchOnGithub,
 } from "@/lib/github-sync";
+import { verifyRequestAdminAuth } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const isVercelCron = request.headers.get("x-vercel-cron") === "1";
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET?.trim();
+  const isCronSecretValid = Boolean(
+    cronSecret && authHeader === `Bearer ${cronSecret}`
+  );
+  const adminSession = verifyRequestAdminAuth(request);
+
+  if (!isVercelCron && !isCronSecretValid && !adminSession.authorized) {
+    return NextResponse.json(
+      {
+        error:
+          "Yetkisiz İşlem: Günlük zamanlanmış tarama yalnızca Vercel Cron veya yetkili Yönetici Oturumu tarafından tetiklenebilir.",
+        requiresAuth: true,
+      },
+      { status: 401 }
+    );
+  }
+
   const state = getGuardianState();
   const scannedIds: string[] = [];
   const autoPatchedPackages: string[] = [];
