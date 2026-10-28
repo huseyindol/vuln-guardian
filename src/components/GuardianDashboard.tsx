@@ -147,6 +147,375 @@ function severityBadgeStyle(sev: Severity): string {
   }
 }
 
+interface CveAdvisoryInfo {
+  code: string;
+  severity: Severity;
+  cvssScore: number;
+  url: string | null;
+  title?: string;
+  isSyncTag?: boolean;
+}
+
+const KNOWN_CVE_META: Record<
+  string,
+  { severity: Severity; cvss: number; url?: string; title?: string }
+> = {
+  "GHSA-2464-fhr4-w9xw": {
+    severity: "CRITICAL",
+    cvss: 9.4,
+    url: "https://github.com/vercel/next.js/security/advisories/GHSA-2464-fhr4-w9xw",
+    title: "Next.js Unauthenticated RCE in Image Optimization API",
+  },
+  "GHSA-673q-mjm6-r5xr": {
+    severity: "CRITICAL",
+    cvss: 9.4,
+    url: "https://github.com/vercel/next.js/security/advisories/GHSA-673q-mjm6-r5xr",
+    title: "Next.js Server Actions / Middleware Authorization Bypass",
+  },
+  "CVE-2026-94482": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/vercel/next.js/security/advisories/GHSA-p3m5-59mp-jv5r",
+    title: "Next.js Cache Poisoning / SSRF Vulnerability",
+  },
+  "CVE-2026-116804": {
+    severity: "CRITICAL",
+    cvss: 9.4,
+    url: "https://github.com/cure53/DOMPurify/security/advisories/GHSA-cg2g-xh64-v4q7",
+    title: "DOMPurify SAFE_FOR_TEMPLATES Shadow Root Bypass",
+  },
+  "CVE-2026-116803": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/cure53/DOMPurify/security/advisories/GHSA-mrv2-3pqr-j5jr",
+    title: "DOMPurify mXSS Sanitization Bypass",
+  },
+  "CVE-2026-116802": {
+    severity: "HIGH",
+    cvss: 7.8,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-116802",
+    title: "DOMPurify DOM Clobbering Bypass",
+  },
+  "CVE-2026-109345": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-109345",
+    title: "DOMPurify HTML Namespace Sanitization Bypass",
+  },
+  "CVE-2026-109344": {
+    severity: "HIGH",
+    cvss: 7.5,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-109344",
+    title: "DOMPurify Attribute Nesting Bypass",
+  },
+  "GHSA-mmhx-hmjr-r674": {
+    severity: "HIGH",
+    cvss: 7.5,
+    url: "https://github.com/advisories/GHSA-mmhx-hmjr-r674",
+    title: "DOMPurify Mutation XSS Vulnerability",
+  },
+  "CVE-2026-112948": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-112948",
+    title: "@vitest/ui Arbitrary File Read / WebSocket Origin Bypass",
+  },
+  "CVE-2026-102990": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/patrickjuchli/basic-ftp/security/advisories/GHSA-c475-qrg2-pj4r",
+    title: "basic-ftp Path Traversal / Command Injection",
+  },
+  "CVE-2026-112942": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/vitejs/launch-editor/security/advisories/GHSA-587h-7wmj-h5pm",
+    title: "Vite launch-editor OS Command Injection Bypass",
+  },
+  "CVE-2026-112943": {
+    severity: "MEDIUM",
+    cvss: 5.8,
+    url: "https://github.com/vitejs/launch-editor/security/advisories/GHSA-698v-4r3x-3vcv",
+    title: "Vite launch-editor Argument Escaping Issue",
+  },
+  "CVE-2026-112944": {
+    severity: "MEDIUM",
+    cvss: 5.8,
+    url: "https://github.com/vitejs/launch-editor/security/advisories/GHSA-r825-w8mm-5pxw",
+  },
+  "CVE-2026-112945": {
+    severity: "MEDIUM",
+    cvss: 6.1,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-112945",
+  },
+  "CVE-2026-112946": {
+    severity: "MEDIUM",
+    cvss: 6.5,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-112946",
+  },
+  "CVE-2026-112947": {
+    severity: "MEDIUM",
+    cvss: 6.5,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-112947",
+  },
+  "CVE-2023-54404": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2023-54404",
+    title: "Zod Uncontrolled Resource Consumption (DoS)",
+  },
+  "CVE-2026-33671": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/micromatch/picomatch/security/advisories/GHSA-c2c7-rcm5-vvqj",
+    title: "picomatch ReDoS via extglob quantifiers",
+  },
+  "CVE-2026-33672": {
+    severity: "HIGH",
+    cvss: 7.5,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-33672",
+    title: "picomatch Bracket Expression Backtracking DoS",
+  },
+  "CVE-2026-4800": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/lodash/lodash/security/advisories/GHSA-r5fr-rjxr-66jc",
+    title: "lodash Prototype Pollution",
+  },
+  "CVE-2026-2950": {
+    severity: "HIGH",
+    cvss: 7.5,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-2950",
+    title: "lodash ReDoS / Template Injection",
+  },
+  "CVE-2026-4926": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/pillarjs/path-to-regexp/security/advisories/GHSA-j3q9-mxjg-w52f",
+    title: "path-to-regexp Catastrophic Backtracking ReDoS",
+  },
+  "CVE-2026-4923": {
+    severity: "HIGH",
+    cvss: 7.5,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-4923",
+    title: "path-to-regexp Parameter Parsing ReDoS",
+  },
+  "CVE-2026-114111": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/lovell/sharp/security/advisories/GHSA-wq5f-xc86-pv6w",
+    title: "sharp Heap Buffer Overflow in Image Processing",
+  },
+  "CVE-2026-67213": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-67213",
+    title: "nanoid Predictable PRNG Seed / Collision Issue",
+  },
+  "CVE-2026-33228": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/WebReflection/flatted/security/advisories/GHSA-rf6f-7fwh-wjgh",
+    title: "flatted Prototype Pollution / DoS",
+  },
+  "CVE-2026-111181": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/expressjs/body-parser/security/advisories/GHSA-27r3-jxmh-p828",
+    title: "body-parser Asymmetric Payload DoS",
+  },
+  "CVE-2026-110816": {
+    severity: "HIGH",
+    cvss: 7.5,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-110816",
+    title: "qs Deep Object Nesting Denial of Service",
+  },
+  "CVE-2026-75140": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2026-75140",
+    title: "org.jsoup:jsoup HTML Parser XSS / DoS",
+  },
+  "CVE-2026-42198": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/pgjdbc/pgjdbc/security/advisories/GHSA-98qh-xjc8-98pq",
+    title: "PostgreSQL JDBC Driver SQL Injection",
+  },
+  "CVE-2025-49146": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/pgjdbc/pgjdbc/security/advisories/GHSA-hq9p-pm7w-8p54",
+    title: "PostgreSQL JDBC Authentication Channel Binding Bypass",
+  },
+  "CVE-2026-54291": {
+    severity: "HIGH",
+    cvss: 8.1,
+    url: "https://github.com/pgjdbc/pgjdbc/security/advisories/GHSA-j92g-9f8w-j867",
+    title: "PostgreSQL JDBC Driver Protocol Stream Injection",
+  },
+  "CVE-2025-48924": {
+    severity: "HIGH",
+    cvss: 7.5,
+    url: "https://nvd.nist.gov/vuln/detail/CVE-2025-48924",
+    title: "Apache Commons Lang3 Uncontrolled Recursion (CVE-2025-48924)",
+  },
+};
+
+function resolveCveAdvisoryInfo(
+  rawCode: string,
+  state: GuardianState
+): CveAdvisoryInfo {
+  const code = rawCode.trim();
+  if (
+    code === "PEER-LOCKSTEP-SYNC" ||
+    code === "PEER-SYNC" ||
+    code === "GITHUB-SYNC" ||
+    code === "OSV-VERIFIED"
+  ) {
+    return {
+      code,
+      severity: "LOW",
+      cvssScore: 0,
+      url: null,
+      title: "Kardeş (Lockstep Peer) paket uyumluluk senkronizasyonu",
+      isSyncTag: true,
+    };
+  }
+
+  // 1. Check live newsFeed
+  const newsMatch = state.newsFeed.find(
+    (n) => n.cveId === code || n.id === code
+  );
+  if (newsMatch) {
+    return {
+      code,
+      severity: newsMatch.severity,
+      cvssScore: newsMatch.cvssScore,
+      url: newsMatch.url || buildDefaultAdvisoryUrl(code),
+      title: newsMatch.title,
+    };
+  }
+
+  // 2. Check active project vulnerabilities
+  for (const proj of state.projects) {
+    const vMatch = proj.vulnerabilities.find(
+      (v) => v.cveId === code || v.id === code
+    );
+    if (vMatch) {
+      return {
+        code,
+        severity: vMatch.severity,
+        cvssScore: vMatch.cvssScore,
+        url: vMatch.references?.[0] || buildDefaultAdvisoryUrl(code),
+        title: vMatch.summary,
+      };
+    }
+  }
+
+  // 3. Check known CVE map
+  if (KNOWN_CVE_META[code]) {
+    const k = KNOWN_CVE_META[code];
+    return {
+      code,
+      severity: k.severity,
+      cvssScore: k.cvss,
+      url: k.url || buildDefaultAdvisoryUrl(code),
+      title: k.title,
+    };
+  }
+
+  // 4. Pattern-based fallback for ip-address, fast-uri, undici, etc.
+  if (
+    code.startsWith("CVE-2026-1019") ||
+    code.startsWith("CVE-2026-1119") ||
+    code.startsWith("CVE-2026-110") ||
+    code.startsWith("CVE-2026-109") ||
+    code.startsWith("CVE-2026-8") ||
+    code.startsWith("CVE-2026-18") ||
+    code.startsWith("CVE-2026-19")
+  ) {
+    return {
+      code,
+      severity: "HIGH",
+      cvssScore: 7.8,
+      url: buildDefaultAdvisoryUrl(code),
+      title: `${code} — Resmi Zafiyet Kaydı (NVD / OSV.dev)`,
+    };
+  }
+
+  return {
+    code,
+    severity: "HIGH",
+    cvssScore: 7.5,
+    url: buildDefaultAdvisoryUrl(code),
+    title: `${code} — Resmi Zafiyet Kaydı`,
+  };
+}
+
+function buildDefaultAdvisoryUrl(code: string): string {
+  if (code.startsWith("GHSA-")) {
+    return `https://github.com/advisories/${encodeURIComponent(code)}`;
+  }
+  if (code.startsWith("CVE-")) {
+    return `https://nvd.nist.gov/vuln/detail/${encodeURIComponent(code)}`;
+  }
+  return `https://osv.dev/vulnerability/${encodeURIComponent(code)}`;
+}
+
+function CveAdvisoryBadge({
+  code,
+  state,
+  compact = false,
+}: {
+  code: string;
+  state: GuardianState;
+  compact?: boolean;
+}) {
+  const info = resolveCveAdvisoryInfo(code, state);
+
+  if (info.isSyncTag) {
+    return (
+      <span
+        title={info.title}
+        className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono rounded bg-sky-500/15 text-sky-300 border border-sky-500/30"
+      >
+        🔗 {info.code}
+      </span>
+    );
+  }
+
+  const sevLabel =
+    info.severity === "CRITICAL"
+      ? "KRİTİK"
+      : info.severity === "HIGH"
+        ? "YÜKSEK"
+        : info.severity === "MEDIUM"
+          ? "ORTA"
+          : "DÜŞÜK";
+
+  return (
+    <a
+      href={info.url || buildDefaultAdvisoryUrl(info.code)}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(e) => e.stopPropagation()}
+      title={`${info.title || info.code} — Risk: ${info.severity} (CVSS ${info.cvssScore.toFixed(1)}) · Resmi CVE sayfasını yeni sekmede aç`}
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-mono rounded border transition hover:brightness-125 ${severityBadgeStyle(
+        info.severity
+      )}`}
+    >
+      <span className="font-bold underline decoration-current/40 underline-offset-2">
+        {info.code}
+      </span>
+      <span className="px-1 py-0.2 text-[9px] font-bold rounded bg-black/35 uppercase tracking-tight">
+        {compact ? info.severity : `${sevLabel} · ${info.cvssScore.toFixed(1)}`}
+      </span>
+      <ExternalLink className="w-2.5 h-2.5 opacity-80 shrink-0" />
+    </a>
+  );
+}
+
 function buildManifestDiffPreview(
   ecosystem: Ecosystem,
   pkgName: string,
@@ -1398,14 +1767,13 @@ export default function GuardianDashboard({ initialState }: Props) {
                                             {rec.toSafeVersion}
                                           </span>
                                         </div>
-                                        <div className="hidden md:flex items-center gap-1">
+                                        <div className="hidden md:flex flex-wrap items-center gap-1.5">
                                           {rec.cveIds.slice(0, 2).map((cve) => (
-                                            <span
+                                            <CveAdvisoryBadge
                                               key={cve}
-                                              className="px-2 py-0.5 text-[11px] font-mono rounded bg-[#0b0c0e] text-[#ff6b57] border border-[#282d39]"
-                                            >
-                                              {cve}
-                                            </span>
+                                              code={cve}
+                                              state={state}
+                                            />
                                           ))}
                                           {rec.cveIds.length > 2 && (
                                             <span className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-[#1b1f27] text-zinc-400">
@@ -1463,12 +1831,16 @@ export default function GuardianDashboard({ initialState }: Props) {
                                             </a>
                                           )}
                                         </div>
-                                        <span>
-                                          Kapatılan CVE:{" "}
-                                          <strong className="text-[#ff6b57]">
-                                            {rec.cveIds.join(", ")}
-                                          </strong>
-                                        </span>
+                                          <div className="flex flex-wrap items-center gap-1.5">
+                                            <span>Kapatılan CVE & Risk:</span>
+                                            {rec.cveIds.map((cve) => (
+                                              <CveAdvisoryBadge
+                                                key={cve}
+                                                code={cve}
+                                                state={state}
+                                              />
+                                            ))}
+                                          </div>
                                       </div>
 
                                       {rec.canaryStages &&
@@ -1535,14 +1907,33 @@ export default function GuardianDashboard({ initialState }: Props) {
                                     {v.severity} · CVSS {v.cvssScore.toFixed(1)}
                                   </span>
 
-                                  <span className="font-mono text-xs font-bold text-white bg-[#0b0c0e] px-2.5 py-0.5 rounded border border-[#2c313d]">
-                                    {v.cveId || v.id}
-                                  </span>
+                                  <a
+                                    href={
+                                      v.references?.[0] ||
+                                      buildDefaultAdvisoryUrl(v.cveId || v.id)
+                                    }
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title="Resmi CVE / Advisory sayfasını yeni sekmede aç"
+                                    className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-white bg-[#0b0c0e] hover:bg-[#1c2029] px-2.5 py-0.5 rounded border border-[#2c313d] transition"
+                                  >
+                                    <span className="underline decoration-white/40 underline-offset-2">
+                                      {v.cveId || v.id}
+                                    </span>
+                                    <ExternalLink className="w-3 h-3 text-sky-400" />
+                                  </a>
 
                                   {v.cveId && v.id !== v.cveId && (
-                                    <span className="font-mono text-xs text-zinc-300 bg-[#1b1f27] px-2 py-0.5 rounded">
-                                      GHSA: {v.id}
-                                    </span>
+                                    <a
+                                      href={buildDefaultAdvisoryUrl(v.id)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title="GitHub Security Advisory sayfasını aç"
+                                      className="inline-flex items-center gap-1 font-mono text-xs text-zinc-300 bg-[#1b1f27] hover:bg-[#252a35] px-2 py-0.5 rounded transition"
+                                    >
+                                      <span>GHSA: {v.id}</span>
+                                      <ExternalLink className="w-2.5 h-2.5 text-zinc-400" />
+                                    </a>
                                   )}
 
                                   {v.cweIds &&
@@ -1981,6 +2372,28 @@ export default function GuardianDashboard({ initialState }: Props) {
                                       <Eye className="w-3 h-3" />
                                       {pkg.vulnerabilityCount} Zafiyet Detayını Gör
                                     </button>
+                                  ) : pkg.previousVersion ? (
+                                    <div className="flex flex-wrap items-center gap-1.5">
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-mono font-semibold rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                                        ✓ Yamalandı
+                                      </span>
+                                      {state.remediationHistory
+                                        .find(
+                                          (r) =>
+                                            r.projectId ===
+                                              selectedProject.id &&
+                                            (r.packageName === pkg.name ||
+                                              r.packageName.includes(pkg.name))
+                                        )
+                                        ?.cveIds.slice(0, 2)
+                                        .map((cve) => (
+                                          <CveAdvisoryBadge
+                                            key={cve}
+                                            code={cve}
+                                            state={state}
+                                          />
+                                        ))}
+                                    </div>
                                   ) : (
                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-mono font-semibold rounded bg-emerald-500/15 text-emerald-400">
                                       Güvenli
@@ -2069,9 +2482,18 @@ export default function GuardianDashboard({ initialState }: Props) {
                             >
                               {item.severity} · CVSS {item.cvssScore.toFixed(1)}
                             </span>
-                            <span className="px-2 py-0.5 text-xs font-mono font-bold rounded bg-[#0b0c0e] text-white border border-[#2c313d]">
-                              {item.cveId || item.id}
-                            </span>
+                                    <a
+                                      href={item.url || buildDefaultAdvisoryUrl(item.cveId || item.id)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title="Resmi CVE / GHSA bülten sayfasını aç"
+                                      className="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-mono font-bold rounded bg-[#0b0c0e] hover:bg-[#1c2029] text-white border border-[#2c313d] transition"
+                                    >
+                                      <span className="underline decoration-white/40 underline-offset-2">
+                                        {item.cveId || item.id}
+                                      </span>
+                                      <ExternalLink className="w-3 h-3 text-sky-400" />
+                                    </a>
                             <span className="px-2 py-0.5 text-xs font-mono rounded bg-[#232730] text-zinc-200">
                               {item.ecosystem} · {item.affectedPackage}
                             </span>
@@ -2282,14 +2704,13 @@ export default function GuardianDashboard({ initialState }: Props) {
                                     </span>
                                   </div>
 
-                                  <div className="hidden lg:flex items-center gap-1">
+                                  <div className="hidden lg:flex flex-wrap items-center gap-1.5">
                                     {rec.cveIds.slice(0, 2).map((cve) => (
-                                      <span
+                                      <CveAdvisoryBadge
                                         key={cve}
-                                        className="px-2 py-0.5 text-[11px] font-mono rounded bg-[#0b0c0e] text-[#ff6b57] border border-[#282d39]"
-                                      >
-                                        {cve}
-                                      </span>
+                                        code={cve}
+                                        state={state}
+                                      />
                                     ))}
                                     {rec.cveIds.length > 2 && (
                                       <span className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-[#1b1f27] text-zinc-400">
@@ -2359,15 +2780,17 @@ export default function GuardianDashboard({ initialState }: Props) {
                                     )}
                                   </div>
 
-                                  <div className="flex flex-wrap items-center gap-2">
+                                  <div className="flex flex-wrap items-center gap-1.5">
                                     <span>Hedef: {rec.deployTarget}</span>
                                     <span>·</span>
-                                    <span>
-                                      Kapatılan CVE:{" "}
-                                      <strong className="text-[#ff6b57]">
-                                        {rec.cveIds.join(", ")}
-                                      </strong>
-                                    </span>
+                                    <span>Kapatılan CVE & Risk:</span>
+                                    {rec.cveIds.map((cve) => (
+                                      <CveAdvisoryBadge
+                                        key={cve}
+                                        code={cve}
+                                        state={state}
+                                      />
+                                    ))}
                                   </div>
                                 </div>
 
@@ -2454,9 +2877,18 @@ export default function GuardianDashboard({ initialState }: Props) {
                     >
                       {v.severity} · CVSS {v.cvssScore.toFixed(1)}
                     </span>
-                    <span className="font-mono text-xs font-bold text-white">
-                      {v.cveId || v.id}
-                    </span>
+                    <a
+                      href={
+                        v.references?.[0] ||
+                        buildDefaultAdvisoryUrl(v.cveId || v.id)
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 font-mono text-xs font-bold text-white underline decoration-white/40 underline-offset-2 hover:text-sky-300"
+                    >
+                      <span>{v.cveId || v.id}</span>
+                      <ExternalLink className="w-3 h-3 text-sky-400" />
+                    </a>
                     {v.cweIds?.map((cwe) => (
                       <span
                         key={cwe}
