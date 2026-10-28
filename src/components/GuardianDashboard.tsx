@@ -248,6 +248,8 @@ export default function GuardianDashboard({ initialState }: Props) {
     "ALL" | "VULNERABLE" | "SAFE"
   >("ALL");
   const [pkgSectionFilter, setPkgSectionFilter] = useState<string>("ALL");
+  const [logProjectFilter, setLogProjectFilter] = useState<string>("ALL");
+  const [logSearchQuery, setLogSearchQuery] = useState<string>("");
 
   const visibleProjects = useMemo(() => {
     if (selectedLang === "ALL") return state.projects;
@@ -1344,79 +1346,166 @@ export default function GuardianDashboard({ initialState }: Props) {
                           </p>
                         </div>
 
-                        {/* Show recently auto-patched packages for this project right here! */}
+                        {/* Show recently auto-patched packages for this project in a clean compact accordion */}
                         {state.remediationHistory.filter(
                           (r) => r.projectId === selectedProject.id
                         ).length > 0 && (
-                          <div className="flex flex-col gap-3">
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 px-1">
-                              ✅ {selectedProject.name} — Otonom Safe Versiyona Çekilen Paketler & Kapatılan Zafiyetler
-                            </h4>
+                          <div className="flex flex-col gap-2.5">
+                            <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                                ✅ {selectedProject.name} — Otonom Safe Versiyona Çekilen Paketler (
+                                {
+                                  state.remediationHistory.filter(
+                                    (r) => r.projectId === selectedProject.id
+                                  ).length
+                                }
+                                )
+                              </h4>
+                              <span className="text-[11px] text-zinc-400 font-mono">
+                                5 aşamalı Canary ve log detayları için satıra tıklayın
+                              </span>
+                            </div>
                             {state.remediationHistory
                               .filter((r) => r.projectId === selectedProject.id)
-                              .map((rec) => (
-                                <div
-                                  key={rec.id}
-                                  className="p-4 rounded-xl border border-emerald-500/30 bg-[#121418] flex flex-col gap-2.5"
-                                >
-                                  <div className="flex flex-wrap items-center justify-between gap-2">
-                                    <div className="flex flex-wrap items-center gap-2">
-                                      <span className="px-2 py-0.5 text-[11px] font-mono font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                                        ✓ SAFE VERSİYONA ÇEKİLDİ ({rec.upgradeRisk || "SAFE_PATCH"})
-                                      </span>
-                                      {rec.canaryBranch && (
-                                        <span className="px-2 py-0.5 text-[11px] font-mono rounded bg-sky-500/15 text-sky-300 border border-sky-500/30">
-                                          🌿 {rec.canaryBranch} → {rec.autoMergedToMain ? "main (AUTO-MERGED)" : "PR AÇIK"}
+                              .map((rec, idx) => {
+                                const passedStages =
+                                  rec.canaryStages?.filter(
+                                    (s) => s.status === "PASSED"
+                                  ).length ?? 5;
+                                const totalStages =
+                                  rec.canaryStages?.length || 5;
+                                return (
+                                  <details
+                                    key={rec.id}
+                                    name="project-remediation-accordion"
+                                    open={idx === 0}
+                                    className="group rounded-xl border border-emerald-500/25 bg-[#121418] open:border-emerald-500/50 transition overflow-hidden"
+                                  >
+                                    <summary className="px-4 py-3 cursor-pointer list-none flex flex-wrap items-center justify-between gap-3 hover:bg-[#161920] transition select-none">
+                                      <div className="flex flex-wrap items-center gap-2.5 min-w-0">
+                                        <span className="px-2 py-0.5 text-[11px] font-mono font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                                          ✓ PATCHED
                                         </span>
-                                      )}
-                                      <span className="font-mono text-sm font-bold text-white">
-                                        {rec.packageName}
-                                      </span>
-                                      <span className="px-2 py-0.5 text-xs font-mono rounded bg-red-500/15 text-red-300 line-through">
-                                        {rec.fromVersion}
-                                      </span>
-                                      <ArrowRight className="w-3.5 h-3.5 text-zinc-400" />
-                                      <span className="px-2 py-0.5 text-xs font-mono font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                                        {rec.toSafeVersion}
-                                      </span>
-                                    </div>
-                                    <span className="text-xs font-mono text-zinc-400">
-                                      {formatDateTime(rec.timestamp)}
-                                    </span>
-                                  </div>
-                                  <div className="text-xs font-mono text-zinc-300">
-                                    Kapatılan Zafiyetler (CVE / GHSA):{" "}
-                                    <span className="text-[#ff6b57] font-semibold">
-                                      {rec.cveIds.join(", ")}
-                                    </span>
-                                  </div>
-                                  {rec.canaryStages && rec.canaryStages.length > 0 && (
-                                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-1">
-                                      {rec.canaryStages.map((st) => (
-                                        <div
-                                          key={st.stage}
-                                          className={`p-2 rounded border text-[11px] font-mono ${
-                                            st.status === "PASSED"
-                                              ? "bg-emerald-950/30 border-emerald-500/30 text-emerald-200"
-                                              : "bg-red-950/30 border-red-500/40 text-red-200"
-                                          }`}
-                                        >
-                                          <div className="font-bold flex items-center justify-between">
-                                            <span>{st.label}</span>
-                                            <span>{st.status === "PASSED" ? "✓" : "✕"}</span>
-                                          </div>
-                                          <p className="mt-1 text-[10px] text-zinc-300 leading-snug">
-                                            {st.detail}
-                                          </p>
+                                        <span className="font-mono text-sm font-bold text-white">
+                                          {rec.packageName}
+                                        </span>
+                                        <div className="inline-flex items-center gap-1.5 font-mono text-xs">
+                                          <span className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-300 line-through">
+                                            {rec.fromVersion}
+                                          </span>
+                                          <ArrowRight className="w-3 h-3 text-zinc-500" />
+                                          <span className="px-2 py-0.5 font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                                            {rec.toSafeVersion}
+                                          </span>
                                         </div>
-                                      ))}
+                                        <div className="hidden md:flex items-center gap-1">
+                                          {rec.cveIds.slice(0, 2).map((cve) => (
+                                            <span
+                                              key={cve}
+                                              className="px-2 py-0.5 text-[11px] font-mono rounded bg-[#0b0c0e] text-[#ff6b57] border border-[#282d39]"
+                                            >
+                                              {cve}
+                                            </span>
+                                          ))}
+                                          {rec.cveIds.length > 2 && (
+                                            <span className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-[#1b1f27] text-zinc-400">
+                                              +{rec.cveIds.length - 2} CVE
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+
+                                      <div className="flex items-center gap-3">
+                                        <div
+                                          className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-950/40 border border-emerald-500/30 text-[11px] font-mono text-emerald-300"
+                                          title="5 Aşamalı Canary Doğrulama Kapısı"
+                                        >
+                                          <span className="flex items-center gap-0.5">
+                                            {Array.from({
+                                              length: totalStages,
+                                            }).map((_, i) => (
+                                              <span
+                                                key={i}
+                                                className="w-1.5 h-1.5 rounded-full bg-emerald-400"
+                                              />
+                                            ))}
+                                          </span>
+                                          <span>
+                                            {passedStages}/{totalStages} Canary ✓
+                                          </span>
+                                        </div>
+                                        <span className="text-xs font-mono text-zinc-400">
+                                          {formatDateTime(rec.timestamp)}
+                                        </span>
+                                        <span className="text-[11px] font-mono text-zinc-400 group-open:rotate-180 transition-transform">
+                                          ▾
+                                        </span>
+                                      </div>
+                                    </summary>
+
+                                    <div className="px-4 pb-4 pt-2 border-t border-[#232730] bg-[#0e1014] flex flex-col gap-2.5">
+                                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-zinc-400">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                          <span>
+                                            Commit:{" "}
+                                            <code className="text-zinc-200">
+                                              {rec.commitRef}
+                                            </code>
+                                          </span>
+                                          {rec.prUrl && (
+                                            <a
+                                              href={rec.prUrl}
+                                              target="_blank"
+                                              rel="noreferrer"
+                                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30 hover:bg-sky-500/25"
+                                            >
+                                              GitHub Commit <ExternalLink className="w-3 h-3" />
+                                            </a>
+                                          )}
+                                        </div>
+                                        <span>
+                                          Kapatılan CVE:{" "}
+                                          <strong className="text-[#ff6b57]">
+                                            {rec.cveIds.join(", ")}
+                                          </strong>
+                                        </span>
+                                      </div>
+
+                                      {rec.canaryStages &&
+                                        rec.canaryStages.length > 0 && (
+                                          <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                                            {rec.canaryStages.map((st) => (
+                                              <div
+                                                key={st.stage}
+                                                className={`p-2 rounded border text-[11px] font-mono ${
+                                                  st.status === "PASSED"
+                                                    ? "bg-emerald-950/25 border-emerald-500/30 text-emerald-200"
+                                                    : "bg-red-950/25 border-red-500/40 text-red-200"
+                                                }`}
+                                              >
+                                                <div className="font-bold flex items-center justify-between">
+                                                  <span>{st.label}</span>
+                                                  <span>
+                                                    {st.status === "PASSED"
+                                                      ? "✓"
+                                                      : "✕"}
+                                                  </span>
+                                                </div>
+                                                <p className="mt-1 text-[10px] text-zinc-300 leading-snug">
+                                                  {st.detail}
+                                                </p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        )}
+
+                                      <pre className="p-2.5 rounded bg-[#0b0c0e] border border-[#232730] text-[11px] font-mono text-emerald-300/90 overflow-x-auto">
+                                        {rec.logs.join("\n")}
+                                      </pre>
                                     </div>
-                                  )}
-                                  <pre className="p-2.5 rounded bg-[#0b0c0e] border border-[#232730] text-[11px] font-mono text-emerald-300/90 overflow-x-auto">
-                                    {rec.logs.join("\n")}
-                                  </pre>
-                                </div>
-                              ))}
+                                  </details>
+                                );
+                              })}
                           </div>
                         )}
                       </div>
@@ -2043,89 +2132,281 @@ export default function GuardianDashboard({ initialState }: Props) {
                   </div>
                 )}
 
-                {/* TAB 4: REMEDIATION LOGS */}
+                {/* TAB 4: REMEDIATION LOGS (Compact Accordion + Project Filter + Search) */}
                 {activeTab === "logs" && (
-                  <div className="flex flex-col gap-4">
-                    <div className="p-4 rounded-xl border border-[#232730] bg-[#121418] flex items-center justify-between">
-                      <div>
-                        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                          <Terminal className="w-4 h-4 text-[#d83a26]" />
-                          Elly Studio Otonom Safe-Version Yama & Deploy Kayıtları
-                        </h3>
-                        <p className="text-xs text-[#9ca3af] mt-0.5">
-                          Uygulanan her safe-version yükseltmesi, doğrulama testi ve deploy çıktısı aşağıda kayıtlıdır.
-                        </p>
+                  <div className="flex flex-col gap-3">
+                    {/* Header + KPI Summary + Filter Toolbar */}
+                    <div className="p-4 rounded-xl border border-[#232730] bg-[#121418] flex flex-col gap-3">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                            <Terminal className="w-4 h-4 text-[#d83a26]" />
+                            Elly Studio Otonom Safe-Version Yama & Deploy Kayıtları
+                          </h3>
+                          <p className="text-xs text-[#9ca3af] mt-0.5">
+                            5 aşamalı Canary doğrulaması ve terminal loglarını görmek için ilgili paket satırına tıklayın.
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                          <span className="px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold">
+                            ✓ {state.remediationHistory.length} Toplam Yama
+                          </span>
+                          <span className="px-2.5 py-1 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30">
+                            🌿{" "}
+                            {
+                              state.remediationHistory.filter(
+                                (r) => r.autoMergedToMain
+                              ).length
+                            }{" "}
+                            Auto-Merged
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t border-[#232730] flex flex-wrap items-center justify-between gap-2">
+                        {/* Project Filter Pills */}
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setLogProjectFilter("ALL")}
+                            className={`px-2.5 py-1 rounded text-xs font-mono transition cursor-pointer ${
+                              logProjectFilter === "ALL"
+                                ? "bg-[#d83a26] text-white font-bold"
+                                : "bg-[#0b0c0e] border border-[#232730] text-zinc-400 hover:text-white"
+                            }`}
+                          >
+                            Tüm Projeler ({state.remediationHistory.length})
+                          </button>
+                          {state.projects.map((proj) => {
+                            const count = state.remediationHistory.filter(
+                              (r) => r.projectId === proj.id
+                            ).length;
+                            if (count === 0) return null;
+                            return (
+                              <button
+                                key={proj.id}
+                                type="button"
+                                onClick={() => setLogProjectFilter(proj.id)}
+                                className={`px-2.5 py-1 rounded text-xs font-mono transition cursor-pointer ${
+                                  logProjectFilter === proj.id
+                                    ? "bg-[#d83a26] text-white font-bold"
+                                    : "bg-[#0b0c0e] border border-[#232730] text-zinc-400 hover:text-white"
+                                }`}
+                              >
+                                {proj.name} ({count})
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Search Input */}
+                        <div className="relative min-w-[220px] flex-1 sm:flex-initial">
+                          <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                          <input
+                            type="search"
+                            value={logSearchQuery}
+                            onChange={(e) => setLogSearchQuery(e.target.value)}
+                            placeholder="Paket, CVE veya commit ara..."
+                            className="w-full pl-8 pr-3 py-1 rounded bg-[#0b0c0e] border border-[#232730] text-xs font-mono text-white placeholder:text-zinc-500 focus:outline-none focus:border-[#d83a26]"
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    {state.remediationHistory.map((rec) => (
-                      <div
-                        key={rec.id}
-                        className="p-4 rounded-xl border border-[#232730] bg-[#121418] flex flex-col gap-3"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="px-2 py-0.5 text-xs font-mono font-bold rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                              {rec.deployStatus}
-                            </span>
-                            {rec.canaryBranch && (
-                              <span className="px-2 py-0.5 text-[11px] font-mono rounded bg-sky-500/15 text-sky-300 border border-sky-500/30">
-                                🌿 {rec.canaryBranch} → {rec.autoMergedToMain ? "main (AUTO-MERGED)" : "PR AÇIK"}
-                              </span>
-                            )}
-                            <span className="font-semibold text-sm text-white">
-                              {rec.projectName}
-                            </span>
-                            <span className="font-mono text-xs text-zinc-300">
-                              {rec.packageName}: {rec.fromVersion} →{" "}
-                              <strong className="text-emerald-400">
-                                {rec.toSafeVersion}
-                              </strong>
-                            </span>
-                          </div>
-                          <span className="text-xs font-mono text-zinc-400">
-                            {formatDateTime(rec.timestamp)} · Hedef:{" "}
-                            {rec.deployTarget}
-                          </span>
-                        </div>
+                    {/* Mutually Exclusive Compact Disclosure List (modern-web-guidance: search-hidden-content) */}
+                    <div className="flex flex-col gap-2">
+                      {state.remediationHistory
+                        .filter((rec) => {
+                          if (
+                            logProjectFilter !== "ALL" &&
+                            rec.projectId !== logProjectFilter
+                          ) {
+                            return false;
+                          }
+                          if (logSearchQuery.trim()) {
+                            const q = logSearchQuery.toLowerCase();
+                            return (
+                              rec.packageName.toLowerCase().includes(q) ||
+                              rec.projectName.toLowerCase().includes(q) ||
+                              rec.commitRef.toLowerCase().includes(q) ||
+                              rec.cveIds.some((c) =>
+                                c.toLowerCase().includes(q)
+                              )
+                            );
+                          }
+                          return true;
+                        })
+                        .map((rec, idx) => {
+                          const passedStages =
+                            rec.canaryStages?.filter(
+                              (s) => s.status === "PASSED"
+                            ).length ?? 5;
+                          const totalStages = rec.canaryStages?.length || 5;
+                          return (
+                            <details
+                              key={rec.id}
+                              name="remediation-logs-accordion"
+                              open={idx === 0}
+                              className="group rounded-xl border border-[#232730] bg-[#121418] open:border-emerald-500/45 transition overflow-hidden"
+                            >
+                              <summary className="px-4 py-3 cursor-pointer list-none flex flex-wrap items-center justify-between gap-3 hover:bg-[#161920] transition select-none">
+                                <div className="flex flex-wrap items-center gap-2.5 min-w-0">
+                                  <span
+                                    className={`px-2 py-0.5 text-[11px] font-mono font-bold rounded border ${
+                                      rec.verifyStatus === "PASSED"
+                                        ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                                        : "bg-red-500/15 text-red-400 border-red-500/30"
+                                    }`}
+                                  >
+                                    {rec.verifyStatus === "PASSED"
+                                      ? "✓ DEPLOYED"
+                                      : "⛔ BLOCKED"}
+                                  </span>
 
-                        <div className="text-xs font-mono text-zinc-400">
-                          Commit:{" "}
-                          <code className="text-zinc-200">{rec.commitRef}</code>{" "}
-                          | Kapatılan CVE:{" "}
-                          <span className="text-[#ff6b57]">
-                            {rec.cveIds.slice(0, 6).join(", ")}
-                          </span>
-                        </div>
+                                  <span className="px-2 py-0.5 text-xs font-mono font-semibold rounded bg-[#1b1f27] text-zinc-200 border border-[#2c313d]">
+                                    {rec.projectName}
+                                  </span>
 
-                        {rec.canaryStages && rec.canaryStages.length > 0 && (
-                          <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
-                            {rec.canaryStages.map((st) => (
-                              <div
-                                key={st.stage}
-                                className={`p-2 rounded border text-[11px] font-mono ${
-                                  st.status === "PASSED"
-                                    ? "bg-emerald-950/30 border-emerald-500/30 text-emerald-200"
-                                    : "bg-red-950/30 border-red-500/40 text-red-200"
-                                }`}
-                              >
-                                <div className="font-bold flex items-center justify-between">
-                                  <span>{st.label}</span>
-                                  <span>{st.status === "PASSED" ? "✓" : "✕"}</span>
+                                  <span className="font-mono text-sm font-bold text-white">
+                                    {rec.packageName}
+                                  </span>
+
+                                  <div className="inline-flex items-center gap-1.5 font-mono text-xs">
+                                    <span className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-300 line-through">
+                                      {rec.fromVersion}
+                                    </span>
+                                    <ArrowRight className="w-3 h-3 text-zinc-500" />
+                                    <span className="px-2 py-0.5 font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                                      {rec.toSafeVersion}
+                                    </span>
+                                  </div>
+
+                                  <div className="hidden lg:flex items-center gap-1">
+                                    {rec.cveIds.slice(0, 2).map((cve) => (
+                                      <span
+                                        key={cve}
+                                        className="px-2 py-0.5 text-[11px] font-mono rounded bg-[#0b0c0e] text-[#ff6b57] border border-[#282d39]"
+                                      >
+                                        {cve}
+                                      </span>
+                                    ))}
+                                    {rec.cveIds.length > 2 && (
+                                      <span className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-[#1b1f27] text-zinc-400">
+                                        +{rec.cveIds.length - 2} CVE
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                                <p className="mt-1 text-[10px] text-zinc-300 leading-snug">
-                                  {st.detail}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
 
-                        <pre className="p-3 rounded bg-[#0b0c0e] border border-[#232730] text-[11px] font-mono text-emerald-300/90 overflow-x-auto">
-                          {rec.logs.join("\n")}
-                        </pre>
-                      </div>
-                    ))}
+                                <div className="flex items-center gap-3">
+                                  <div
+                                    className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-950/40 border border-emerald-500/30 text-[11px] font-mono text-emerald-300"
+                                    title="5 Aşamalı Canary Doğrulama Kapısı"
+                                  >
+                                    <span className="flex items-center gap-0.5">
+                                      {Array.from({ length: totalStages }).map(
+                                        (_, i) => (
+                                          <span
+                                            key={i}
+                                            className="w-1.5 h-1.5 rounded-full bg-emerald-400"
+                                          />
+                                        )
+                                      )}
+                                    </span>
+                                    <span>
+                                      {passedStages}/{totalStages} Aşama ✓
+                                    </span>
+                                  </div>
+
+                                  <span className="text-xs font-mono text-zinc-400">
+                                    {formatDateTime(rec.timestamp)}
+                                  </span>
+
+                                  <span className="px-2 py-0.5 rounded bg-[#1b1f27] text-[11px] font-mono text-zinc-300 group-open:bg-emerald-500/20 group-open:text-emerald-300 transition">
+                                    Detay ▾
+                                  </span>
+                                </div>
+                              </summary>
+
+                              <div className="px-4 pb-4 pt-3 border-t border-[#232730] bg-[#0e1014] flex flex-col gap-3">
+                                <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-zinc-400">
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    {rec.canaryBranch && (
+                                      <span className="px-2 py-0.5 text-[11px] rounded bg-sky-500/15 text-sky-300 border border-sky-500/30">
+                                        🌿 {rec.canaryBranch} →{" "}
+                                        {rec.autoMergedToMain
+                                          ? "main (AUTO-MERGED)"
+                                          : "PR AÇIK"}
+                                      </span>
+                                    )}
+                                    <span>
+                                      Commit:{" "}
+                                      <code className="text-zinc-200">
+                                        {rec.commitRef}
+                                      </code>
+                                    </span>
+                                    {rec.prUrl && (
+                                      <a
+                                        href={rec.prUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30 hover:bg-sky-500/25"
+                                      >
+                                        GitHub Commit{" "}
+                                        <ExternalLink className="w-3 h-3" />
+                                      </a>
+                                    )}
+                                  </div>
+
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <span>Hedef: {rec.deployTarget}</span>
+                                    <span>·</span>
+                                    <span>
+                                      Kapatılan CVE:{" "}
+                                      <strong className="text-[#ff6b57]">
+                                        {rec.cveIds.join(", ")}
+                                      </strong>
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {rec.canaryStages &&
+                                  rec.canaryStages.length > 0 && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                                      {rec.canaryStages.map((st) => (
+                                        <div
+                                          key={st.stage}
+                                          className={`p-2.5 rounded-lg border text-[11px] font-mono ${
+                                            st.status === "PASSED"
+                                              ? "bg-emerald-950/25 border-emerald-500/30 text-emerald-200"
+                                              : "bg-red-950/25 border-red-500/40 text-red-200"
+                                          }`}
+                                        >
+                                          <div className="font-bold flex items-center justify-between">
+                                            <span>{st.label}</span>
+                                            <span>
+                                              {st.status === "PASSED"
+                                                ? "✓"
+                                                : "✕"}
+                                            </span>
+                                          </div>
+                                          <p className="mt-1 text-[10px] text-zinc-300 leading-snug">
+                                            {st.detail}
+                                          </p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+
+                                <pre className="p-2.5 rounded-lg bg-[#0b0c0e] border border-[#232730] text-[11px] font-mono text-emerald-300/90 overflow-x-auto">
+                                  {rec.logs.join("\n")}
+                                </pre>
+                              </div>
+                            </details>
+                          );
+                        })}
+                    </div>
                   </div>
                 )}
               </>
