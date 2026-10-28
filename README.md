@@ -1,3 +1,9 @@
+<div align="center">
+
+**[🇹🇷 Türkçe](./README.md)** · **[🇬🇧 English](./README.en.md)**
+
+</div>
+
 # 🛡️ VulnGuardian — Autonomous Vulnerability Intelligence, Single-Batch Safe-Version Patcher & Deploy Skill
 
 **VulnGuardian**, çok dilli yazılım projelerinizin (`TypeScript/Node.js`, `Java/Spring Boot`, `Flutter/Dart`, `Python/PyPI`, `Go`, `Rust/Cargo`) bağımlılıklarını canlı **Google OSV.dev**, **GitHub Security Advisories (GHSA)** ve **NVD/CVE** veritabanlarına karşı tarayan; zafiyetli paketlerin **tamamını (Patch, Minor ve Major dahil) tek seferde güvenli (`Safe`) versiyona çeken**, prod (`main`) ortamına göndermeden önce **Breaking-Change ve Site Çalışabilirlik kontrollerini** çalıştıran ve **PR mail spam'i üretmeden tek seferde `main` dalına birleştirip deploy eden** açık kaynaklı bir **AI Agent Skill (`Antigravity` & `Claude Code`)** ve **Self-Hosted Web Komut Merkezidir (Next.js 16)**.

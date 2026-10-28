@@ -1,5 +1,7 @@
 # VulnGuardian — Safe-Version Remediation & Deployment Playbook
 
+> **Dil / Language:** [🇹🇷 Türkçe](./remediation-playbook.md) · [🇬🇧 English](./remediation-playbook.en.md)
+
 Bu referans dokümanı, farklı ekosistemlerde zafiyetli paketlerin güvenli (`safe`) versiyonlara çekilmesi, geçişli (transitive) bağımlılıkların ezilmesi ve güvenli deploy kurallarını tanımlar.
 
 ## 1. Ekosistem Bazlı Safe-Version Güncelleme Kuralları

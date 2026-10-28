@@ -10,6 +10,8 @@ description: >-
 
 # VulnGuardian — Vulnerability Intelligence, Safe-Version Patcher & Auto-Deploy Skill
 
+> **Dil / Language:** [🇹🇷 Türkçe](./SKILL.md) · [🇬🇧 English](./SKILL.en.md)
+
 Bu skill, kayıtlı projelerin bağımlılık ağaçlarını (`package.json`, `pom.xml`, `pubspec.yaml`, `requirements.txt`, `go.mod`) belirli aralıklarla tarar, güncel zafiyet haberlerini (OSV.dev, GitHub Security Advisories, CISA KEV, CVE/NVD) okur, zafiyetli paket versiyonlarını **en yakın güvenli (safe/fixed) versiyona** çeker, doğrulama testlerini çalıştırır ve otomatik deploy çıkar.
 
 ## Mimari & Komut Merkezi
