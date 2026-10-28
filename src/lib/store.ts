@@ -12,31 +12,40 @@ const TMP_STATE_PATH = "/tmp/vuln-guardian-state.json";
 let memoryState: GuardianState | null = null;
 
 export function getGuardianState(): GuardianState {
-  if (fs.existsSync(LOCAL_STATE_PATH)) {
-    try {
-      const raw = fs.readFileSync(LOCAL_STATE_PATH, "utf8");
-      const parsed = JSON.parse(raw) as GuardianState;
-      if (memoryState && new Date(memoryState.lastGlobalScanAt) > new Date(parsed.lastGlobalScanAt)) {
-        return memoryState;
-      }
-      memoryState = parsed;
-      return parsed;
-    } catch {
-      // Fallback below
-    }
+  const candidates: GuardianState[] = [];
+
+  if (memoryState) {
+    candidates.push(memoryState);
   }
 
   if (fs.existsSync(TMP_STATE_PATH)) {
     try {
       const raw = fs.readFileSync(TMP_STATE_PATH, "utf8");
-      memoryState = JSON.parse(raw) as GuardianState;
-      return memoryState;
+      candidates.push(JSON.parse(raw) as GuardianState);
     } catch {
-      // Fallback below
+      // Ignore corrupt tmp state
     }
   }
 
-  if (memoryState) return memoryState;
+  if (fs.existsSync(LOCAL_STATE_PATH)) {
+    try {
+      const raw = fs.readFileSync(LOCAL_STATE_PATH, "utf8");
+      candidates.push(JSON.parse(raw) as GuardianState);
+    } catch {
+      // Ignore corrupt local state
+    }
+  }
+
+  if (candidates.length > 0) {
+    candidates.sort(
+      (a, b) =>
+        new Date(b.lastGlobalScanAt || 0).getTime() -
+        new Date(a.lastGlobalScanAt || 0).getTime()
+    );
+    memoryState = candidates[0];
+    return memoryState;
+  }
+
   memoryState = structuredClone(initialSeed as unknown as GuardianState);
   return memoryState;
 }

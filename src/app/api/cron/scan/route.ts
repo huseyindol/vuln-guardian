@@ -97,7 +97,41 @@ export async function GET() {
             toVersion: toVer,
           });
 
-          if (canaryCheck.allPassed) {
+          let finalAllPassed = canaryCheck.allPassed;
+          let finalCanaryBranch = canaryCheck.canaryBranch;
+          let finalStages = canaryCheck.stages;
+          let finalPrUrl: string | undefined;
+          let mergedToMainOnGithub = false;
+
+          if (p.autoDeploy && process.env.GITHUB_TOKEN) {
+            try {
+              const ghCanary = await runCanaryBranchTestAndAutoMergeOnGithub({
+                repoUrl: p.repoUrl,
+                manifestFile: p.manifestFile,
+                newContent: candidateManifest,
+                packageName: pkg.name,
+                fromVersion: fromVer,
+                toVersion: toVer,
+                localStages: canaryCheck.stages,
+                localAllPassed: canaryCheck.allPassed,
+                baseBranch: "main",
+              });
+              if (ghCanary) {
+                finalAllPassed = Boolean(ghCanary.autoMerged);
+                finalCanaryBranch = ghCanary.branchName || finalCanaryBranch;
+                finalStages = ghCanary.canaryStages || finalStages;
+                finalPrUrl = ghCanary.prUrl;
+                mergedToMainOnGithub = Boolean(ghCanary.autoMerged);
+                if (ghCanary.autoMerged) {
+                  p.lastDeployAt = new Date().toISOString();
+                }
+              }
+            } catch {
+              // Keep local/in-memory canary result if GitHub call fails
+            }
+          }
+
+          if (finalAllPassed) {
             manifestRaw = candidateManifest;
             patchedSummary.push(`${pkg.name} (${fromVer}->${toVer})`);
             autoPatchedPackages.push(`${p.name}:${pkg.name}@${toVer}`);
@@ -121,48 +155,26 @@ export async function GET() {
             toSafeVersion: toVer,
             upgradeRisk: risk,
             cveIds,
-            verifyStatus: canaryCheck.allPassed ? "PASSED" : "FAILED",
-            deployStatus: canaryCheck.allPassed
+            verifyStatus: finalAllPassed ? "PASSED" : "FAILED",
+            deployStatus: finalAllPassed
               ? "AUTO_MERGED_DEPLOYED"
               : "BLOCKED_BREAKING",
             deployTarget: p.deployTarget,
             commitRef: `fix(security): auto-merge verified ${pkg.name} from ${fromVer} to ${toVer}`,
-            canaryBranch: canaryCheck.canaryBranch,
-            autoMergedToMain: canaryCheck.allPassed,
-            canaryStages: canaryCheck.stages,
+            prUrl: finalPrUrl,
+            canaryBranch: finalCanaryBranch,
+            autoMergedToMain: mergedToMainOnGithub || finalAllPassed,
+            canaryStages: finalStages,
             logs: [
               `[1. Ön Rapor 20:30] Otonom taramada ${pkg.name}@${fromVer} için ${cveIds.slice(0, 3).join(", ")} tespit edildi`,
-              `[2. Git & Canary Dalı] İzole dal oluşturuldu (${canaryCheck.canaryBranch}) ve ${p.manifestFile} içinde ${pkg.name} -> ${toVer} safe versiyonuna çekildi`,
-              `[3. CI/CD & Test Kapısı] ${p.verifyCommand} (${risk}: ${reason}) -> ${canaryCheck.allPassed ? "PASSED (EXIT 0)" : "FAILED"}`,
-              canaryCheck.allPassed
-                ? `[4. Auto-Merge & Deploy] Hatasız geçti; '${canaryCheck.canaryBranch}' otomatik olarak 'main' dalına merge edildi (${repoSlug}) ve ${p.deployTarget} CD hattı tetiklendi`
-                : `[4. Merge Kilidi] Test hatası nedeniyle 'main' merge engellendi`,
+              `[2. Git & Canary Dalı] GitHub üzerinde izole dal oluşturuldu (${finalCanaryBranch}) ve ${p.manifestFile} içinde ${pkg.name} -> ${toVer} safe versiyonuna çekildi`,
+              `[3. CI/CD & Test Kapısı] ${p.verifyCommand} (${risk}: ${reason}) -> ${finalAllPassed ? "PASSED (EXIT 0)" : "FAILED"}`,
+              finalAllPassed
+                ? `[4. Auto-Merge & Deploy] Hatasız geçti; '${finalCanaryBranch}' otomatik olarak 'main' dalına merge edildi (${repoSlug})${finalPrUrl ? ` [${finalPrUrl}]` : ""} ve ${p.deployTarget} CD hattı tetiklendi`
+                : `[4. Merge Kilidi] Test veya CI/CD hatası nedeniyle 'main' merge engellendi`,
               `[5. Final Rapor] CI/CD sonrası ikinci OSV.dev doğrulama taraması tamamlandı: ${pkg.name}@${toVer} üzerinde kalan zafiyet = 0 (TEMİZ)`,
             ],
           });
-        }
-
-        if (p.autoDeploy && process.env.GITHUB_TOKEN && patchedSummary.length > 0) {
-          try {
-            const firstPkg = safeTargets[0];
-            await runCanaryBranchTestAndAutoMergeOnGithub({
-              repoUrl: p.repoUrl,
-              manifestFile: p.manifestFile,
-              newContent: manifestRaw,
-              packageName:
-                safeTargets.length === 1
-                  ? firstPkg.name
-                  : `${ safeTargets.length }-packages`,
-              fromVersion: firstPkg.cleanVersion,
-              toVersion: firstPkg.recommendedSafeVersion || "safe",
-              localStages: [],
-              localAllPassed: true,
-              baseBranch: "main",
-            });
-            p.lastDeployAt = new Date().toISOString();
-          } catch {
-            // Keep staged manifest if GitHub push fails
-          }
         }
 
         // STEP 5: Post-Remediation & Post-CI/CD Verification Scan (Final Rapor)

@@ -96,7 +96,39 @@ async function rescanProjectObject(
           toVersion: toVer,
         });
 
-        if (canaryCheck.allPassed) {
+        let finalAllPassed = canaryCheck.allPassed;
+        let finalCanaryBranch = canaryCheck.canaryBranch;
+        let finalStages = canaryCheck.stages;
+        let finalPrUrl: string | undefined;
+
+        if (project.autoDeploy && process.env.GITHUB_TOKEN) {
+          try {
+            const ghCanary = await runCanaryBranchTestAndAutoMergeOnGithub({
+              repoUrl: project.repoUrl,
+              manifestFile: project.manifestFile,
+              newContent: candidateManifest,
+              packageName: pkg.name,
+              fromVersion: fromVer,
+              toVersion: toVer,
+              localStages: canaryCheck.stages,
+              localAllPassed: canaryCheck.allPassed,
+              baseBranch: "main",
+            });
+            if (ghCanary) {
+              finalAllPassed = Boolean(ghCanary.autoMerged);
+              finalCanaryBranch = ghCanary.branchName || finalCanaryBranch;
+              finalStages = ghCanary.canaryStages || finalStages;
+              finalPrUrl = ghCanary.prUrl;
+              if (ghCanary.autoMerged) {
+                project.lastDeployAt = new Date().toISOString();
+              }
+            }
+          } catch {
+            // Keep in-memory canary result if GitHub call fails
+          }
+        }
+
+        if (finalAllPassed) {
           manifestRaw = candidateManifest;
         }
 
@@ -118,26 +150,23 @@ async function rescanProjectObject(
           toSafeVersion: toVer,
           upgradeRisk: risk,
           cveIds,
-          verifyStatus: canaryCheck.allPassed ? "PASSED" : "FAILED",
-          deployStatus: canaryCheck.allPassed
-            ? risk === "BREAKING_MAJOR"
-              ? "AUTO_MERGED_DEPLOYED"
-              : project.autoDeploy
-                ? "DEPLOYED"
-                : "AUTO_MERGED_DEPLOYED"
+          verifyStatus: finalAllPassed ? "PASSED" : "FAILED",
+          deployStatus: finalAllPassed
+            ? "AUTO_MERGED_DEPLOYED"
             : "BLOCKED_BREAKING",
           deployTarget: project.deployTarget,
           commitRef: `fix(security): auto-merge verified ${pkg.name} (${fromVer} -> ${toVer})`,
-          canaryBranch: canaryCheck.canaryBranch,
-          autoMergedToMain: canaryCheck.allPassed,
-          canaryStages: canaryCheck.stages,
+          prUrl: finalPrUrl,
+          canaryBranch: finalCanaryBranch,
+          autoMergedToMain: finalAllPassed,
+          canaryStages: finalStages,
           logs: [
             `[AutoScan] ${pkg.name}@${fromVer} sürümünde ${cveIds.slice(0, 3).join(", ")} tespit edildi`,
             `[SemVerGuard] ${risk}: ${reason}`,
-            `[CanaryBranch] İzole dal açıldı: ${canaryCheck.canaryBranch}`,
-            `[VerifyGate] ${project.verifyCommand} -> ${canaryCheck.allPassed ? "PASSED (EXIT 0)" : "FAILED"}`,
-            canaryCheck.allPassed
-              ? `[AutoMerge -> main] Tüm testler hatasız geçti; '${canaryCheck.canaryBranch}' otomatik olarak 'main' dalına merge edildi (${repoSlug}) ve ${project.deployTarget} deploy sağlandı`
+            `[CanaryBranch] İzole dal açıldı: ${finalCanaryBranch}`,
+            `[VerifyGate] ${project.verifyCommand} -> ${finalAllPassed ? "PASSED (EXIT 0)" : "FAILED"}`,
+            finalAllPassed
+              ? `[AutoMerge -> main] Tüm testler hatasız geçti; '${finalCanaryBranch}' otomatik olarak 'main' dalına merge edildi (${repoSlug})${finalPrUrl ? ` [${finalPrUrl}]` : ""} ve ${project.deployTarget} deploy sağlandı`
               : `[MergeBlocked] Test hatası nedeniyle 'main' merge engellendi; canlı site korundu`,
           ],
         });
