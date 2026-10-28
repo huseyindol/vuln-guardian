@@ -514,21 +514,36 @@ export default function GuardianDashboard({ initialState }: Props) {
 
       {/* Main Content Container */}
       <main className="max-w-[1580px] w-full mx-auto px-4 sm:px-6 py-6 flex-1 flex flex-col gap-6">
-        {/* LANGUAGE / STACK SEPARATION CARDS (Proje Dillerine Göre Ayrım) */}
+        {/* LANGUAGE / STACK & PROJECT SELECTOR CARDS (Üst Birleşik Alan) */}
         <section aria-label="Proje Dillerine Göre Ayrım">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <h2 className="text-xs font-bold uppercase tracking-wider text-[#9ca3af]">
-              1. Proje Dillerine & Ekosistemlerine Göre Ayrım (Filtrelemek İçin Seçin)
+              Proje Dillerine & Ekosistemlerine Göre Ayrım (İncelemek İçin Proje Seçin)
             </h2>
-            {selectedLang !== "ALL" && (
-              <button
-                type="button"
-                onClick={() => setSelectedLang("ALL")}
-                className="text-xs font-mono text-[#ff6b57] hover:underline cursor-pointer"
-              >
-                Tüm Dilleri Göster (Sıfırla)
-              </button>
-            )}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md border border-[#232730] bg-[#121418] text-[11px] font-mono text-zinc-300">
+                <CalendarClock className="w-3.5 h-3.5 text-emerald-400" />
+                <span>
+                  Otonom Tarama: <strong className="text-emerald-400">Her Akşam 20:30</strong> (Cron: 30 20 * * * TSİ)
+                </span>
+                <span className="text-zinc-600">·</span>
+                <span>
+                  Sonraki:{" "}
+                  <span className="text-emerald-400">
+                    {formatDateTime(selectedProject?.nextScanAt)}
+                  </span>
+                </span>
+              </div>
+              {selectedLang !== "ALL" && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedLang("ALL")}
+                  className="text-xs font-mono text-[#ff6b57] hover:underline cursor-pointer"
+                >
+                  Tüm Dilleri Göster (Sıfırla)
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -552,60 +567,93 @@ export default function GuardianDashboard({ initialState }: Props) {
                   }`}
                 >
                   <div>
-                    <div className="flex items-center justify-between gap-2">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-mono font-bold rounded border ${lg.accentBadge}`}
-                      >
-                        {lg.ecosystem === "npm" && (
-                          <Code2 className="w-3.5 h-3.5" />
-                        )}
-                        {lg.ecosystem === "Maven" && (
-                          <FileCode2 className="w-3.5 h-3.5" />
-                        )}
-                        {lg.ecosystem === "Pub" && (
-                          <Smartphone className="w-3.5 h-3.5" />
-                        )}
-                        {lg.langTitle}
-                      </span>
+                    <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-[#232730]">
+                      <div>
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-mono font-bold rounded border ${lg.accentBadge}`}
+                        >
+                          {lg.ecosystem === "npm" && (
+                            <Code2 className="w-3.5 h-3.5" />
+                          )}
+                          {lg.ecosystem === "Maven" && (
+                            <FileCode2 className="w-3.5 h-3.5" />
+                          )}
+                          {lg.ecosystem === "Pub" && (
+                            <Smartphone className="w-3.5 h-3.5" />
+                          )}
+                          {lg.langTitle}
+                        </span>
+                        <span className="block text-[11px] font-mono text-zinc-400 mt-1">
+                          {lg.runtimeLabel} · {lg.manifestLabel}
+                        </span>
+                      </div>
 
-                      <span className="text-xs font-mono text-zinc-400">
-                        {lg.manifestLabel}
-                      </span>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="px-2 py-0.5 text-[11px] font-mono rounded bg-[#1b1f27] text-zinc-300 border border-[#2c313d]">
+                          {lg.projects.length} repo
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Projects inside this language */}
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {lg.projects.map((p) => (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedLang(lg.ecosystem);
-                            setSelectedProjectId(p.id);
-                          }}
-                          className={`px-2.5 py-1 rounded text-xs font-mono font-semibold border transition cursor-pointer flex items-center gap-1.5 ${
-                            selectedProject?.id === p.id
-                              ? "bg-white text-black border-white"
-                              : "bg-[#0b0c0e] text-zinc-200 border-[#2c313d] hover:border-zinc-500"
-                          }`}
-                        >
-                          <span>{p.name}</span>
-                          <span
-                            className={`px-1.5 py-0.2 rounded text-[10px] ${
-                              p.vulnerabilities.length > 0
-                                ? "bg-[#d83a26] text-white"
-                                : "bg-emerald-600 text-white"
+                    {/* Enriched Project Cards inside this language */}
+                    <div
+                      className={`mt-3 grid gap-2.5 ${
+                        lg.projects.length > 1
+                          ? "grid-cols-1 sm:grid-cols-2"
+                          : "grid-cols-1"
+                      }`}
+                    >
+                      {lg.projects.map((p) => {
+                        const isSelected = selectedProject?.id === p.id;
+                        const vulnCount = p.vulnerabilities.length;
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedLang(lg.ecosystem);
+                              setSelectedProjectId(p.id);
+                            }}
+                            className={`w-full text-left p-2.5 rounded-lg border transition cursor-pointer flex flex-col justify-between ${
+                              isSelected
+                                ? "border-[#d83a26] bg-[#191d26] shadow-sm ring-1 ring-[#d83a26]/40"
+                                : "border-[#232730] bg-[#0b0c0e] hover:border-[#323846]"
                             }`}
                           >
-                            {p.vulnerabilities.length}
-                          </span>
-                        </button>
-                      ))}
+                            <div>
+                              <div className="flex items-center justify-between gap-1.5">
+                                <span className="font-bold text-xs font-mono text-white truncate">
+                                  {p.name}
+                                </span>
+                                {vulnCount > 0 ? (
+                                  <span className="shrink-0 px-1.5 py-0.5 text-[10px] font-mono font-bold rounded bg-[#d83a26]/20 text-[#ff6b57] border border-[#d83a26]/40">
+                                    {vulnCount} Zafiyet
+                                  </span>
+                                ) : (
+                                  <span className="shrink-0 px-1.5 py-0.5 text-[10px] font-mono font-bold rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                                    Güvenli
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-[#9ca3af] line-clamp-1 mt-1">
+                                {p.description}
+                              </p>
+                            </div>
+
+                            <div className="mt-2 pt-1.5 border-t border-[#232730]/80 flex items-center justify-between text-[10px] text-zinc-400 font-mono">
+                              <span className="text-emerald-400">
+                                ⏰ Her Akşam {p.dailyScanTime || "20:30"}
+                              </span>
+                              <span>{p.packages.length} paket</span>
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-[#232730] flex items-center justify-between text-xs font-mono">
+                  <div className="mt-3.5 pt-2.5 border-t border-[#232730] flex items-center justify-between text-xs font-mono">
                     <span className="text-zinc-400">
                       {lg.projects.length} Proje · {lg.pkgCount} Paket
                     </span>
@@ -626,117 +674,9 @@ export default function GuardianDashboard({ initialState }: Props) {
           </div>
         </section>
 
-        {/* Master-Detail Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Projects Grouped by Language */}
-          <aside className="lg:col-span-4 xl:col-span-3 flex flex-col gap-4">
-            {LANGUAGE_GROUPS.filter(
-              (lg) =>
-                (selectedLang === "ALL" || lg.ecosystem === selectedLang) &&
-                (["npm", "Maven", "Pub"].includes(lg.ecosystem) ||
-                  state.projects.some((p) => p.ecosystem === lg.ecosystem))
-            ).map((lg) => {
-              const groupProjects = state.projects.filter(
-                (p) => p.ecosystem === lg.ecosystem
-              );
-              return (
-                <div
-                  key={lg.ecosystem}
-                  className="p-3.5 rounded-xl border border-[#232730] bg-[#121418] flex flex-col gap-2.5"
-                >
-                  <div className="flex items-center justify-between border-b border-[#232730] pb-2">
-                    <div>
-                      <span
-                        className={`text-xs font-bold uppercase tracking-wider ${lg.accentText}`}
-                      >
-                        {lg.langTitle}
-                      </span>
-                      <span className="block text-[11px] font-mono text-zinc-400">
-                        {lg.runtimeLabel} · {lg.manifestLabel}
-                      </span>
-                    </div>
-                    <span className="px-2 py-0.5 text-[11px] font-mono rounded bg-[#1b1f27] text-zinc-300">
-                      {groupProjects.length} repo
-                    </span>
-                  </div>
-
-                  {groupProjects.map((proj) => {
-                    const isSelected = proj.id === selectedProject?.id;
-                    const vulnCount = proj.vulnerabilities.length;
-                    return (
-                      <button
-                        key={proj.id}
-                        type="button"
-                        onClick={() => setSelectedProjectId(proj.id)}
-                        className={`w-full text-left p-3 rounded-lg border transition cursor-pointer ${
-                          isSelected
-                            ? "border-[#d83a26] bg-[#191d26] shadow-sm"
-                            : "border-[#232730] bg-[#0b0c0e] hover:border-[#323846]"
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <span className="font-bold text-sm text-white block">
-                              {proj.name}
-                            </span>
-                            <span className="text-[11px] text-[#9ca3af] line-clamp-1 mt-0.5">
-                              {proj.description}
-                            </span>
-                          </div>
-
-                          {vulnCount > 0 ? (
-                            <span className="shrink-0 px-2 py-0.5 text-[11px] font-mono font-bold rounded bg-[#d83a26]/20 text-[#ff6b57] border border-[#d83a26]/40">
-                              {vulnCount} Zafiyet
-                            </span>
-                          ) : (
-                            <span className="shrink-0 px-2 py-0.5 text-[11px] font-mono font-bold rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                              Güvenli
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="mt-2.5 pt-2 border-t border-[#232730]/80 flex items-center justify-between text-[11px] text-zinc-400 font-mono">
-                          <span className="text-emerald-400">
-                            ⏰ Her Akşam {proj.dailyScanTime || "20:30"}
-                          </span>
-                          <span>{proj.packages.length} paket</span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              );
-            })}
-
-            {/* Daily 20:30 Schedule Info Box */}
-            <div className="p-4 rounded-xl border border-[#232730] bg-[#121418]">
-              <div className="flex items-center gap-2 text-xs font-bold text-white">
-                <CalendarClock className="w-4 h-4 text-emerald-400" />
-                Otonom Günlük Tarama Zamanlayıcısı
-              </div>
-              <p className="mt-1.5 text-xs text-[#9ca3af] leading-relaxed">
-                Tüm Elly Studio projeleri (
-                <code className="text-zinc-200">elly-admin</code>,{" "}
-                <code className="text-zinc-200">elly-tenant</code>,{" "}
-                <code className="text-zinc-200">elly-backend</code>,{" "}
-                <code className="text-zinc-200">elly-mobile-app</code>) her
-                akşam saat <strong className="text-emerald-400">20:30</strong>
-                &apos;da otomatik taranır ve zafiyet listesi güncellenir.
-              </p>
-              <div className="mt-2.5 p-2.5 rounded bg-[#0b0c0e] border border-[#232730] text-[11px] font-mono text-zinc-300 space-y-1">
-                <div>Cron İfadesi: 30 20 * * * (TSİ)</div>
-                <div>
-                  Sonraki Otomatik Tarama:{" "}
-                  <span className="text-emerald-400">
-                    {formatDateTime(selectedProject?.nextScanAt)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </aside>
-
-          {/* Right Column: Selected Project Inspector */}
-          <section className="lg:col-span-8 xl:col-span-9 flex flex-col gap-5">
+        {/* Full-Width Selected Project Inspector */}
+        <div className="w-full">
+          <section className="w-full flex flex-col gap-5">
             {selectedProject && (
               <>
                 {/* Selected Project Header Card */}
