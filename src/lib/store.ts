@@ -58,11 +58,52 @@ export function saveGuardianState(state: GuardianState): void {
   try {
     fs.writeFileSync(LOCAL_STATE_PATH, serialized, "utf8");
   } catch {
-    // Read-only filesystem on Vercel serverless — write to /tmp instead
+    // Read-only filesystem on Vercel serverless — write to /tmp and sync to GitHub state repo
     try {
       fs.writeFileSync(TMP_STATE_PATH, serialized, "utf8");
     } catch {
       // Ignore if /tmp is unavailable
     }
+    void persistStateToGithubRepo(serialized);
+  }
+}
+
+async function persistStateToGithubRepo(serialized: string): Promise<void> {
+  const token = process.env.GITHUB_TOKEN?.trim();
+  if (!token) return;
+  const repoSlug =
+    process.env.GUARDIAN_STATE_REPO?.trim() || "huseyindol/vuln-guardian";
+  const filePath = "src/data/guardian-state.json";
+  const apiUrl = `https://api.github.com/repos/${repoSlug}/contents/${filePath}`;
+  const headers: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+    "User-Agent": "Elly-VulnGuardian-Studio",
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const getResp = await fetch(`${apiUrl}?ref=main`, {
+      headers,
+      cache: "no-store",
+    });
+    if (!getResp.ok) return;
+    const current = (await getResp.json()) as { sha?: string };
+    if (!current.sha) return;
+
+    await fetch(apiUrl, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({
+        message: "chore(state): sync guardian-state.json after scan/remediation [skip ci]",
+        content: Buffer.from(serialized, "utf8").toString("base64"),
+        sha: current.sha,
+        branch: "main",
+      }),
+      cache: "no-store",
+    });
+  } catch {
+    // Best-effort persistence on serverless
   }
 }

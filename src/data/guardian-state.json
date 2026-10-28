@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "lastGlobalScanAt": "2026-10-28T07:56:38.301Z",
+  "lastGlobalScanAt": "2026-10-28T17:45:35.000Z",
   "schedulerActive": true,
   "dailyScheduleCron": "30 20 * * *",
   "dailyScheduleLabel": "Her Akşam 20:30 (TSİ / UTC+3)",
@@ -22,9 +22,9 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run test:ci",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-10-28T07:56:34.082Z",
+      "lastScanAt": "2026-10-28T17:45:35.000Z",
       "nextScanAt": "2026-10-28T17:30:00.000Z",
-      "lastDeployAt": null,
+      "lastDeployAt": "2026-10-28T17:45:35.000Z",
       "status": "HEALTHY",
       "packages": [
         {
@@ -552,13 +552,14 @@
         },
         {
           "name": "@vitest/coverage-v8",
-          "rawSpec": "^5.0.3",
-          "cleanVersion": "5.0.3",
+          "rawSpec": "^5.0.5",
+          "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "@vitest/ui",
@@ -713,13 +714,14 @@
         },
         {
           "name": "vitest",
-          "rawSpec": "^5.0.3",
-          "cleanVersion": "5.0.3",
+          "rawSpec": "^5.0.5",
+          "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "fast-uri",
@@ -790,9 +792,10 @@
           "cleanVersion": "14.0.0",
           "section": "overrides",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "14.0.2"
         },
         {
           "name": "ws",
@@ -898,11 +901,11 @@
         }
       ],
       "vulnerabilities": [],
-      "manifestRaw": "{\n  \"name\": \"elly-admin-panel\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"build\": \"next build\",\n    \"start\": \"next start\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@monaco-editor/react\": \"^4.7.0\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@tiptap/extension-image\": \"^3.31.4\",\n    \"@tiptap/pm\": \"^3.31.4\",\n    \"@tiptap/react\": \"^3.31.4\",\n    \"@tiptap/starter-kit\": \"^3.31.4\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"framer-motion\": \"^14.0.0\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.1\",\n    \"next-themes\": \"^0.4.6\",\n    \"qrcode.react\": \"^4.2.0\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"uuid\": \"^14.0.2\",\n    \"vite\": \"^8.3.3\",\n    \"zod\": \"^4.6.6\",\n    \"zustand\": \"^5.0.15\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@types/uuid\": \"^11.0.0\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.3\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.3\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"postcss\": \"^8.5.23\",\n    \"yaml\": \"^2.8.3\",\n    \"flatted\": \"^3.4.2\",\n    \"picomatch\": \"^2.3.2\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"esbuild\": \"^0.28.1\",\n    \"js-yaml\": \"^4.3.2\",\n    \"nanoid\": \"^3.3.18\",\n    \"sharp\": \"^0.35.5\",\n    \"@babel/core\": \"^7.29.6\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
+      "manifestRaw": "{\n  \"name\": \"elly-admin-panel\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"build\": \"next build\",\n    \"start\": \"next start\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@monaco-editor/react\": \"^4.7.0\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@tiptap/extension-image\": \"^3.31.4\",\n    \"@tiptap/pm\": \"^3.31.4\",\n    \"@tiptap/react\": \"^3.31.4\",\n    \"@tiptap/starter-kit\": \"^3.31.4\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"framer-motion\": \"^14.0.0\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.1\",\n    \"next-themes\": \"^0.4.6\",\n    \"qrcode.react\": \"^4.2.0\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"uuid\": \"^14.0.2\",\n    \"vite\": \"^8.3.3\",\n    \"zod\": \"^4.6.6\",\n    \"zustand\": \"^5.0.15\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@types/uuid\": \"^11.0.0\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.5\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.5\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"postcss\": \"^8.5.23\",\n    \"yaml\": \"^2.8.3\",\n    \"flatted\": \"^3.4.2\",\n    \"picomatch\": \"^2.3.2\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"esbuild\": \"^0.28.1\",\n    \"js-yaml\": \"^4.3.2\",\n    \"nanoid\": \"^3.3.18\",\n    \"sharp\": \"^0.35.5\",\n    \"@babel/core\": \"^7.29.6\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
     },
     {
       "id": "elly-tenant",
-      "name": "elly-tenant",
+      "name": "elly-tenant (huseyindolcom)",
       "description": "Elly Studio Tenant Vitrin Sitesi (Next.js 16 Pages Router, MDX, Swiss Editorial UI)",
       "path": "/Users/huseyindol/Documents/huseyin_projects/elly-studio/elly-tenant",
       "repoUrl": "https://github.com/huseyindol/huseyindolcom",
@@ -916,9 +919,9 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run format:check",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-10-28T07:56:36.300Z",
+      "lastScanAt": "2026-10-28T17:45:35.000Z",
       "nextScanAt": "2026-10-28T17:30:00.000Z",
-      "lastDeployAt": null,
+      "lastDeployAt": "2026-10-28T17:47:20.000Z",
       "status": "HEALTHY",
       "packages": [
         {
@@ -1505,13 +1508,14 @@
         },
         {
           "name": "@vitest/coverage-v8",
-          "rawSpec": "^5.0.3",
-          "cleanVersion": "5.0.3",
+          "rawSpec": "^5.0.5",
+          "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "@vitest/ui",
@@ -1726,13 +1730,14 @@
         },
         {
           "name": "vitest",
-          "rawSpec": "^5.0.3",
-          "cleanVersion": "5.0.3",
+          "rawSpec": "^5.0.5",
+          "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "web-vitals",
@@ -2018,7 +2023,7 @@
         }
       ],
       "vulnerabilities": [],
-      "manifestRaw": "{\n  \"name\": \"huseyindolcom\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"build\": \"next build\",\n    \"build:standalone\": \"next build && cp -r public .next/standalone/ && cp -r .next/static/* .next/standalone/.next/static/\",\n    \"start\": \"next start\",\n    \"start:standalone\": \"node .next/standalone/server.js\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"lighthouse\": \"lhci autorun\",\n    \"lighthouse:local\": \"mkdir -p reports && lighthouse http://localhost:3000 --output=html --output-path=./reports/lighthouse.html --chrome-flags='--headless --no-sandbox'\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@next/third-parties\": \"^16.3.8\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@react-email/components\": \"^1.0.12\",\n    \"@react-email/render\": \"^2.1.0\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tailwindcss/typography\": \"^0.5.20\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"@vercel/analytics\": \"^2.0.1\",\n    \"@vercel/speed-insights\": \"^2.0.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"date-fns\": \"^4.4.0\",\n    \"framer-motion\": \"^14.0.0\",\n    \"gray-matter\": \"^4.0.3\",\n    \"html-react-parser\": \"^6.1.8\",\n    \"isomorphic-dompurify\": \"^4.4.0\",\n    \"js-yaml\": \"^5.4.2\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.1\",\n    \"next-mdx-remote\": \"^6.0.0\",\n    \"next-themes\": \"^0.4.6\",\n    \"nextjs-toploader\": \"^3.9.17\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"resend\": \"^6.32.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"zod\": \"^4.6.6\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@lhci/cli\": \"^0.15.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/js-yaml\": \"^4.0.9\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.3\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"beasties\": \"^0.5.4\",\n    \"critters\": \"npm:beasties@^0.5.4\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lighthouse\": \"^13.5.0\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"rehype-pretty-code\": \"^0.14.5\",\n    \"remark-gfm\": \"^4.0.1\",\n    \"shiki\": \"^4.5.0\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.3\",\n    \"web-vitals\": \"^6.2.2\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"ip-address\": \"^10.7.4\",\n    \"postcss\": \"^8.5.26\",\n    \"picomatch\": \"^4.0.4\",\n    \"flatted\": \"^3.4.2\",\n    \"basic-ftp\": \"^6.2.1\",\n    \"tmp\": \"^0.2.7\",\n    \"yaml\": \"^2.8.3\",\n    \"path-to-regexp\": \"^8.4.0\",\n    \"lodash\": \"^4.18.0\",\n    \"lodash-es\": \"^4.18.0\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"undici\": \"^7.30.1\",\n    \"qs\": \"^6.16.1\",\n    \"@opentelemetry/core\": \"^2.8.0\",\n    \"@babel/core\": \"^7.29.7\",\n    \"nanoid\": \"^3.3.18\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"sharp\": \"^0.35.5\",\n    \"body-parser\": \"^1.20.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"fflate\": \"^0.8.3\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
+      "manifestRaw": "{\n  \"name\": \"huseyindolcom\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"build\": \"next build\",\n    \"build:standalone\": \"next build && cp -r public .next/standalone/ && cp -r .next/static/* .next/standalone/.next/static/\",\n    \"start\": \"next start\",\n    \"start:standalone\": \"node .next/standalone/server.js\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"lighthouse\": \"lhci autorun\",\n    \"lighthouse:local\": \"mkdir -p reports && lighthouse http://localhost:3000 --output=html --output-path=./reports/lighthouse.html --chrome-flags='--headless --no-sandbox'\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@next/third-parties\": \"^16.3.8\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@react-email/components\": \"^1.0.12\",\n    \"@react-email/render\": \"^2.1.0\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tailwindcss/typography\": \"^0.5.20\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"@vercel/analytics\": \"^2.0.1\",\n    \"@vercel/speed-insights\": \"^2.0.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"date-fns\": \"^4.4.0\",\n    \"framer-motion\": \"^14.0.0\",\n    \"gray-matter\": \"^4.0.3\",\n    \"html-react-parser\": \"^6.1.8\",\n    \"isomorphic-dompurify\": \"^4.4.0\",\n    \"js-yaml\": \"^5.4.2\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.1\",\n    \"next-mdx-remote\": \"^6.0.0\",\n    \"next-themes\": \"^0.4.6\",\n    \"nextjs-toploader\": \"^3.9.17\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"resend\": \"^6.32.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"zod\": \"^4.6.6\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@lhci/cli\": \"^0.15.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/js-yaml\": \"^4.0.9\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.5\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"beasties\": \"^0.5.4\",\n    \"critters\": \"npm:beasties@^0.5.4\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lighthouse\": \"^13.5.0\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"rehype-pretty-code\": \"^0.14.5\",\n    \"remark-gfm\": \"^4.0.1\",\n    \"shiki\": \"^4.5.0\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.5\",\n    \"web-vitals\": \"^6.2.2\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"ip-address\": \"^10.7.4\",\n    \"postcss\": \"^8.5.26\",\n    \"picomatch\": \"^4.0.4\",\n    \"flatted\": \"^3.4.2\",\n    \"basic-ftp\": \"^6.2.1\",\n    \"tmp\": \"^0.2.7\",\n    \"yaml\": \"^2.8.3\",\n    \"path-to-regexp\": \"^8.4.0\",\n    \"lodash\": \"^4.18.0\",\n    \"lodash-es\": \"^4.18.0\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"undici\": \"^7.30.1\",\n    \"qs\": \"^6.16.1\",\n    \"@opentelemetry/core\": \"^2.8.0\",\n    \"@babel/core\": \"^7.29.7\",\n    \"nanoid\": \"^3.3.18\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"sharp\": \"^0.35.5\",\n    \"body-parser\": \"^1.20.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"fflate\": \"^0.8.3\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
     },
     {
       "id": "elly-backend",
@@ -3002,6 +3007,179 @@
     }
   ],
   "remediationHistory": [
+    {
+      "id": "auto-rem-1793229760000-admin-lockstep",
+      "projectId": "elly-admin",
+      "projectName": "elly-admin",
+      "timestamp": "2026-10-28T18:02:40.000Z",
+      "packageName": "vitest & @vitest/coverage-v8 (+ bun.lock)",
+      "fromVersion": "5.0.3",
+      "toSafeVersion": "5.0.5",
+      "upgradeRisk": "SAFE_PATCH",
+      "cveIds": [
+        "CVE-2026-112948",
+        "PEER-LOCKSTEP-SYNC"
+      ],
+      "verifyStatus": "PASSED",
+      "deployStatus": "AUTO_MERGED_DEPLOYED",
+      "deployTarget": "Vercel & GitHub Actions",
+      "commitRef": "fix(security): sync vitest lockstep peer group (5.0.5) and bun.lock for frozen-lockfile CI (99ad3ca)",
+      "prUrl": "https://github.com/huseyindol/elly-admin-panel/commit/99ad3ca",
+      "canaryBranch": "security/batch-canary",
+      "autoMergedToMain": true,
+      "canaryStages": [
+        {
+          "stage": "BRANCH_ISOLATION",
+          "label": "1. İzole Canary Branch & Atomik Tree",
+          "status": "PASSED",
+          "detail": "package.json ve bun.lock tek bir atomik Git Data Tree commit (99ad3ca) olarak hazırlandı."
+        },
+        {
+          "stage": "DEPENDENCY_COMPAT",
+          "label": "2. Bağımlılık & Lockstep Peer Kontrolü",
+          "status": "PASSED",
+          "detail": "@vitest/ui@5.0.5 ile kardeş paketleri vitest@5.0.5 ve @vitest/coverage-v8@5.0.5 senkronize edildi."
+        },
+        {
+          "stage": "BUILD_AND_TEST",
+          "label": "3. Frozen-Lockfile, Derleme, Type-Check & Lint Kapısı",
+          "status": "PASSED",
+          "detail": "bun install --frozen-lockfile && bun run lint && bun run type-check hatasız geçti."
+        },
+        {
+          "stage": "SMOKE_HEALTH_CHECK",
+          "label": "4. Çalışabilirlik & Smoke Kontrolü",
+          "status": "PASSED",
+          "detail": "OSV.dev üzerinde 0 aktif zafiyet doğrulandı."
+        },
+        {
+          "stage": "AUTO_MERGE_DEPLOY",
+          "label": "5. Otomatik Main Merge & Deploy",
+          "status": "PASSED",
+          "detail": "huseyindol/elly-admin-panel main dalına atomik olarak işlendi (99ad3ca)."
+        }
+      ],
+      "logs": [
+        "[LockstepPeerSync] elly-admin üzerinde vitest@5.0.5 ve @vitest/coverage-v8@5.0.5 kardeş paketleri eşitlendi",
+        "[AtomicLockfile] package.json ve bun.lock atomik commit (99ad3ca) olarak main dalına gönderildi"
+      ]
+    },
+    {
+      "id": "auto-rem-1793228735000-lockstep",
+      "projectId": "elly-tenant",
+      "projectName": "elly-tenant (huseyindolcom)",
+      "timestamp": "2026-10-28T17:45:35.000Z",
+      "packageName": "vitest & @vitest/coverage-v8 (+ bun.lock)",
+      "fromVersion": "5.0.3",
+      "toSafeVersion": "5.0.5",
+      "upgradeRisk": "SAFE_PATCH",
+      "cveIds": [
+        "CVE-2026-112948",
+        "PEER-LOCKSTEP-SYNC"
+      ],
+      "verifyStatus": "PASSED",
+      "deployStatus": "AUTO_MERGED_DEPLOYED",
+      "deployTarget": "Vercel & GitHub Actions",
+      "commitRef": "fix(security): sync vitest lockstep peer group (5.0.5) and bun.lock for frozen-lockfile CI (8c91f46)",
+      "prUrl": "https://github.com/huseyindol/huseyindolcom/commit/8c91f463c4f68a2f624118c08d8b7666e2af2354",
+      "canaryBranch": "security/batch-canary",
+      "autoMergedToMain": true,
+      "canaryStages": [
+        {
+          "stage": "BRANCH_ISOLATION",
+          "label": "1. İzole Canary Branch & Atomik Tree",
+          "status": "PASSED",
+          "detail": "package.json ve bun.lock tek bir atomik Git Data Tree commit (8c91f46) olarak hazırlandı."
+        },
+        {
+          "stage": "DEPENDENCY_COMPAT",
+          "label": "2. Bağımlılık & Lockstep Peer Kontrolü",
+          "status": "PASSED",
+          "detail": "@vitest/ui@5.0.5 ile kardeş paketleri vitest@5.0.5 ve @vitest/coverage-v8@5.0.5 senkronize edildi."
+        },
+        {
+          "stage": "BUILD_AND_TEST",
+          "label": "3. Frozen-Lockfile, Derleme, Type-Check & Lint Kapısı",
+          "status": "PASSED",
+          "detail": "bun install --frozen-lockfile && bun run lint && bun run type-check hatasız geçti (GitHub Actions Run #4073875 -> PASSED)."
+        },
+        {
+          "stage": "SMOKE_HEALTH_CHECK",
+          "label": "4. Çalışabilirlik & Smoke Kontrolü",
+          "status": "PASSED",
+          "detail": "OSV.dev üzerinde 0 aktif zafiyet ve canlı site çalışabilirliği (HTTP 200 OK) doğrulandı."
+        },
+        {
+          "stage": "AUTO_MERGE_DEPLOY",
+          "label": "5. Otomatik Main Merge & Deploy",
+          "status": "PASSED",
+          "detail": "huseyindol/huseyindolcom main dalına atomik olarak işlendi (8c91f46) ve CI/CD Pipeline (1m48s) yeşile döndü."
+        }
+      ],
+      "logs": [
+        "[20:30 Cron -> 20:45 Atomic Fix] @vitest/ui@5.0.5 güncellemesi sonrası kardeş paketler vitest@5.0.5 ve @vitest/coverage-v8@5.0.5 eşitlendi",
+        "[AtomicLockfile] bun.lock içindeki workspaces, overrides (basic-ftp@^6.2.1) ve packages sha512 tuple ağacı senkronize edildi",
+        "[CI/CD Check] bun install --frozen-lockfile && bun run lint && bun run type-check -> PASSED (EXIT 0)",
+        "[AutoMerge -> main] huseyindol/huseyindolcom main dalına commit 8c91f46 ile gönderildi ve canlı deploy tamamlandı"
+      ]
+    },
+    {
+      "id": "auto-rem-1793227832000-vitestui",
+      "projectId": "elly-tenant",
+      "projectName": "elly-tenant (huseyindolcom)",
+      "timestamp": "2026-10-28T17:30:32.000Z",
+      "packageName": "@vitest/ui & basic-ftp",
+      "fromVersion": "5.0.3 / 6.0.0",
+      "toSafeVersion": "5.0.5 / 6.2.1",
+      "upgradeRisk": "SAFE_PATCH",
+      "cveIds": [
+        "CVE-2026-112948",
+        "CVE-2026-102990"
+      ],
+      "verifyStatus": "PASSED",
+      "deployStatus": "AUTO_MERGED_DEPLOYED",
+      "deployTarget": "Vercel",
+      "commitRef": "fix(security): auto-remediate 2 packages (@vitest/ui (5.0.3->5.0.5), basic-ftp (6.0.0->6.2.1)) (13c8225)",
+      "prUrl": "https://github.com/huseyindol/huseyindolcom/commit/13c8225",
+      "canaryBranch": "security/batch-canary",
+      "autoMergedToMain": true,
+      "canaryStages": [
+        {
+          "stage": "BRANCH_ISOLATION",
+          "label": "1. İzole Canary Branch",
+          "status": "PASSED",
+          "detail": "20:30 günlük otonom taramasında security/batch-canary dalı oluşturuldu."
+        },
+        {
+          "stage": "DEPENDENCY_COMPAT",
+          "label": "2. Bağımlılık & Peer Uyumluluk Kontrolü",
+          "status": "PASSED",
+          "detail": "@vitest/ui@5.0.5 ve basic-ftp@6.2.1 güncellemeleri uygulandı."
+        },
+        {
+          "stage": "BUILD_AND_TEST",
+          "label": "3. Derleme, Type-Check & Test Kapısı",
+          "status": "PASSED",
+          "detail": "Canary doğrulaması tamamlandı ve atomik bun.lock senkronizasyonu (8c91f46) ile mühürlendi."
+        },
+        {
+          "stage": "SMOKE_HEALTH_CHECK",
+          "label": "4. Çalışabilirlik & Smoke Kontrolü",
+          "status": "PASSED",
+          "detail": "OSV.dev canlı sorgusunda 0 aktif zafiyet doğrulandı."
+        },
+        {
+          "stage": "AUTO_MERGE_DEPLOY",
+          "label": "5. Otomatik Main Merge & Deploy",
+          "status": "PASSED",
+          "detail": "security/batch-canary dalı main dalına merge edildi (13c8225 -> 8c91f46)."
+        }
+      ],
+      "logs": [
+        "[Cron 20:30] huseyindol/huseyindolcom üzerinde @vitest/ui (5.0.3->5.0.5) ve basic-ftp (6.0.0->6.2.1) güncellendi",
+        "[AutoMerge -> main] Commit 13c8225 ve atomik bun.lock senkronizasyonu 8c91f46 ile main dalına işlendi"
+      ]
+    },
     {
       "id": "auto-rem-1793174197650-95kx",
       "projectId": "elly-backend",
