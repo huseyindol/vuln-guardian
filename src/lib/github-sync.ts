@@ -363,20 +363,27 @@ export async function runCanaryBranchTestAndAutoMergeOnGithub(params: {
 
   // Step 3: If all checks passed, auto-merge PR into main & delete temporary canary branch!
   if (allChecksGreen && prInfo.prNumber) {
-    const mergeResp = await fetch(
-      `https://api.github.com/repos/${slug}/pulls/${prInfo.prNumber}/merge`,
-      {
-        method: "PUT",
-        headers: { ...getGithubHeaders(), "Content-Type": "application/json" },
-        body: JSON.stringify({
-          commit_title: `fix(security): auto-merge verified upgrade ${packageName} (${fromVersion} -> ${toVersion})`,
-          commit_message: `Otonom Canary Branch doğrulama kapılarından (Dependecy, Build/Type-Check, Smoke Check) hatasız geçtiği için otomatik olarak ${baseBranch} dalına merge edildi.`,
-          merge_method: "squash",
-        }),
+    let mergeResp: Response | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) {
+        await new Promise((r) => setTimeout(r, 900 * attempt));
       }
-    );
+      mergeResp = await fetch(
+        `https://api.github.com/repos/${slug}/pulls/${prInfo.prNumber}/merge`,
+        {
+          method: "PUT",
+          headers: { ...getGithubHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify({
+            commit_title: `fix(security): auto-merge verified upgrade ${packageName} (${fromVersion} -> ${toVersion})`,
+            commit_message: `Otonom Canary Branch doğrulama kapılarından (Dependecy, Build/Type-Check, Smoke Check) hatasız geçtiği için otomatik olarak ${baseBranch} dalına merge edildi.`,
+            merge_method: "squash",
+          }),
+        }
+      );
+      if (mergeResp.ok) break;
+    }
 
-    if (mergeResp.ok) {
+    if (mergeResp && mergeResp.ok) {
       const mergeData = (await mergeResp.json()) as {
         merged?: boolean;
         sha?: string;
