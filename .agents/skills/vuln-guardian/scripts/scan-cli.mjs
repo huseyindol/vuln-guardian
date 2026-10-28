@@ -838,7 +838,7 @@ async function runCli() {
     );
     for (const p of state.projects) {
       console.log(
-        `• [${p.id}] ${p.name} (${p.ecosystem}) | Günlük Tarama: ${p.dailyScanTime || "20:05"} | Durum: ${p.status} | Paket: ${p.packages.length} | Zafiyet: ${p.vulnerabilities.length}`
+        `• [${p.id}] ${p.name} (${p.ecosystem}) | Günlük Tarama: ${p.dailyScanTime || "20:30"} | Durum: ${p.status} | Paket: ${p.packages.length} | Zafiyet: ${p.vulnerabilities.length}`
       );
     }
     return;
@@ -1163,7 +1163,7 @@ async function runCli() {
         const p = state.projects[i];
         const nextMs = p.nextScanAt ? new Date(p.nextScanAt).getTime() : 0;
         if (!nextMs || now >= nextMs) {
-          console.log(`[Scheduler 20:05] Günlük tarama tetiklendi: ${p.name}`);
+          console.log(`[Scheduler 20:30] Günlük tarama tetiklendi: ${p.name}`);
           state.projects[i] = await scanSingleProject(p);
           changed = true;
         }

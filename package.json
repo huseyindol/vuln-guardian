@@ -1,5 +1,5 @@
 {
-  "name": "vuln-guardian-studio",
+  "name": "vuln-guardian",
   "version": "1.0.0",
   "private": true,
   "description": "VulnGuardian — Autonomous Vulnerability Intelligence, Safe-Version Auto-Remediation & Continuous Deploy Skill + Command Center",

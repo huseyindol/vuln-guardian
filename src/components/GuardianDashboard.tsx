@@ -817,37 +817,37 @@ export default function GuardianDashboard({ initialState }: Props) {
                     </div>
                   </div>
 
-                  {/* Autonomous Canary Branch -> Test -> Auto-Merge Pipeline Banner */}
+                  {/* Autonomous Single-Batch Canary -> Breaking-Change & Site Check -> Main Merge Banner */}
                   <div className="mt-4 p-3.5 rounded-lg border border-emerald-500/30 bg-[#0b0c0e] flex flex-col gap-2.5">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                         <ShieldCheck className="w-4 h-4" />
-                        Otonom Canary Branch → 4 Aşamalı Test Kapısı → Otomatik Main Merge & Deploy Sistemi Aktif
+                        Tek Seferde Toplu (Batch) Safe-Version → Breaking-Change & Site Çalışabilirlik Kapısı → Prod (main) Merge Aktif
                       </span>
                       <span className="text-[11px] font-mono text-zinc-400">
-                        Hata Yoksa: Otomatik <code>main</code> Merge + Deploy · Hata Varsa: Otomatik Rollback & PR Kilidi
+                        Hata Yoksa: PR Açmadan Tek Seferde <code>main</code> Merge + Deploy · Hata Varsa: Otomatik Engelleme
                       </span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 text-[11px] font-mono">
                       <div className="p-2 rounded bg-[#121418] border border-[#232730] text-zinc-200">
-                        <span className="text-emerald-400 font-bold block">1. İzole Canary Dalı</span>
-                        <code>security/canary-*</code> açılır, <code>main</code> korunur
+                        <span className="text-emerald-400 font-bold block">1. Toplu Hazırlık & İzole Dal</span>
+                        Tüm paketler (Major dahil) <code>security/batch-canary</code> dalına alınır
                       </div>
                       <div className="p-2 rounded bg-[#121418] border border-[#232730] text-zinc-200">
-                        <span className="text-emerald-400 font-bold block">2. Peer & Manifest</span>
-                        SemVer ve bağımlılık ağacı çakışma testi
+                        <span className="text-emerald-400 font-bold block">2. Breaking-Change & Peer</span>
+                        Major sürüm ve bağımlılık ağacı çakışma testi
                       </div>
                       <div className="p-2 rounded bg-[#121418] border border-[#232730] text-zinc-200">
                         <span className="text-emerald-400 font-bold block">3. Build & Type-Check</span>
                         <code>{selectedProject.verifyCommand}</code>
                       </div>
                       <div className="p-2 rounded bg-[#121418] border border-[#232730] text-zinc-200">
-                        <span className="text-emerald-400 font-bold block">4. Smoke & OSV Kontrolü</span>
-                        Canlı OSV 0-zafiyet ve sağlık kontrolü
+                        <span className="text-emerald-400 font-bold block">4. Site Açılıyor mu? (Smoke)</span>
+                        Preview HTTP 200 OK & OSV 0-zafiyet kontrolü
                       </div>
                       <div className="p-2 rounded bg-[#121418] border border-emerald-500/40 text-emerald-300">
-                        <span className="font-bold block">5. Auto-Merge & Deploy</span>
-                        Hatasızsa <code>main</code> merge + {selectedProject.deployTarget}
+                        <span className="font-bold block">5. Tekte Prod Merge & Deploy</span>
+                        PR açmadan tek seferde <code>main</code> merge + {selectedProject.deployTarget}
                       </div>
                     </div>
                   </div>
@@ -1241,22 +1241,22 @@ export default function GuardianDashboard({ initialState }: Props) {
                                               action: "remediate",
                                               projectId: selectedProject.id,
                                               packageName: v.packageName,
-                                              deploy: false,
+                                              deploy: true,
                                               pushToGithub: true,
                                             },
                                             `rem-pr-${selectedProject.id}-${v.packageName}`,
-                                            `${v.packageName} (${v.installedVersion} -> ${v.fixedVersion}) Major güncellemesi için main dalına dokunulmadan izole GitHub Pull Request açıldı!`
+                                            `${v.packageName} (${v.installedVersion} -> ${v.fixedVersion}) Major güncellemesi breaking-change ve site çalışabilirlik kapısından geçirilerek 'main' dalına birleştirildi!`
                                           )
                                         }
                                         disabled={loadingAction !== null}
                                         className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded border border-amber-500/50 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 transition disabled:opacity-50 cursor-pointer"
-                                        title="Major sürüm geçişi siteyi kırabileceği için doğrudan main dalına basılmaz; izole PR açılır."
+                                        title="Major sürüm geçişi önce breaking-change ve site çalışabilirlik kapısında doğrulanır, sorun yoksa main dalına gönderilir."
                                       >
                                         <AlertTriangle className="w-3.5 h-3.5" />
                                         {loadingAction ===
                                         `rem-pr-${selectedProject.id}-${v.packageName}`
-                                          ? "İzole PR Açılıyor..."
-                                          : `İzole PR Aç (${v.fixedVersion} · Major Guard)`}
+                                          ? "Breaking-Change Doğrulanıyor..."
+                                          : `Doğrula & Gönder (${v.fixedVersion} · Major Guard)`}
                                       </button>
                                     ) : (
                                       <>
