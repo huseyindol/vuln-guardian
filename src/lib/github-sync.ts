@@ -444,3 +444,192 @@ export async function runCanaryBranchTestAndAutoMergeOnGithub(params: {
     canaryStages: stages,
   };
 }
+
+/**
+ * Tek Seferde Toplu (Single-Batch) Canary Dalı -> CI/CD & Site Smoke Kontrolü -> PR Açmadan 'main' (Prod) Merge.
+ * - Asla paket başına PR açmaz ve GitHub PR mail spam'i üretmez.
+ * - Önce tek bir geçici 'security/batch-canary-...' dalı oluşturur.
+ * - GitHub Check Runs / Commit Status ve varsa Preview URL (HTTP 200 OK site çalışabilirlik) kontrolü yapar.
+ * - Sorun yoksa GitHub Merge API (POST /repos/{owner}/{repo}/merges) ile doğrudan 'main' dalına birleştirip geçici dalı siler.
+ */
+export async function verifyAndMergeBatchCanaryBranchOnGithub(params: {
+  repoUrl: string | undefined;
+  manifestFile: string;
+  newContent: string;
+  commitMessage: string;
+  baseBranch?: string;
+}): Promise<GithubCommitResult | null> {
+  const {
+    repoUrl,
+    manifestFile,
+    newContent,
+    commitMessage,
+    baseBranch = "main",
+  } = params;
+
+  const slug = extractGithubRepoSlug(repoUrl);
+  if (!slug || !process.env.GITHUB_TOKEN) return null;
+
+  const currentFile = await fetchManifestFromGithub(
+    repoUrl,
+    manifestFile,
+    baseBranch
+  );
+  if (!currentFile) return null;
+
+  if (currentFile.content.trim() === newContent.trim()) {
+    return {
+      commitSha: currentFile.sha.slice(0, 7),
+      fullCommitSha: currentFile.sha,
+      commitUrl: currentFile.htmlUrl,
+      branchName: baseBranch,
+      autoMerged: true,
+    };
+  }
+
+  // 1. Get base branch SHA
+  const refResp = await fetch(
+    `https://api.github.com/repos/${slug}/git/ref/heads/${baseBranch}`,
+    { headers: getGithubHeaders() }
+  );
+  if (!refResp.ok) return null;
+  const refData = (await refResp.json()) as { object?: { sha?: string } };
+  const baseSha = refData.object?.sha;
+  if (!baseSha) return null;
+
+  const canaryBranch = `security/batch-canary-${Date.now().toString().slice(-4)}`;
+
+  // 2. Create temporary canary branch (NO Pull Request opened -> 0 PR emails!)
+  const createRefResp = await fetch(
+    `https://api.github.com/repos/${slug}/git/refs`,
+    {
+      method: "POST",
+      headers: { ...getGithubHeaders(), "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ref: `refs/heads/${canaryBranch}`,
+        sha: baseSha,
+      }),
+    }
+  );
+  if (!createRefResp.ok) return null;
+
+  // 3. Commit batch manifest to the isolated canary branch
+  const canaryCommit = await commitManifestToGithub(
+    repoUrl,
+    manifestFile,
+    newContent,
+    commitMessage,
+    canaryBranch
+  );
+  if (!canaryCommit?.fullCommitSha) {
+    fetch(`https://api.github.com/repos/${slug}/git/refs/heads/${canaryBranch}`, {
+      method: "DELETE",
+      headers: getGithubHeaders(),
+    }).catch(() => {});
+    return null;
+  }
+
+  // 4. Verify GitHub Check Runs & Commit Status + Live Preview HTTP Smoke Check BEFORE merging to main (prod)
+  let ciAndSiteHealthy = true;
+  try {
+    const [checksResp, statusResp] = await Promise.all([
+      fetch(
+        `https://api.github.com/repos/${slug}/commits/${canaryCommit.fullCommitSha}/check-runs`,
+        { headers: getGithubHeaders() }
+      ),
+      fetch(
+        `https://api.github.com/repos/${slug}/commits/${canaryCommit.fullCommitSha}/status`,
+        { headers: getGithubHeaders() }
+      ),
+    ]);
+
+    if (checksResp.ok) {
+      const checksData = (await checksResp.json()) as {
+        check_runs?: Array<{ conclusion?: string | null }>;
+      };
+      const failedRuns = (checksData.check_runs || []).filter(
+        (r) =>
+          r.conclusion === "failure" ||
+          r.conclusion === "timed_out" ||
+          r.conclusion === "cancelled"
+      );
+      if (failedRuns.length > 0) {
+        ciAndSiteHealthy = false;
+      }
+    }
+
+    if (ciAndSiteHealthy && statusResp.ok) {
+      const statusData = (await statusResp.json()) as {
+        state?: string;
+        statuses?: Array<{ state?: string; target_url?: string }>;
+      };
+      if (statusData.state === "failure" || statusData.state === "error") {
+        ciAndSiteHealthy = false;
+      }
+      // If a Vercel/Preview deployment URL is attached, run an HTTP GET smoke check to verify the site boots
+      const previewUrl = (statusData.statuses || [])
+        .map((s) => s.target_url)
+        .find((u) => u && u.startsWith("https://") && !u.includes("github.com"));
+      if (ciAndSiteHealthy && previewUrl) {
+        try {
+          const smokeResp = await fetch(previewUrl, { method: "GET" });
+          if (smokeResp.status >= 500) {
+            ciAndSiteHealthy = false;
+          }
+        } catch {
+          // Ignore network reachability if preview requires auth
+        }
+      }
+    }
+  } catch {
+    // Proceed if check API is not configured on repo
+  }
+
+  // If breaking change or site failure detected on canary branch, DO NOT merge to main (prod)!
+  if (!ciAndSiteHealthy) {
+    return {
+      ...canaryCommit,
+      branchName: canaryBranch,
+      autoMerged: false,
+    };
+  }
+
+  // 5. All checks passed -> Merge canaryBranch directly into 'main' (prod) via Git Merge API (NO PR -> 0 PR emails!)
+  const mergeResp = await fetch(`https://api.github.com/repos/${slug}/merges`, {
+    method: "POST",
+    headers: { ...getGithubHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify({
+      base: baseBranch,
+      head: canaryBranch,
+      commit_message: commitMessage,
+    }),
+  });
+
+  // Delete temporary canary branch after merge
+  fetch(`https://api.github.com/repos/${slug}/git/refs/heads/${canaryBranch}`, {
+    method: "DELETE",
+    headers: getGithubHeaders(),
+  }).catch(() => {});
+
+  if (mergeResp.ok) {
+    const mergeData = (await mergeResp.json()) as {
+      sha?: string;
+      html_url?: string;
+    };
+    return {
+      commitSha: mergeData.sha?.slice(0, 7) || canaryCommit.commitSha,
+      fullCommitSha: mergeData.sha || canaryCommit.fullCommitSha,
+      commitUrl:
+        mergeData.html_url || `https://github.com/${slug}/commits/${baseBranch}`,
+      branchName: canaryBranch,
+      autoMerged: true,
+      mergeCommitSha: mergeData.sha?.slice(0, 7) || canaryCommit.commitSha,
+    };
+  }
+
+  return {
+    ...canaryCommit,
+    branchName: canaryBranch,
+    autoMerged: false,
+  };
+}

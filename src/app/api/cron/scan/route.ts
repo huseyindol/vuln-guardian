@@ -10,9 +10,9 @@ import {
   runCanaryVerificationPipeline,
 } from "@/lib/scanner-engine";
 import {
-  commitManifestToGithub,
   extractGithubRepoSlug,
   fetchManifestFromGithub,
+  verifyAndMergeBatchCanaryBranchOnGithub,
 } from "@/lib/github-sync";
 
 export async function GET() {
@@ -142,17 +142,19 @@ export async function GET() {
           });
         }
 
-        // Tek toplu (batch) commit: Her paket için ayrı PR açıp GitHub mail spam'i yapmak yerine proje başına tek commit!
+        // Tek toplu (batch) Canary Dalı -> CI/CD & Site Smoke Kontrolü -> PR açmadan 'main' (Prod) Merge!
         if (p.autoDeploy && process.env.GITHUB_TOKEN && patchedSummary.length > 0) {
           try {
-            await commitManifestToGithub(
-              p.repoUrl,
-              p.manifestFile,
-              manifestRaw,
-              `fix(security): auto-remediate ${patchedSummary.length} packages (${patchedSummary.slice(0, 4).join(", ")})`,
-              "main"
-            );
-            p.lastDeployAt = new Date().toISOString();
+            const batchMerge = await verifyAndMergeBatchCanaryBranchOnGithub({
+              repoUrl: p.repoUrl,
+              manifestFile: p.manifestFile,
+              newContent: manifestRaw,
+              commitMessage: `fix(security): auto-remediate ${patchedSummary.length} packages (${patchedSummary.slice(0, 4).join(", ")})`,
+              baseBranch: "main",
+            });
+            if (batchMerge?.autoMerged) {
+              p.lastDeployAt = new Date().toISOString();
+            }
           } catch {
             // Keep staged manifest if GitHub commit fails
           }

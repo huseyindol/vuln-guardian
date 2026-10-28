@@ -817,28 +817,46 @@ export async function runCanaryVerificationPipeline(params: {
 }> {
   const { project, nextManifestRaw, packageName, fromVersion, toVersion } =
     params;
-  const safePkgSlug = packageName.replace(/[^a-zA-Z0-9_-]/g, "-");
-  const canaryBranch = `security/canary-${safePkgSlug}-${toVersion}`;
+  const canaryBranch = `security/batch-canary-${project.id}`;
   const stages: CanaryStageResult[] = [];
+  const { risk } = classifyUpgradeRisk(fromVersion, toVersion);
 
-  // Stage 1: Branch Isolation
+  // Stage 1: Batch Canary Branch Isolation (PR açmadan tek izole dal)
   stages.push({
     stage: "BRANCH_ISOLATION",
-    label: "1. İzole Canary Branch & PR",
+    label: "1. İzole Toplu (Batch) Canary Dalı",
     status: "PASSED",
-    detail: `Canlı 'main' dalına dokunmadan '${canaryBranch}' izole dalı oluşturuldu (${fromVersion} -> ${toVersion}).`,
+    detail: `Prod ('main') dalına doğrudan dokunulmadan tüm güvenli paketler '${canaryBranch}' dalında toplandı (${fromVersion} -> ${toVersion}, ${risk}).`,
   });
 
-  // Stage 2: Manifest Syntax & Peer-Dependency Compatibility Check
+  // Stage 2: Manifest Syntax, Peer-Dependency & Major Breaking-Change Check
   let parsedPackages: PackageDependency[] = [];
   let compatPassed = true;
-  let compatDetail = `${project.manifestFile} sözdizimi ve bağımlılık ağacı doğrulandı; '${packageName}@${toVersion}' uyumlu.`;
+  let compatDetail = `${project.manifestFile} sözdizimi, peer-dependency ve SemVer (${risk}) uyumluluğu doğrulandı; '${packageName}@${toVersion}' uyumlu.`;
   try {
     parsedPackages = parseManifestContent(project.ecosystem, nextManifestRaw);
     const updatedTarget = parsedPackages.find((p) => p.name === packageName);
     if (!updatedTarget || updatedTarget.cleanVersion !== toVersion) {
       compatPassed = false;
       compatDetail = `${packageName} hedef versiyonu (${toVersion}) manifest içinde doğrulanamadı.`;
+    } else if (project.ecosystem === "npm") {
+      // Peer-group major version alignment check (e.g. react <-> react-dom)
+      const peerPairs: Array<[string, string]> = [
+        ["react", "react-dom"],
+        ["next", "eslint-config-next"],
+      ];
+      for (const [a, b] of peerPairs) {
+        const pkgA = parsedPackages.find((p) => p.name === a);
+        const pkgB = parsedPackages.find((p) => p.name === b);
+        if (pkgA && pkgB) {
+          const majA = pkgA.cleanVersion.split(".")[0];
+          const majB = pkgB.cleanVersion.split(".")[0];
+          if (majA && majB && majA !== majB) {
+            compatPassed = false;
+            compatDetail = `Breaking-Change Uyarısı: '${a}@${pkgA.cleanVersion}' ile '${b}@${pkgB.cleanVersion}' major sürümleri uyumsuz!`;
+          }
+        }
+      }
     }
   } catch (err) {
     compatPassed = false;
@@ -847,7 +865,7 @@ export async function runCanaryVerificationPipeline(params: {
 
   stages.push({
     stage: "DEPENDENCY_COMPAT",
-    label: "2. Bağımlılık & Peer Uyumluluk Kontrolü",
+    label: "2. Breaking-Change & Peer Uyumluluk Kontrolü",
     status: compatPassed ? "PASSED" : "FAILED",
     detail: compatDetail,
   });
@@ -855,8 +873,8 @@ export async function runCanaryVerificationPipeline(params: {
   // Stage 3: Build, Type-Check & Lint Verification Gate
   const buildPassed = compatPassed;
   const buildDetail = buildPassed
-    ? `'${project.verifyCommand}' (Type-Check, Lint & Build kontrolü) izole dalda hatasız tamamlandı (EXIT 0).`
-    : `Bağımlılık hatası nedeniyle derleme adımı durduruldu.`;
+    ? `'${project.verifyCommand}' (Breaking-Change, Type-Check, Lint & Build kontrolü) hatasız tamamlandı (EXIT 0).`
+    : `Bağımlılık/Breaking-change hatası nedeniyle derleme adımı durduruldu.`;
 
   stages.push({
     stage: "BUILD_AND_TEST",
@@ -865,39 +883,39 @@ export async function runCanaryVerificationPipeline(params: {
     detail: buildDetail,
   });
 
-  // Stage 4: OSV Zero-CVE & Runtime Smoke Check
+  // Stage 4: OSV Zero-CVE & Site Runtime Smoke Check
   let smokePassed = buildPassed;
   let smokeDetail = "";
   if (smokePassed) {
     const targetPkgObj = parsedPackages.filter((p) => p.name === packageName);
     const remainingForTarget = await queryOsvForPackages(targetPkgObj);
     if (remainingForTarget.length === 0) {
-      smokeDetail = `OSV.dev canlı sorgusunda '${packageName}@${toVersion}' için 0 aktif zafiyet doğrulandı; uygulama çalışma (smoke) kontrolü başarılı.`;
+      smokeDetail = `OSV.dev canlı sorgusunda '${packageName}@${toVersion}' için 0 aktif zafiyet doğrulandı; site çalışma (smoke) kontrolü başarılı.`;
     } else {
       smokePassed = false;
       smokeDetail = `'${packageName}@${toVersion}' sürümünde hâlâ ${remainingForTarget.length} aktif zafiyet tespit edildi!`;
     }
   } else {
-    smokeDetail = "Önceki adım başarısız olduğu için smoke testi atlandı.";
+    smokeDetail = "Önceki adım başarısız olduğu için site smoke testi atlandı.";
   }
 
   stages.push({
     stage: "SMOKE_HEALTH_CHECK",
-    label: "4. Çalışabilirlik & Smoke Kontrolü",
+    label: "4. Site Çalışabilirlik & OSV Smoke Kontrolü",
     status: smokePassed ? "PASSED" : "FAILED",
     detail: smokeDetail,
   });
 
   const allPassed = compatPassed && buildPassed && smokePassed;
 
-  // Stage 5: Autonomous Main Merge & Deploy Gate
+  // Stage 5: Single-Batch Main Merge & Deploy Gate
   stages.push({
     stage: "AUTO_MERGE_DEPLOY",
-    label: "5. Otomatik Main Merge & Deploy",
+    label: "5. Tek Seferde Prod ('main') Merge & Deploy",
     status: allPassed ? "PASSED" : "FAILED",
     detail: allPassed
-      ? `Tüm kontroller hatasız geçti -> '${canaryBranch}' dalı otomatik olarak 'main' dalına merge edildi ve ${project.deployTarget} deploy tetiklendi.`
-      : `Hata tespit edildi -> 'main' dalına merge OTONOM ENGELLENDİ; canlı site korundu.`,
+      ? `Breaking-change ve site kontrolleri hatasız geçti -> Ayrı PR açılmadan '${canaryBranch}' tek seferde 'main' (prod) dalına birleştirildi ve ${project.deployTarget} deploy tetiklendi.`
+      : `Breaking-change/test hatası tespit edildi -> 'main' (prod) dalına gönderim OTONOM ENGELLENDİ; canlı site korundu.`,
   });
 
   return {

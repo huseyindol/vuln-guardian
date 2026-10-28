@@ -13,10 +13,9 @@ import {
   runCanaryVerificationPipeline,
 } from "@/lib/scanner-engine";
 import {
-  commitManifestToGithub,
   extractGithubRepoSlug,
   fetchManifestFromGithub,
-  runCanaryBranchTestAndAutoMergeOnGithub,
+  verifyAndMergeBatchCanaryBranchOnGithub,
 } from "@/lib/github-sync";
 import type {
   CanaryStageResult,
@@ -405,24 +404,29 @@ export async function POST(request: Request) {
         });
       }
 
-      // 2. Kontrollerden geçen TÜM paketleri (Patch + Minor + Major) ayrı ayrı PR açmadan TEK SEFERDE gönder!
+      // 2. Kontrollerden geçen TÜM paketleri (Patch + Minor + Major) önce tek bir izole Canary dalına gönder,
+      //    CI/CD ve Preview Site Smoke kontrolünü doğrula, sorun yoksa PR açmadan TEK SEFERDE 'main' (prod) dalına merge et!
       let batchCommitUrl: string | undefined;
+      let batchMergedToProd = true;
       if (
         pushToGithub &&
         process.env.GITHUB_TOKEN &&
         batchPatchedSummary.length > 0
       ) {
         try {
-          const batchCommit = await commitManifestToGithub(
-            proj.repoUrl,
-            proj.manifestFile,
-            manifestRaw,
-            `fix(security): batch upgrade ${batchPatchedSummary.length} verified packages (${batchPatchedSummary.slice(0, 5).join(", ")})`,
-            "main"
-          );
-          if (batchCommit) {
-            batchCommitUrl = batchCommit.commitUrl;
-            proj.lastDeployAt = new Date().toISOString();
+          const batchMerge = await verifyAndMergeBatchCanaryBranchOnGithub({
+            repoUrl: proj.repoUrl,
+            manifestFile: proj.manifestFile,
+            newContent: manifestRaw,
+            commitMessage: `fix(security): batch upgrade ${batchPatchedSummary.length} verified packages (${batchPatchedSummary.slice(0, 5).join(", ")})`,
+            baseBranch: "main",
+          });
+          if (batchMerge) {
+            batchCommitUrl = batchMerge.commitUrl;
+            batchMergedToProd = Boolean(batchMerge.autoMerged);
+            if (batchMerge.autoMerged) {
+              proj.lastDeployAt = new Date().toISOString();
+            }
           }
         } catch {
           // Keep verified manifestRaw in state
@@ -432,8 +436,14 @@ export async function POST(request: Request) {
       }
 
       for (const rec of pendingHistoryRecords) {
-        if (batchCommitUrl && rec.verifyStatus === "PASSED") {
-          rec.prUrl = batchCommitUrl;
+        if (rec.verifyStatus === "PASSED") {
+          if (batchCommitUrl) {
+            rec.prUrl = batchCommitUrl;
+          }
+          rec.autoMergedToMain = batchMergedToProd;
+          rec.deployStatus = batchMergedToProd
+            ? rec.deployStatus
+            : "BLOCKED_BREAKING";
           rec.commitRef = `fix(security): batch upgrade ${batchPatchedSummary.length} packages (${batchPatchedSummary.slice(0, 4).join(", ")})`;
         }
         state.remediationHistory.unshift(rec);
