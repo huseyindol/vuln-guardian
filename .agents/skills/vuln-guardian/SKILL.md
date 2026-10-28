@@ -88,8 +88,11 @@ node .agents/skills/vuln-guardian/scripts/scan-cli.mjs remediate \
   --deploy
 ```
 
-**Güvenlik, Breaking-Change & Tek Seferde Toplu Gönderim (Single-Batch) Kuralları:**
+**Güvenlik, Breaking-Change, Lockfile Senkronizasyonu & Tek Seferde Toplu Gönderim (Single-Batch) Kuralları:**
 - **Asla Paket Başına Ayrı PR Açılmaz:** Bir projede kaç tane zafiyetli paket varsa (`SAFE_PATCH`, `MINOR_VERIFY` ve `BREAKING_MAJOR` dahil), tamamı önce tek bir manifest üzerinde güvenli (`safe`) versiyonlarına çekilir.
+- **Zorunlu Lockstep Kardeş Paket & Lockfile (`bun.lock` / `package-lock.json`) Senkronizasyonu:**
+  - `package.json` güncellendiğinde **asla yalnız başına commit edilmez!** GitHub Actions ve Vercel CI süreçlerinde `bun install --frozen-lockfile` veya `npm ci` çalışırken `error: lockfile had changes, but lockfile is frozen` hatası alınmaması için `bun.lock` (veya `package-lock.json`) içindeki `workspaces[""]`, `overrides` ve `packages` (`integrity`, `dependencies`, `peerDependencies`) alanları otomatik senkronize edilir ve `package.json` + `bun.lock` **tek bir atomik Git Tree commit'i** ile birlikte gönderilir.
+  - Lockstep kardeş paket aileleri (`vitest` ↔ `@vitest/ui` ↔ `@vitest/coverage-v8`, `react` ↔ `react-dom`, `@angular/*`) her zaman aynı sürüme birlikte yükseltilir (`incorrect peer dependency` hatasını önlemek için).
 - **Breaking-Change & Site Çalışabilirlik Kapısı (4 Aşama):**
   1. **Bağımlılık & Peer Uyumluluğu (`DEPENDENCY_COMPAT`):** Manifest sözdizimi ve bağımlılık ağacı doğrulanır.
   2. **Derleme, Type-Check & Test (`BUILD_AND_TEST`):** Projenin `verifyCommand` komutu (`bun run lint && bun run type-check && bun run test:ci`, `./mvnw -q -DskipTests compile`, `flutter analyze`) çalıştırılarak breaking-change olup olmadığı ve sitenin hatasız derlendiği kontrol edilir.

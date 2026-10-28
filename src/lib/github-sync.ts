@@ -108,6 +108,276 @@ export async function fetchManifestFromGithub(
   return null;
 }
 
+function parseSemverTuple(v: string): [number, number, number] {
+  const m = String(v)
+    .trim()
+    .replace(/^[~^>=<v\s]+/, "")
+    .match(/^(\d+)\.(\d+)\.(\d+)/);
+  if (!m) return [0, 0, 0];
+  return [Number(m[1]), Number(m[2]), Number(m[3])];
+}
+
+function cmpSemverTuple(a: string, b: string): number {
+  const pa = parseSemverTuple(a);
+  const pb = parseSemverTuple(b);
+  for (let i = 0; i < 3; i++) {
+    if (pa[i] !== pb[i]) return pa[i] - pb[i];
+  }
+  return 0;
+}
+
+function satisfiesSemverRange(ver: string, range: string): boolean {
+  const cleanRange = String(range).trim();
+  if (!cleanRange || cleanRange === "*" || cleanRange.includes("||")) {
+    return true;
+  }
+  const minVer = cleanRange.replace(/^[~^>=<\s]+/, "");
+  if (!/^\d+\.\d+\.\d+/.test(minVer)) return true;
+  const [vMaj, vMin] = parseSemverTuple(ver);
+  const [rMaj, rMin] = parseSemverTuple(minVer);
+  if (cleanRange.startsWith("^") && vMaj !== rMaj) return false;
+  if (cleanRange.startsWith("~") && (vMaj !== rMaj || vMin !== rMin)) {
+    return false;
+  }
+  return cmpSemverTuple(ver, minVer) >= 0;
+}
+
+async function fetchNpmRegistryPackageTuple(
+  name: string,
+  targetVerOrRange: string
+): Promise<{
+  name: string;
+  ver: string;
+  info: Record<string, unknown>;
+  integrity: string;
+  tarball: string;
+  dependencies: Record<string, string>;
+} | null> {
+  const cleanTarget = String(targetVerOrRange)
+    .trim()
+    .replace(/^[~^>=<\s]+/, "");
+  if (!cleanTarget) return null;
+  try {
+    const res = await fetch(
+      `https://registry.npmjs.org/${encodeURIComponent(name)}/${encodeURIComponent(
+        cleanTarget
+      )}`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return null;
+    const meta = (await res.json()) as {
+      version?: string;
+      dependencies?: Record<string, string>;
+      optionalDependencies?: Record<string, string>;
+      peerDependencies?: Record<string, string>;
+      peerDependenciesMeta?: Record<string, { optional?: boolean }>;
+      bin?: Record<string, string>;
+      dist?: { integrity?: string; tarball?: string };
+    };
+    const ver = meta.version || cleanTarget;
+    const info: Record<string, unknown> = {};
+    if (meta.dependencies && Object.keys(meta.dependencies).length > 0) {
+      info.dependencies = meta.dependencies;
+    }
+    if (
+      meta.optionalDependencies &&
+      Object.keys(meta.optionalDependencies).length > 0
+    ) {
+      info.optionalDependencies = meta.optionalDependencies;
+    }
+    if (meta.peerDependencies && Object.keys(meta.peerDependencies).length > 0) {
+      info.peerDependencies = meta.peerDependencies;
+    }
+    if (meta.peerDependenciesMeta) {
+      const optPeers = Object.entries(meta.peerDependenciesMeta)
+        .filter(([, v]) => v && v.optional)
+        .map(([k]) => k);
+      if (optPeers.length > 0) info.optionalPeers = optPeers;
+    }
+    if (meta.bin) {
+      const binKeys = Object.keys(meta.bin);
+      const shortName = name.split("/").pop();
+      if (binKeys.length === 1 && binKeys[0] === shortName) {
+        info.bin = meta.bin[binKeys[0]];
+      } else if (binKeys.length > 0) {
+        info.bin = meta.bin;
+      }
+    }
+    return {
+      name,
+      ver,
+      info,
+      integrity: meta.dist?.integrity || "",
+      tarball: meta.dist?.tarball || "",
+      dependencies: meta.dependencies || {},
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * `package.json` güncellendiğinde `bun.lock` dosyasını da npm registry verileriyle otomatik senkronize eder.
+ * Böylece GitHub Actions veya Vercel üzerinde `bun install --frozen-lockfile` hatası ("lockfile had changes, but lockfile is frozen") oluşmaz.
+ */
+export async function autoSyncBunLockContent(
+  newPkgJsonRaw: string,
+  bunLockRaw: string
+): Promise<string> {
+  try {
+    const newPkg = JSON.parse(newPkgJsonRaw) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+      overrides?: Record<string, string>;
+    };
+    let lockText = bunLockRaw;
+
+    const allSpecs: Record<string, string> = {
+      ...(newPkg.dependencies || {}),
+      ...(newPkg.devDependencies || {}),
+      ...(newPkg.overrides || {}),
+    };
+
+    const queue: Array<[string, string]> = [];
+    const pkgBlockIdx = lockText.indexOf('"packages": {');
+
+    for (const [pkgName, newSpec] of Object.entries(allSpecs)) {
+      if (typeof newSpec !== "string" || newSpec.startsWith("npm:")) continue;
+      const cleanTarget = newSpec.replace(/^[~^>=<\s]+/, "");
+      const escaped = pkgName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+      if (pkgBlockIdx !== -1) {
+        const header = lockText.slice(0, pkgBlockIdx).replace(
+          new RegExp(`("${escaped}":\\s*)"([^"]+)"`, "g"),
+          (_, p1: string, oldSpec: string) => {
+            if (oldSpec !== newSpec) {
+              queue.push([pkgName, cleanTarget]);
+            }
+            return `${p1}"${newSpec}"`;
+          }
+        );
+        lockText = header + lockText.slice(pkgBlockIdx);
+      }
+
+      // Also enqueue if package in "packages" block is older than cleanTarget
+      const pkgEntryMatch = lockText.match(
+        new RegExp(`"${escaped}":\\s*\\["${escaped}@([^"]+)"`)
+      );
+      if (
+        pkgEntryMatch &&
+        cmpSemverTuple(pkgEntryMatch[1], cleanTarget) < 0
+      ) {
+        queue.push([pkgName, cleanTarget]);
+      }
+    }
+
+    const visited = new Set<string>();
+    while (queue.length > 0) {
+      const item = queue.shift()!;
+      const [pkgName, targetVer] = item;
+      const key = `${pkgName}@${targetVer}`;
+      if (visited.has(key)) continue;
+      visited.add(key);
+
+      const escaped = pkgName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const entryRegex = new RegExp(
+        `("${escaped}":\\s*)\\["${escaped}@([^"]+)",\\s*"",\\s*(\\{[^\\n]*\\}),\\s*"(sha512-[^"]+)"\\]`
+      );
+      const match = lockText.match(entryRegex);
+      if (!match) continue;
+      const currentLockedVer = match[2];
+
+      if (
+        satisfiesSemverRange(currentLockedVer, `^${targetVer}`) &&
+        cmpSemverTuple(currentLockedVer, targetVer) >= 0
+      ) {
+        continue;
+      }
+
+      const tuple = await fetchNpmRegistryPackageTuple(pkgName, targetVer);
+      if (!tuple || !tuple.integrity) continue;
+
+      const replacement = `$1["${pkgName}@${tuple.ver}", "", ${JSON.stringify(
+        tuple.info
+      )}, "${tuple.integrity}"]`;
+      lockText = lockText.replace(entryRegex, replacement);
+
+      for (const [subName, subRange] of Object.entries(tuple.dependencies)) {
+        const subEsc = subName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const subMatch = lockText.match(
+          new RegExp(`"${subEsc}":\\s*\\["${subEsc}@([^"]+)"`)
+        );
+        if (subMatch && !satisfiesSemverRange(subMatch[1], subRange)) {
+          queue.push([subName, String(subRange).replace(/^[~^>=<\s]+/, "")]);
+        }
+      }
+    }
+
+    return lockText;
+  } catch {
+    return bunLockRaw;
+  }
+}
+
+/**
+ * `package.json` güncellendiğinde `package-lock.json` dosyasını da senkronize eder (`npm ci` uyumluluğu için).
+ */
+export async function autoSyncPackageLockJsonContent(
+  newPkgJsonRaw: string,
+  pkgLockRaw: string
+): Promise<string> {
+  try {
+    const newPkg = JSON.parse(newPkgJsonRaw) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+      overrides?: Record<string, string>;
+    };
+    const lockJson = JSON.parse(pkgLockRaw) as {
+      packages?: Record<string, Record<string, unknown>>;
+    };
+    if (!lockJson.packages) return pkgLockRaw;
+
+    const rootPkg = lockJson.packages[""] || {};
+    if (newPkg.dependencies) rootPkg.dependencies = newPkg.dependencies;
+    if (newPkg.devDependencies) rootPkg.devDependencies = newPkg.devDependencies;
+    if (newPkg.overrides) rootPkg.overrides = newPkg.overrides;
+    lockJson.packages[""] = rootPkg;
+
+    const allSpecs: Record<string, string> = {
+      ...(newPkg.dependencies || {}),
+      ...(newPkg.devDependencies || {}),
+      ...(newPkg.overrides || {}),
+    };
+
+    for (const [pkgName, newSpec] of Object.entries(allSpecs)) {
+      if (typeof newSpec !== "string" || newSpec.startsWith("npm:")) continue;
+      const cleanTarget = newSpec.replace(/^[~^>=<\s]+/, "");
+      const nodeKey = `node_modules/${pkgName}`;
+      const existing = lockJson.packages[nodeKey] as
+        | { version?: string; resolved?: string; integrity?: string; dependencies?: Record<string, string> }
+        | undefined;
+      if (
+        existing?.version &&
+        cmpSemverTuple(existing.version, cleanTarget) < 0
+      ) {
+        const tuple = await fetchNpmRegistryPackageTuple(pkgName, cleanTarget);
+        if (tuple && tuple.integrity) {
+          existing.version = tuple.ver;
+          if (tuple.tarball) existing.resolved = tuple.tarball;
+          existing.integrity = tuple.integrity;
+          if (Object.keys(tuple.dependencies).length > 0) {
+            existing.dependencies = tuple.dependencies;
+          }
+        }
+      }
+    }
+
+    return JSON.stringify(lockJson, null, 2) + "\n";
+  } catch {
+    return pkgLockRaw;
+  }
+}
+
 export async function commitManifestToGithub(
   repoUrl: string | undefined,
   manifestFile: string,
@@ -129,12 +399,158 @@ export async function commitManifestToGithub(
     );
   }
 
-  if (currentFile.content.trim() === newContent.trim()) {
+  // Prepare list of files to commit atomically (manifestFile + synced bun.lock / package-lock.json if applicable)
+  const filesToCommit: Array<{ path: string; content: string }> = [
+    { path: manifestFile, content: newContent },
+  ];
+
+  if (manifestFile.endsWith("package.json")) {
+    const dirPrefix = manifestFile.includes("/")
+      ? manifestFile.slice(0, manifestFile.lastIndexOf("/") + 1)
+      : "";
+    const bunLockPath = `${dirPrefix}bun.lock`;
+    const pkgLockPath = `${dirPrefix}package-lock.json`;
+
+    const existingBunLock = await fetchManifestFromGithub(
+      repoUrl,
+      bunLockPath,
+      branch
+    );
+    if (existingBunLock?.content) {
+      const syncedBunLock = await autoSyncBunLockContent(
+        newContent,
+        existingBunLock.content
+      );
+      if (syncedBunLock.trim() !== existingBunLock.content.trim()) {
+        filesToCommit.push({ path: bunLockPath, content: syncedBunLock });
+      }
+    } else {
+      const existingPkgLock = await fetchManifestFromGithub(
+        repoUrl,
+        pkgLockPath,
+        branch
+      );
+      if (existingPkgLock?.content) {
+        const syncedPkgLock = await autoSyncPackageLockJsonContent(
+          newContent,
+          existingPkgLock.content
+        );
+        if (syncedPkgLock.trim() !== existingPkgLock.content.trim()) {
+          filesToCommit.push({ path: pkgLockPath, content: syncedPkgLock });
+        }
+      }
+    }
+  }
+
+  if (
+    filesToCommit.length === 1 &&
+    currentFile.content.trim() === newContent.trim()
+  ) {
     return {
       commitSha: currentFile.sha.slice(0, 7),
       fullCommitSha: currentFile.sha,
       commitUrl: currentFile.htmlUrl,
     };
+  }
+
+  // If multiple files (e.g. package.json + bun.lock), commit atomically via Git Data Tree API so CI runs once with synced lockfile!
+  if (filesToCommit.length > 1) {
+    try {
+      const refResp = await fetch(
+        `https://api.github.com/repos/${slug}/git/ref/heads/${encodeURIComponent(
+          branch
+        )}`,
+        { headers: getGithubHeaders(), cache: "no-store" }
+      );
+      if (refResp.ok) {
+        const refData = (await refResp.json()) as {
+          object?: { sha?: string };
+        };
+        const latestCommitSha = refData.object?.sha;
+        if (latestCommitSha) {
+          const commitInfoResp = await fetch(
+            `https://api.github.com/repos/${slug}/git/commits/${latestCommitSha}`,
+            { headers: getGithubHeaders(), cache: "no-store" }
+          );
+          const commitInfo = (await commitInfoResp.json()) as {
+            tree?: { sha?: string };
+          };
+          const baseTreeSha = commitInfo.tree?.sha;
+          if (baseTreeSha) {
+            const treeResp = await fetch(
+              `https://api.github.com/repos/${slug}/git/trees`,
+              {
+                method: "POST",
+                headers: {
+                  ...getGithubHeaders(),
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  base_tree: baseTreeSha,
+                  tree: filesToCommit.map((f) => ({
+                    path: f.path,
+                    mode: "100644",
+                    type: "blob",
+                    content: f.content,
+                  })),
+                }),
+              }
+            );
+            if (treeResp.ok) {
+              const treeData = (await treeResp.json()) as { sha?: string };
+              const createCommitResp = await fetch(
+                `https://api.github.com/repos/${slug}/git/commits`,
+                {
+                  method: "POST",
+                  headers: {
+                    ...getGithubHeaders(),
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    message: commitMessage,
+                    tree: treeData.sha,
+                    parents: [latestCommitSha],
+                  }),
+                }
+              );
+              if (createCommitResp.ok) {
+                const newCommitData = (await createCommitResp.json()) as {
+                  sha?: string;
+                  html_url?: string;
+                };
+                const updateRefResp = await fetch(
+                  `https://api.github.com/repos/${slug}/git/refs/heads/${encodeURIComponent(
+                    branch
+                  )}`,
+                  {
+                    method: "PATCH",
+                    headers: {
+                      ...getGithubHeaders(),
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      sha: newCommitData.sha,
+                      force: false,
+                    }),
+                  }
+                );
+                if (updateRefResp.ok && newCommitData.sha) {
+                  return {
+                    commitSha: newCommitData.sha.slice(0, 7),
+                    fullCommitSha: newCommitData.sha,
+                    commitUrl:
+                      newCommitData.html_url ||
+                      `https://github.com/${slug}/commit/${newCommitData.sha}`,
+                  };
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch {
+      // Fallback to single-file PUT below if Git Data API fails
+    }
   }
 
   const url = `https://api.github.com/repos/${slug}/contents/${encodeURIComponent(

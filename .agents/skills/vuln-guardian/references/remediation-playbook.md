@@ -10,10 +10,14 @@ Bu referans dokümanı, farklı ekosistemlerde zafiyetli paketlerin güvenli (`s
 - **Doğrudan Bağımlılıklar (`dependencies` / `devDependencies`):**
   - Mevcut aralık öneki (`^` veya `~`) korunarak veya tam güvenli versiyon (`x.y.z`) yazılarak güncellenir.
   - Eğer `fixedVersion` mevcut versiyonla aynı major sürümdeyse (`semver` minor/patch), doğrudan yükseltilir.
+- **Kardeş (Lockstep Peer) Paket Ailesi Senkronizasyonu (`NPM_LOCKSTEP_PEER_FAMILIES`):**
+  - Birlikte aynı versiyonda yürümesi zorunlu olan paket ailelerinden (`vitest` / `@vitest/ui` / `@vitest/coverage-v8`, `react` / `react-dom`, `@angular/*`) herhangi biri güncellendiğinde, `package.json` içindeki diğer aile üyeleri de otomatik olarak aynı hedef versiyona yükseltilir (`incorrect peer dependency` hatasını önler).
 - **Geçişli Bağımlılıklar (`overrides` / `resolutions`):**
   - Zafiyet bir alt paketten geliyorsa `package.json` içindeki `"overrides"` bloğuna `"<pkg>": "^<fixedVersion>"` eklenir veya güncellenir.
+- **Zorunlu Lockfile (`bun.lock` / `package-lock.json`) Atomik Senkronizasyonu:**
+  - `package.json` güncellendiğinde CI/CD ortamlarında `bun install --frozen-lockfile` veya `npm ci` komutlarının `error: lockfile had changes, but lockfile is frozen` hatasıyla patlamaması için `bun.lock` (`workspaces[""]`, `overrides`, `packages` tuple'ları + `registry.npmjs.org` integrity/alt-bağımlılık ağacı) ve `package-lock.json` dosyaları otomatik senkronize edilir ve GitHub Git Data Tree API üzerinden `package.json` ile **tek bir atomik commit** içinde gönderilir.
 - **Doğrulama:**
-  - `bun install` (veya `npm install --package-lock-only`) ardından `bun run type-check` veya `npm test` çalıştırılır.
+  - `bun install --frozen-lockfile` (veya `npm ci`) ardından `bun run type-check` veya `npm test` çalıştırılır.
 
 ### B. Java / Spring Boot (`pom.xml`)
 - **Açık Versiyonlu Bağımlılıklar (`<version>`):**

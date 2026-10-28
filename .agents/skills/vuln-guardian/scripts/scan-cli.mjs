@@ -674,6 +674,35 @@ export async function scanSingleProject(project) {
   };
 }
 
+const NPM_LOCKSTEP_PEER_FAMILIES = [
+  [
+    "vitest",
+    "@vitest/ui",
+    "@vitest/coverage-v8",
+    "@vitest/coverage-istanbul",
+    "@vitest/browser",
+    "@vitest/runner",
+    "@vitest/spy",
+    "@vitest/utils",
+    "@vitest/mocker",
+    "@vitest/pretty-format",
+    "@vitest/expect",
+    "@vitest/snapshot",
+  ],
+  ["react", "react-dom"],
+  [
+    "@angular/core",
+    "@angular/common",
+    "@angular/compiler",
+    "@angular/platform-browser",
+    "@angular/platform-browser-dynamic",
+    "@angular/router",
+    "@angular/forms",
+    "@angular/cli",
+    "@angular/compiler-cli",
+  ],
+];
+
 export function applySafeVersionToManifest(
   ecosystem,
   manifestRaw,
@@ -699,6 +728,35 @@ export function applySafeVersionToManifest(
       json.overrides = json.overrides || {};
       json.overrides[packageName] = `^${safeVersion}`;
     }
+
+    const peerFamily = NPM_LOCKSTEP_PEER_FAMILIES.find((fam) =>
+      fam.includes(packageName)
+    );
+    if (peerFamily) {
+      const targetMaj = parseSemverParts(safeVersion).major;
+      for (const sibling of peerFamily) {
+        if (sibling === packageName) continue;
+        for (const sec of ["dependencies", "devDependencies"]) {
+          if (json[sec] && typeof json[sec][sibling] === "string") {
+            const sibRaw = json[sec][sibling];
+            const sibClean = cleanVersionString(sibRaw);
+            const sibMaj = parseSemverParts(sibClean).major;
+            if (
+              sibMaj === targetMaj &&
+              compareSemver(sibClean, safeVersion) < 0
+            ) {
+              const prefix = sibRaw.startsWith("^")
+                ? "^"
+                : sibRaw.startsWith("~")
+                  ? "~"
+                  : "";
+              json[sec][sibling] = `${prefix}${safeVersion}`;
+            }
+          }
+        }
+      }
+    }
+
     return JSON.stringify(json, null, 2) + "\n";
   }
 
@@ -1076,6 +1134,25 @@ async function runCli() {
 
     if (shouldApply && fs.existsSync(manifestPath)) {
       fs.writeFileSync(manifestPath, manifestRaw, "utf8");
+      if (proj.ecosystem === "npm" && fs.existsSync(proj.path)) {
+        try {
+          if (fs.existsSync(path.join(proj.path, "bun.lock"))) {
+            execSync("bun install --lockfile-only", {
+              cwd: proj.path,
+              stdio: "pipe",
+              timeout: 60000,
+            });
+          } else if (fs.existsSync(path.join(proj.path, "package-lock.json"))) {
+            execSync("npm install --package-lock-only --ignore-scripts", {
+              cwd: proj.path,
+              stdio: "pipe",
+              timeout: 60000,
+            });
+          }
+        } catch {
+          // Proceed to verifyCommand which will catch any lockfile mismatch
+        }
+      }
     }
 
     // 2. Birleştirilmiş manifest üzerinde tek seferde Breaking-Change & Site Çalışabilirlik kontrolünü çalıştır:

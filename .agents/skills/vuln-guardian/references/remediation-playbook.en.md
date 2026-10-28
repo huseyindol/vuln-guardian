@@ -9,10 +9,14 @@ This reference playbook defines the rules for upgrading vulnerable dependencies 
 ### A. Node.js / Bun / npm (`package.json`)
 - **Direct Dependencies (`dependencies` / `devDependencies`):**
   - Preserves the existing range prefix (`^` or `~`) while bumping to `fixedVersion`.
+- **Lockstep Peer Family Synchronization (`NPM_LOCKSTEP_PEER_FAMILIES`):**
+  - When upgrading any package belonging to a lockstep peer family (`vitest` / `@vitest/ui` / `@vitest/coverage-v8`, `react` / `react-dom`, `@angular/*`), all sibling packages present in `package.json` are automatically aligned to the same target version to prevent `incorrect peer dependency` warnings/errors.
 - **Transitive Dependencies (`overrides` / `resolutions`):**
   - Pins `"<pkg>": "^<fixedVersion>"` inside the `"overrides"` block in `package.json`.
+- **Mandatory Atomic Lockfile (`bun.lock` / `package-lock.json`) Synchronization:**
+  - Whenever `package.json` changes, `bun.lock` (`workspaces[""]`, `overrides`, and `packages` tuples with `registry.npmjs.org` integrity hashes and recursive sub-dependencies) and `package-lock.json` are automatically updated and committed **atomically in a single Git Data Tree commit** alongside `package.json` so `bun install --frozen-lockfile` and `npm ci` in CI/CD pipelines never fail with `lockfile had changes, but lockfile is frozen`.
 - **Verification:**
-  - Runs `bun run lint && bun run type-check && bun run test:ci` (or `npm test`).
+  - Runs `bun install --frozen-lockfile && bun run lint && bun run type-check && bun run test:ci` (or `npm ci && npm test`).
 
 ### B. Java / Spring Boot (`pom.xml`)
 - **Explicit `<version>` Dependencies:**

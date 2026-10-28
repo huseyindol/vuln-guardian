@@ -67,8 +67,11 @@ node .agents/skills/vuln-guardian/scripts/scan-cli.mjs remediate \
   --deploy
 ```
 
-**Single-Batch & Pre-Prod Verification Rules:**
+**Single-Batch, Lockfile Synchronization & Pre-Prod Verification Rules:**
 - **Never Open Per-Package PRs:** Regardless of how many vulnerable packages exist in a project (`SAFE_PATCH`, `MINOR_VERIFY`, and `BREAKING_MAJOR`), all of them are first upgraded together in a single manifest.
+- **Mandatory Lockstep Peer Family & Lockfile (`bun.lock` / `package-lock.json`) Synchronization:**
+  - Never commit `package.json` alone! To prevent `bun install --frozen-lockfile` (`error: lockfile had changes, but lockfile is frozen`) and `npm ci` failures in GitHub Actions / Vercel CI, `bun.lock` (or `package-lock.json`) `workspaces[""]`, `overrides`, and resolved `packages` tuples (`integrity`, `dependencies`, `peerDependencies`) are synchronized automatically and committed **together with `package.json` in a single atomic Git Tree commit**.
+  - Lockstep peer families (`vitest` ↔ `@vitest/ui` ↔ `@vitest/coverage-v8`, `react` ↔ `react-dom`, `@angular/*`) are always upgraded in lockstep to prevent `incorrect peer dependency` errors.
 - **4-Stage Pre-Prod Breaking-Change & Site Health Gate:**
   1. **Dependency & Peer Compatibility (`DEPENDENCY_COMPAT`):** Validates manifest syntax and peer-group major version alignment (`react` ↔ `react-dom`, `next` ↔ `eslint-config-next`).
   2. **Build, Type-Check & Test (`BUILD_AND_TEST`):** Runs the project's `verifyCommand` and verifies GitHub Check Runs (`/commits/{sha}/check-runs`) on the isolated `security/batch-canary` branch.
