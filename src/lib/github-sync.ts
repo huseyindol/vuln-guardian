@@ -128,6 +128,14 @@ export async function commitManifestToGithub(
     );
   }
 
+  if (currentFile.content.trim() === newContent.trim()) {
+    return {
+      commitSha: currentFile.sha.slice(0, 7),
+      fullCommitSha: currentFile.sha,
+      commitUrl: currentFile.htmlUrl,
+    };
+  }
+
   const url = `https://api.github.com/repos/${slug}/contents/${encodeURIComponent(
     manifestFile
   )}`;

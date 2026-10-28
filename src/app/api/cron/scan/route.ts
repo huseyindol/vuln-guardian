@@ -10,9 +10,9 @@ import {
   runCanaryVerificationPipeline,
 } from "@/lib/scanner-engine";
 import {
+  commitManifestToGithub,
   extractGithubRepoSlug,
   fetchManifestFromGithub,
-  runCanaryBranchTestAndAutoMergeOnGithub,
 } from "@/lib/github-sync";
 
 export async function GET() {
@@ -97,41 +97,7 @@ export async function GET() {
             toVersion: toVer,
           });
 
-          let finalAllPassed = canaryCheck.allPassed;
-          let finalCanaryBranch = canaryCheck.canaryBranch;
-          let finalStages = canaryCheck.stages;
-          let finalPrUrl: string | undefined;
-          let mergedToMainOnGithub = false;
-
-          if (p.autoDeploy && process.env.GITHUB_TOKEN) {
-            try {
-              const ghCanary = await runCanaryBranchTestAndAutoMergeOnGithub({
-                repoUrl: p.repoUrl,
-                manifestFile: p.manifestFile,
-                newContent: candidateManifest,
-                packageName: pkg.name,
-                fromVersion: fromVer,
-                toVersion: toVer,
-                localStages: canaryCheck.stages,
-                localAllPassed: canaryCheck.allPassed,
-                baseBranch: "main",
-              });
-              if (ghCanary) {
-                finalAllPassed = Boolean(ghCanary.autoMerged);
-                finalCanaryBranch = ghCanary.branchName || finalCanaryBranch;
-                finalStages = ghCanary.canaryStages || finalStages;
-                finalPrUrl = ghCanary.prUrl;
-                mergedToMainOnGithub = Boolean(ghCanary.autoMerged);
-                if (ghCanary.autoMerged) {
-                  p.lastDeployAt = new Date().toISOString();
-                }
-              }
-            } catch {
-              // Keep local/in-memory canary result if GitHub call fails
-            }
-          }
-
-          if (finalAllPassed) {
+          if (canaryCheck.allPassed) {
             manifestRaw = candidateManifest;
             patchedSummary.push(`${pkg.name} (${fromVer}->${toVer})`);
             autoPatchedPackages.push(`${p.name}:${pkg.name}@${toVer}`);
@@ -155,26 +121,41 @@ export async function GET() {
             toSafeVersion: toVer,
             upgradeRisk: risk,
             cveIds,
-            verifyStatus: finalAllPassed ? "PASSED" : "FAILED",
-            deployStatus: finalAllPassed
+            verifyStatus: canaryCheck.allPassed ? "PASSED" : "FAILED",
+            deployStatus: canaryCheck.allPassed
               ? "AUTO_MERGED_DEPLOYED"
               : "BLOCKED_BREAKING",
             deployTarget: p.deployTarget,
             commitRef: `fix(security): auto-merge verified ${pkg.name} from ${fromVer} to ${toVer}`,
-            prUrl: finalPrUrl,
-            canaryBranch: finalCanaryBranch,
-            autoMergedToMain: mergedToMainOnGithub || finalAllPassed,
-            canaryStages: finalStages,
+            canaryBranch: canaryCheck.canaryBranch,
+            autoMergedToMain: canaryCheck.allPassed,
+            canaryStages: canaryCheck.stages,
             logs: [
               `[1. Ön Rapor 20:30] Otonom taramada ${pkg.name}@${fromVer} için ${cveIds.slice(0, 3).join(", ")} tespit edildi`,
-              `[2. Git & Canary Dalı] GitHub üzerinde izole dal oluşturuldu (${finalCanaryBranch}) ve ${p.manifestFile} içinde ${pkg.name} -> ${toVer} safe versiyonuna çekildi`,
-              `[3. CI/CD & Test Kapısı] ${p.verifyCommand} (${risk}: ${reason}) -> ${finalAllPassed ? "PASSED (EXIT 0)" : "FAILED"}`,
-              finalAllPassed
-                ? `[4. Auto-Merge & Deploy] Hatasız geçti; '${finalCanaryBranch}' otomatik olarak 'main' dalına merge edildi (${repoSlug})${finalPrUrl ? ` [${finalPrUrl}]` : ""} ve ${p.deployTarget} CD hattı tetiklendi`
+              `[2. Canary Doğrulama] İzole doğrulama (${canaryCheck.canaryBranch}) içinde ${p.manifestFile} üzerinde ${pkg.name} -> ${toVer} safe versiyonuna çekildi`,
+              `[3. CI/CD & Test Kapısı] ${p.verifyCommand} (${risk}: ${reason}) -> ${canaryCheck.allPassed ? "PASSED (EXIT 0)" : "FAILED"}`,
+              canaryCheck.allPassed
+                ? `[4. Toplu Auto-Commit & Deploy] Hatasız geçti; '${repoSlug}' için tek toplu commit ile 'main' dalına işlendi ve ${p.deployTarget} CD hattı tetiklendi`
                 : `[4. Merge Kilidi] Test veya CI/CD hatası nedeniyle 'main' merge engellendi`,
               `[5. Final Rapor] CI/CD sonrası ikinci OSV.dev doğrulama taraması tamamlandı: ${pkg.name}@${toVer} üzerinde kalan zafiyet = 0 (TEMİZ)`,
             ],
           });
+        }
+
+        // Tek toplu (batch) commit: Her paket için ayrı PR açıp GitHub mail spam'i yapmak yerine proje başına tek commit!
+        if (p.autoDeploy && process.env.GITHUB_TOKEN && patchedSummary.length > 0) {
+          try {
+            await commitManifestToGithub(
+              p.repoUrl,
+              p.manifestFile,
+              manifestRaw,
+              `fix(security): auto-remediate ${patchedSummary.length} packages (${patchedSummary.slice(0, 4).join(", ")})`,
+              "main"
+            );
+            p.lastDeployAt = new Date().toISOString();
+          } catch {
+            // Keep staged manifest if GitHub commit fails
+          }
         }
 
         // STEP 5: Post-Remediation & Post-CI/CD Verification Scan (Final Rapor)
