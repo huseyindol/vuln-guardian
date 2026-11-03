@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "lastGlobalScanAt": "2026-10-28T17:45:35.000Z",
+  "lastGlobalScanAt": "2026-11-03T11:42:57.288Z",
   "schedulerActive": true,
   "dailyScheduleCron": "30 20 * * *",
   "dailyScheduleLabel": "Her Akşam 20:30 (TSİ / UTC+3)",
@@ -22,8 +22,8 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run test:ci",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-10-28T17:45:35.000Z",
-      "nextScanAt": "2026-10-28T17:30:00.000Z",
+      "lastScanAt": "2026-11-03T11:42:56.070Z",
+      "nextScanAt": "2026-11-03T17:30:00.000Z",
       "lastDeployAt": "2026-10-28T17:45:35.000Z",
       "status": "HEALTHY",
       "packages": [
@@ -556,10 +556,9 @@
           "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "PATCHED",
+          "status": "SAFE",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null,
-          "previousVersion": "5.0.3"
+          "recommendedSafeVersion": null
         },
         {
           "name": "@vitest/ui",
@@ -718,10 +717,9 @@
           "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "PATCHED",
+          "status": "SAFE",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null,
-          "previousVersion": "5.0.3"
+          "recommendedSafeVersion": null
         },
         {
           "name": "fast-uri",
@@ -792,10 +790,9 @@
           "cleanVersion": "14.0.0",
           "section": "overrides",
           "ecosystem": "npm",
-          "status": "PATCHED",
+          "status": "SAFE",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null,
-          "previousVersion": "14.0.2"
+          "recommendedSafeVersion": null
         },
         {
           "name": "ws",
@@ -919,8 +916,8 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run format:check",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-10-28T17:45:35.000Z",
-      "nextScanAt": "2026-10-28T17:30:00.000Z",
+      "lastScanAt": "2026-11-03T11:42:56.621Z",
+      "nextScanAt": "2026-11-03T17:30:00.000Z",
       "lastDeployAt": "2026-10-28T17:47:20.000Z",
       "status": "HEALTHY",
       "packages": [
@@ -1512,10 +1509,9 @@
           "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "PATCHED",
+          "status": "SAFE",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null,
-          "previousVersion": "5.0.3"
+          "recommendedSafeVersion": null
         },
         {
           "name": "@vitest/ui",
@@ -1734,10 +1730,9 @@
           "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "PATCHED",
+          "status": "SAFE",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null,
-          "previousVersion": "5.0.3"
+          "recommendedSafeVersion": null
         },
         {
           "name": "web-vitals",
@@ -2041,8 +2036,8 @@
       "verifyCommand": "./mvnw -q -DskipTests compile",
       "deployCommand": "kubectl rollout restart deployment/elly-backend",
       "deployTarget": "Kubernetes / Server",
-      "lastScanAt": "2026-10-28T07:56:37.649Z",
-      "nextScanAt": "2026-10-28T17:30:00.000Z",
+      "lastScanAt": "2026-11-03T11:42:56.938Z",
+      "nextScanAt": "2026-11-03T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
       "packages": [
@@ -2344,9 +2339,10 @@
           "cleanVersion": "3.20.0",
           "section": "maven",
           "ecosystem": "Maven",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "3.14.0"
         }
       ],
       "vulnerabilities": [],
@@ -2368,8 +2364,8 @@
       "verifyCommand": "flutter analyze --no-fatal-infos && flutter test",
       "deployCommand": "gh workflow run release-mobile.yml",
       "deployTarget": "GitHub Actions",
-      "lastScanAt": "2026-10-28T07:56:38.300Z",
-      "nextScanAt": "2026-10-28T17:30:00.000Z",
+      "lastScanAt": "2026-11-03T11:42:57.287Z",
+      "nextScanAt": "2026-11-03T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
       "packages": [
