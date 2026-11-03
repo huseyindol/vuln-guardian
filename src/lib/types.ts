@@ -139,6 +139,71 @@ export interface MonitoredProject {
   manifestRaw?: string;
 }
 
+export type ScanOutcomeStatus =
+  | "CLEAN_NO_ISSUES"
+  | "ISSUES_FOUND_AND_FIXED"
+  | "ISSUES_REMAINING";
+
+export interface ScanFindingItem {
+  projectId: string;
+  projectName: string;
+  packageName: string;
+  installedVersion: string;
+  recommendedSafeVersion: string | null;
+  cveIds: string[];
+  severity: Severity;
+  fixedInThisRun: boolean;
+}
+
+export interface ScanFixItem {
+  projectId: string;
+  projectName: string;
+  packageName: string;
+  fromVersion: string;
+  toSafeVersion: string;
+  cveIds: string[];
+  commitRef?: string;
+  commitUrl?: string;
+  deployStatus: string;
+}
+
+export interface ScanProjectSummary {
+  projectId: string;
+  projectName: string;
+  ecosystem: Ecosystem;
+  totalPackages: number;
+  detectedVulnCount: number;
+  fixedPackageCount: number;
+  remainingVulnCount: number;
+  status: "CLEAN" | "FIXED" | "VULNERABLE";
+}
+
+export interface ScanHistoryEntry {
+  id: string;
+  timestamp: string;
+  dateKey: string;
+  trigger:
+    | "SCHEDULED_CRON"
+    | "MANUAL_ALL"
+    | "MANUAL_PROJECT"
+    | "AUTO_REMEDIATE"
+    | "CLI_SCAN";
+  triggerLabel: string;
+  outcome: ScanOutcomeStatus;
+  verdictTitle: string;
+  dailyNote: string;
+  notes: string[];
+  scannedProjectsCount: number;
+  totalPackagesScanned: number;
+  detectedVulnCount: number;
+  detectedPackageCount: number;
+  fixedPackageCount: number;
+  remainingVulnCount: number;
+  projectSummaries: ScanProjectSummary[];
+  findings: ScanFindingItem[];
+  fixes: ScanFixItem[];
+}
+
 export interface GuardianState {
   version: string;
   lastGlobalScanAt: string;
@@ -149,4 +214,5 @@ export interface GuardianState {
   projects: MonitoredProject[];
   newsFeed: SecurityNewsItem[];
   remediationHistory: RemediationRecord[];
+  scanHistory?: ScanHistoryEntry[];
 }

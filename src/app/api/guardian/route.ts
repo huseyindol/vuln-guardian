@@ -18,6 +18,7 @@ import {
   verifyAndMergeBatchCanaryBranchOnGithub,
 } from "@/lib/github-sync";
 import { verifyRequestAdminAuth } from "@/lib/auth";
+import { recordScanHistoryRun } from "@/lib/scan-history";
 import type {
   CanaryStageResult,
   Ecosystem,
@@ -233,7 +234,11 @@ async function rescanProjectObject(
     const hist = state.remediationHistory.find(
       (r) =>
         r.projectId === project.id &&
-        r.packageName === up.name &&
+        (r.packageName === up.name ||
+          r.packageName
+            .split(/[,\s+&()]+/)
+            .map((s) => s.trim())
+            .includes(up.name)) &&
         r.toSafeVersion === up.cleanVersion
     );
     if (hist && up.status === "SAFE") {
@@ -289,12 +294,24 @@ export async function POST(request: Request) {
           { status: 404 }
         );
       }
+      const beforeRemIds = new Set(state.remediationHistory.map((r) => r.id));
       const preRemediationList: MonitoredProject[] = [];
       state.projects[idx] = await rescanProjectObject(
         state.projects[idx],
         state,
         preRemediationList
       );
+      const newRemediations = state.remediationHistory.filter(
+        (r) => !beforeRemIds.has(r.id)
+      );
+      recordScanHistoryRun({
+        state,
+        trigger: "MANUAL_PROJECT",
+        triggerLabel: `Proje Bazlı Manuel Tarama (${state.projects[idx].name})`,
+        preScanProjects: preRemediationList,
+        postScanProjects: [state.projects[idx]],
+        newRemediations,
+      });
       const freshNews = await buildSecurityNewsFeed(preRemediationList);
       if (freshNews.length > 0) {
         state.newsFeed = freshNews;
@@ -304,6 +321,7 @@ export async function POST(request: Request) {
     }
 
     if (action === "scan-all") {
+      const beforeRemIds = new Set(state.remediationHistory.map((r) => r.id));
       const preRemediationList: MonitoredProject[] = [];
       for (let i = 0; i < state.projects.length; i++) {
         state.projects[i] = await rescanProjectObject(
@@ -313,6 +331,17 @@ export async function POST(request: Request) {
         );
       }
       state.lastGlobalScanAt = new Date().toISOString();
+      const newRemediations = state.remediationHistory.filter(
+        (r) => !beforeRemIds.has(r.id)
+      );
+      recordScanHistoryRun({
+        state,
+        trigger: "MANUAL_ALL",
+        triggerLabel: "Tüm Kayıtlı Projeler — Manuel Tam Tarama",
+        preScanProjects: preRemediationList,
+        postScanProjects: state.projects,
+        newRemediations,
+      });
       const freshNews = await buildSecurityNewsFeed(preRemediationList);
       if (freshNews.length > 0) {
         state.newsFeed = freshNews;
@@ -556,6 +585,9 @@ export async function POST(request: Request) {
       }
       const now = new Date();
       const dailyTime = proj.dailyScanTime || "20:30";
+      const preSnapshot: MonitoredProject = {
+        ...proj,
+      };
       state.projects[idx] = {
         ...proj,
         manifestRaw,
@@ -565,9 +597,45 @@ export async function POST(request: Request) {
         packages,
         vulnerabilities,
       };
+      recordScanHistoryRun({
+        state,
+        trigger: "AUTO_REMEDIATE",
+        triggerLabel: `Toplu Safe-Version Yama & Canary Doğrulama (${proj.name})`,
+        preScanProjects: [preSnapshot],
+        postScanProjects: [state.projects[idx]],
+        newRemediations: pendingHistoryRecords,
+      });
       const freshNews = await buildSecurityNewsFeed(state.projects);
       if (freshNews.length > 0) {
         state.newsFeed = freshNews;
+      }
+      saveGuardianState(state);
+      return NextResponse.json(state);
+    }
+
+    if (action === "add-daily-note") {
+      const { entryId, noteText } = body;
+      if (!noteText || typeof noteText !== "string" || !noteText.trim()) {
+        return NextResponse.json(
+          { error: "Not metni boş olamaz." },
+          { status: 400 }
+        );
+      }
+      const cleanNote = noteText.trim();
+      if (entryId && Array.isArray(state.scanHistory)) {
+        const target = state.scanHistory.find((e) => e.id === entryId);
+        if (target) {
+          target.dailyNote = cleanNote;
+          if (!target.notes.includes(`📝 Yönetici Notu: ${cleanNote}`)) {
+            target.notes.unshift(`📝 Yönetici Notu: ${cleanNote}`);
+          }
+          saveGuardianState(state);
+          return NextResponse.json(state);
+        }
+      }
+      if (Array.isArray(state.scanHistory) && state.scanHistory[0]) {
+        state.scanHistory[0].dailyNote = cleanNote;
+        state.scanHistory[0].notes.unshift(`📝 Yönetici Notu: ${cleanNote}`);
       }
       saveGuardianState(state);
       return NextResponse.json(state);

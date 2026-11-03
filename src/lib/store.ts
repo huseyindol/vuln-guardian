@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import initialSeed from "@/data/guardian-state.json";
+import { ensureScanHistoryPopulated } from "./scan-history";
 import type { GuardianState } from "./types";
 
 const LOCAL_STATE_PATH = path.join(
@@ -43,10 +44,12 @@ export function getGuardianState(): GuardianState {
         new Date(a.lastGlobalScanAt || 0).getTime()
     );
     memoryState = candidates[0];
+    ensureScanHistoryPopulated(memoryState);
     return memoryState;
   }
 
   memoryState = structuredClone(initialSeed as unknown as GuardianState);
+  ensureScanHistoryPopulated(memoryState);
   return memoryState;
 }
 

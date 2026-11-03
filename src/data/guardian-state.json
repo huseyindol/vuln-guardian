@@ -556,9 +556,10 @@
           "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "@vitest/ui",
@@ -717,9 +718,10 @@
           "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "fast-uri",
@@ -790,9 +792,10 @@
           "cleanVersion": "14.0.0",
           "section": "overrides",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "14.0.2"
         },
         {
           "name": "ws",
@@ -916,7 +919,7 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run format:check",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-11-03T11:42:56.621Z",
+      "lastScanAt": "2026-11-03T11:42:56.070Z",
       "nextScanAt": "2026-11-03T17:30:00.000Z",
       "lastDeployAt": "2026-10-28T17:47:20.000Z",
       "status": "HEALTHY",
@@ -1509,9 +1512,10 @@
           "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "@vitest/ui",
@@ -1730,9 +1734,10 @@
           "cleanVersion": "5.0.5",
           "section": "devDependencies",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "web-vitals",
@@ -2036,7 +2041,7 @@
       "verifyCommand": "./mvnw -q -DskipTests compile",
       "deployCommand": "kubectl rollout restart deployment/elly-backend",
       "deployTarget": "Kubernetes / Server",
-      "lastScanAt": "2026-11-03T11:42:56.938Z",
+      "lastScanAt": "2026-11-03T11:42:56.070Z",
       "nextScanAt": "2026-11-03T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
@@ -2339,10 +2344,9 @@
           "cleanVersion": "3.20.0",
           "section": "maven",
           "ecosystem": "Maven",
-          "status": "PATCHED",
+          "status": "SAFE",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null,
-          "previousVersion": "3.14.0"
+          "recommendedSafeVersion": null
         }
       ],
       "vulnerabilities": [],
@@ -2364,7 +2368,7 @@
       "verifyCommand": "flutter analyze --no-fatal-infos && flutter test",
       "deployCommand": "gh workflow run release-mobile.yml",
       "deployTarget": "GitHub Actions",
-      "lastScanAt": "2026-11-03T11:42:57.287Z",
+      "lastScanAt": "2026-11-03T11:42:56.070Z",
       "nextScanAt": "2026-11-03T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
@@ -4776,6 +4780,1132 @@
         "[ManifestPatcher] Updated package.json overrides.dompurify -> ^3.4.16",
         "[VerifyGate] bun run type-check -> EXIT 0 (PASSED)",
         "[AutoDeploy] Deployed production release to Vercel"
+      ]
+    }
+  ],
+  "scanHistory": [
+    {
+      "id": "scan-hist-2026-11-03-manual",
+      "timestamp": "2026-11-03T11:42:57.288Z",
+      "dateKey": "2026-11-03",
+      "trigger": "MANUAL_ALL",
+      "triggerLabel": "Tüm Kayıtlı Projeler — Manuel Tam Tarama (3 Kasım 2026)",
+      "outcome": "CLEAN_NO_ISSUES",
+      "verdictTitle": "Sorun Yok — Taranan Tüm Projeler Güvenli (0 Zafiyet)",
+      "dailyNote": "3 Kasım 2026 Salı saat 14:42'de 4 kayıtlı projenin tamamı (elly-admin, elly-tenant, elly-backend, elly-mobile-app — toplam 277 paket) canlı OSV.dev ve GitHub Security Advisories veritabanlarına karşı tarandı. Hiçbir projede yeni güvenlik zafiyeti (CVE/GHSA) veya kırık bağımlılık tespit edilmedi; önceki yamaların tamamı aktif ve güvenli durumda.",
+      "notes": [
+        "4 kayıtlı proje (240 bağımlılık paketi) OSV.dev ve GitHub Security Advisories veritabanlarına karşı tarandı.",
+        "elly-admin (npm): 86 paket tarandı, hiçbir güvenlik zafiyeti bulunmadı (Temiz).",
+        "elly-tenant (huseyindolcom) (npm): 108 paket tarandı, hiçbir güvenlik zafiyeti bulunmadı (Temiz).",
+        "elly-backend (Maven): 30 paket tarandı, hiçbir güvenlik zafiyeti bulunmadı (Temiz).",
+        "elly-mobile-app (Pub): 16 paket tarandı, hiçbir güvenlik zafiyeti bulunmadı (Temiz)."
+      ],
+      "scannedProjectsCount": 4,
+      "totalPackagesScanned": 240,
+      "detectedVulnCount": 0,
+      "detectedPackageCount": 0,
+      "fixedPackageCount": 0,
+      "remainingVulnCount": 0,
+      "projectSummaries": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "ecosystem": "npm",
+          "totalPackages": 86,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "ecosystem": "npm",
+          "totalPackages": 108,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "ecosystem": "Maven",
+          "totalPackages": 30,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-mobile-app",
+          "projectName": "elly-mobile-app",
+          "ecosystem": "Pub",
+          "totalPackages": 16,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        }
+      ],
+      "findings": [],
+      "fixes": []
+    },
+    {
+      "id": "scan-hist-2026-10-28-evening",
+      "timestamp": "2026-10-28T18:02:40.000Z",
+      "dateKey": "2026-10-28",
+      "trigger": "SCHEDULED_CRON",
+      "triggerLabel": "Otonom Akşam 20:30 Taraması + Lockstep Peer Senkronizasyonu",
+      "outcome": "ISSUES_FOUND_AND_FIXED",
+      "verdictTitle": "6 Bulguda 3 Paket Otomatik Yamalandı — 0 Açık Sorun Kaldı",
+      "dailyNote": "Akşam 20:30 otonom taraması sonrası elly-tenant (huseyindolcom) ve elly-admin projelerinde @vitest/ui@5.0.5 ile kardeş paketleri (vitest ve @vitest/coverage-v8) arasındaki peer dependency farkı ve bun.lock frozen-lockfile durumu tespit edilip tek atomik commit (8c91f46 ve 99ad3ca) ile düzeltildi. Tüm CI/CD hatları yeşile döndü.",
+      "notes": [
+        "4 kayıtlı proje (240 bağımlılık paketi) OSV.dev ve GitHub Security Advisories veritabanlarına karşı tarandı.",
+        "elly-admin: 2 zafiyet/uyumsuzluk tespit edildi → 1 paket güvenli sürüme yükseltildi [vitest & @vitest/coverage-v8 (+ bun.lock) (5.0.3 → 5.0.5)].",
+        "elly-tenant (huseyindolcom): 4 zafiyet/uyumsuzluk tespit edildi → 2 paket güvenli sürüme yükseltildi [vitest & @vitest/coverage-v8 (+ bun.lock) (5.0.3 → 5.0.5), @vitest/ui & basic-ftp (5.0.3 / 6.0.0 → 5.0.5 / 6.2.1)].",
+        "elly-backend (Maven): 30 paket tarandı, hiçbir güvenlik zafiyeti bulunmadı (Temiz).",
+        "elly-mobile-app (Pub): 16 paket tarandı, hiçbir güvenlik zafiyeti bulunmadı (Temiz).",
+        "GitHub Actions frozen-lockfile doğrulaması (bun install --frozen-lockfile && bun run lint && bun run type-check) 1m48s içinde hatasız tamamlandı."
+      ],
+      "scannedProjectsCount": 4,
+      "totalPackagesScanned": 240,
+      "detectedVulnCount": 6,
+      "detectedPackageCount": 3,
+      "fixedPackageCount": 3,
+      "remainingVulnCount": 0,
+      "projectSummaries": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "ecosystem": "npm",
+          "totalPackages": 86,
+          "detectedVulnCount": 2,
+          "fixedPackageCount": 1,
+          "remainingVulnCount": 0,
+          "status": "FIXED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "ecosystem": "npm",
+          "totalPackages": 108,
+          "detectedVulnCount": 4,
+          "fixedPackageCount": 2,
+          "remainingVulnCount": 0,
+          "status": "FIXED"
+        },
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "ecosystem": "Maven",
+          "totalPackages": 30,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-mobile-app",
+          "projectName": "elly-mobile-app",
+          "ecosystem": "Pub",
+          "totalPackages": 16,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        }
+      ],
+      "findings": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "vitest & @vitest/coverage-v8 (+ bun.lock)",
+          "installedVersion": "5.0.3",
+          "recommendedSafeVersion": "5.0.5",
+          "cveIds": [
+            "CVE-2026-112948",
+            "PEER-LOCKSTEP-SYNC"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "packageName": "vitest & @vitest/coverage-v8 (+ bun.lock)",
+          "installedVersion": "5.0.3",
+          "recommendedSafeVersion": "5.0.5",
+          "cveIds": [
+            "CVE-2026-112948",
+            "PEER-LOCKSTEP-SYNC"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "packageName": "@vitest/ui & basic-ftp",
+          "installedVersion": "5.0.3 / 6.0.0",
+          "recommendedSafeVersion": "5.0.5 / 6.2.1",
+          "cveIds": [
+            "CVE-2026-112948",
+            "CVE-2026-102990"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        }
+      ],
+      "fixes": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "vitest & @vitest/coverage-v8 (+ bun.lock)",
+          "fromVersion": "5.0.3",
+          "toSafeVersion": "5.0.5",
+          "cveIds": [
+            "CVE-2026-112948"
+          ],
+          "commitRef": "fix(security): sync vitest lockstep peer group (5.0.5) and bun.lock for frozen-lockfile CI (99ad3ca)",
+          "commitUrl": "https://github.com/huseyindol/elly-admin-panel/commit/99ad3ca",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "packageName": "vitest & @vitest/coverage-v8 (+ bun.lock)",
+          "fromVersion": "5.0.3",
+          "toSafeVersion": "5.0.5",
+          "cveIds": [
+            "CVE-2026-112948"
+          ],
+          "commitRef": "fix(security): sync vitest lockstep peer group (5.0.5) and bun.lock for frozen-lockfile CI (8c91f46)",
+          "commitUrl": "https://github.com/huseyindol/huseyindolcom/commit/8c91f463c4f68a2f624118c08d8b7666e2af2354",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "packageName": "@vitest/ui & basic-ftp",
+          "fromVersion": "5.0.3 / 6.0.0",
+          "toSafeVersion": "5.0.5 / 6.2.1",
+          "cveIds": [
+            "CVE-2026-112948",
+            "CVE-2026-102990"
+          ],
+          "commitRef": "fix(security): auto-remediate 2 packages (@vitest/ui (5.0.3->5.0.5), basic-ftp (6.0.0->6.2.1)) (13c8225)",
+          "commitUrl": "https://github.com/huseyindol/huseyindolcom/commit/13c8225",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        }
+      ]
+    },
+    {
+      "id": "scan-hist-2026-10-28-morning",
+      "timestamp": "2026-10-28T07:56:38.000Z",
+      "dateKey": "2026-10-28",
+      "trigger": "MANUAL_ALL",
+      "triggerLabel": "Kapsamlı Çoklu-Proje Tarama & Single-Batch Safe-Version Yama",
+      "outcome": "ISSUES_FOUND_AND_FIXED",
+      "verdictTitle": "74 Bulguda 26 Paket Otomatik Yamalandı — 0 Açık Sorun Kaldı",
+      "dailyNote": "4 projede (TypeScript/Node.js, Java/Spring Boot, Dart/Flutter) yapılan kapsamlı OSV.dev taramasında elly-admin (9 paket), elly-tenant (16 paket) ve elly-backend (2 paket) üzerinde tespit edilen tüm CVE ve GHSA zafiyetleri izole Canary dallarında test edilerek tek seferde güvenli sürümlerine yükseltildi. elly-mobile-app (Flutter) temiz çıktı.",
+      "notes": [
+        "4 kayıtlı proje (240 bağımlılık paketi) OSV.dev ve GitHub Security Advisories veritabanlarına karşı tarandı.",
+        "elly-admin: 21 zafiyet/uyumsuzluk tespit edildi → 9 paket güvenli sürüme yükseltildi [sharp (0.35.4 → 0.35.5), nanoid (3.3.16 → 3.3.18), flatted (3.4.0 → 3.4.2), dompurify (3.4.16 → 3.4.17), fast-uri (3.1.8 → 3.1.9), @vitest/ui (5.0.3 → 5.0.5), zod (4.6.5 → 4.6.6), vite (8.3.2 → 8.3.3), next (16.3.8 → 16.4.1)].",
+        "elly-tenant (huseyindolcom): 49 zafiyet/uyumsuzluk tespit edildi → 15 paket güvenli sürüme yükseltildi [dompurify (3.4.13 → 3.4.17), body-parser (1.20.6 → 1.20.9), sharp (0.35.4 → 0.35.5), qs (6.16.0 → 6.16.1), undici (7.29.0 → 7.30.1), lodash-es (4.17.24 → 4.18.0), lodash (4.17.24 → 4.18.0), path-to-regexp (8.0.0 → 8.4.0), basic-ftp (6.0.0 → 6.2.1), picomatch (4.0.2 → 4.0.4), ip-address (10.5.0 → 10.7.4), fast-uri (3.1.8 → 3.1.9), @vitest/ui (5.0.3 → 5.0.5), zod (4.6.5 → 4.6.6), next (16.3.8 → 16.4.1)].",
+        "elly-backend: 4 zafiyet/uyumsuzluk tespit edildi → 2 paket güvenli sürüme yükseltildi [org.jsoup:jsoup (1.23.1 → 1.23.2), org.postgresql:postgresql (42.7.5 → 42.7.12)].",
+        "elly-mobile-app (Pub): 16 paket tarandı, hiçbir güvenlik zafiyeti bulunmadı (Temiz).",
+        "Kritik Next.js (GHSA-2464-fhr4-w9xw, GHSA-673q-mjm6-r5xr -> 16.4.1) ve DOMPurify (CVE-2026-116804 -> 3.4.17) zafiyetleri kapatıldı.",
+        "Spring Boot elly-backend üzerinde org.postgresql:postgresql (42.7.12) ve org.jsoup:jsoup (1.23.2) yamaları doğrulandı."
+      ],
+      "scannedProjectsCount": 4,
+      "totalPackagesScanned": 240,
+      "detectedVulnCount": 74,
+      "detectedPackageCount": 26,
+      "fixedPackageCount": 26,
+      "remainingVulnCount": 0,
+      "projectSummaries": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "ecosystem": "npm",
+          "totalPackages": 86,
+          "detectedVulnCount": 21,
+          "fixedPackageCount": 9,
+          "remainingVulnCount": 0,
+          "status": "FIXED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "ecosystem": "npm",
+          "totalPackages": 108,
+          "detectedVulnCount": 49,
+          "fixedPackageCount": 15,
+          "remainingVulnCount": 0,
+          "status": "FIXED"
+        },
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "ecosystem": "Maven",
+          "totalPackages": 30,
+          "detectedVulnCount": 4,
+          "fixedPackageCount": 2,
+          "remainingVulnCount": 0,
+          "status": "FIXED"
+        },
+        {
+          "projectId": "elly-mobile-app",
+          "projectName": "elly-mobile-app",
+          "ecosystem": "Pub",
+          "totalPackages": 16,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        }
+      ],
+      "findings": [
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "packageName": "org.jsoup:jsoup",
+          "installedVersion": "1.23.1",
+          "recommendedSafeVersion": "1.23.2",
+          "cveIds": [
+            "CVE-2026-75140"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "packageName": "org.postgresql:postgresql",
+          "installedVersion": "42.7.5",
+          "recommendedSafeVersion": "42.7.12",
+          "cveIds": [
+            "CVE-2026-42198",
+            "CVE-2025-49146",
+            "CVE-2026-54291"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "dompurify",
+          "installedVersion": "3.4.13",
+          "recommendedSafeVersion": "3.4.17",
+          "cveIds": [
+            "CVE-2026-116804",
+            "CVE-2026-116803",
+            "CVE-2026-109345",
+            "CVE-2026-116802",
+            "CVE-2026-109344"
+          ],
+          "severity": "CRITICAL",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "body-parser",
+          "installedVersion": "1.20.6",
+          "recommendedSafeVersion": "1.20.9",
+          "cveIds": [
+            "CVE-2026-111181"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "sharp",
+          "installedVersion": "0.35.4",
+          "recommendedSafeVersion": "0.35.5",
+          "cveIds": [
+            "CVE-2026-114111"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "qs",
+          "installedVersion": "6.16.0",
+          "recommendedSafeVersion": "6.16.1",
+          "cveIds": [
+            "CVE-2026-110816"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "undici",
+          "installedVersion": "7.29.0",
+          "recommendedSafeVersion": "7.30.1",
+          "cveIds": [
+            "CVE-2026-109383",
+            "CVE-2026-109829",
+            "CVE-2026-87018",
+            "CVE-2026-19534",
+            "CVE-2026-84961",
+            "CVE-2026-109869",
+            "CVE-2026-84933",
+            "CVE-2026-85024",
+            "CVE-2026-84890",
+            "CVE-2026-109924",
+            "CVE-2026-87029",
+            "CVE-2026-109932",
+            "CVE-2026-109841",
+            "CVE-2026-18149",
+            "CVE-2026-85014",
+            "CVE-2026-84947",
+            "CVE-2026-85008",
+            "CVE-2026-18540"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "lodash-es",
+          "installedVersion": "4.17.24",
+          "recommendedSafeVersion": "4.18.0",
+          "cveIds": [
+            "CVE-2026-4800",
+            "CVE-2026-2950"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "lodash",
+          "installedVersion": "4.17.24",
+          "recommendedSafeVersion": "4.18.0",
+          "cveIds": [
+            "CVE-2026-4800",
+            "CVE-2026-2950"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "path-to-regexp",
+          "installedVersion": "8.0.0",
+          "recommendedSafeVersion": "8.4.0",
+          "cveIds": [
+            "CVE-2026-4926",
+            "CVE-2026-4923"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "basic-ftp",
+          "installedVersion": "6.0.0",
+          "recommendedSafeVersion": "6.2.1",
+          "cveIds": [
+            "CVE-2026-102990"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "picomatch",
+          "installedVersion": "4.0.2",
+          "recommendedSafeVersion": "4.0.4",
+          "cveIds": [
+            "CVE-2026-33671",
+            "CVE-2026-33672"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "ip-address",
+          "installedVersion": "10.5.0",
+          "recommendedSafeVersion": "10.7.4",
+          "cveIds": [
+            "CVE-2026-101910",
+            "CVE-2026-101911",
+            "CVE-2026-101912",
+            "CVE-2026-101913",
+            "CVE-2026-111997"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "fast-uri",
+          "installedVersion": "3.1.8",
+          "recommendedSafeVersion": "3.1.9",
+          "cveIds": [
+            "CVE-2026-110306",
+            "CVE-2026-110180",
+            "CVE-2026-110725",
+            "CVE-2026-110095"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "@vitest/ui",
+          "installedVersion": "5.0.3",
+          "recommendedSafeVersion": "5.0.5",
+          "cveIds": [
+            "CVE-2026-112948"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "zod",
+          "installedVersion": "4.6.5",
+          "recommendedSafeVersion": "4.6.6",
+          "cveIds": [
+            "CVE-2023-54404"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "next",
+          "installedVersion": "16.3.8",
+          "recommendedSafeVersion": "16.4.1",
+          "cveIds": [
+            "GHSA-2464-fhr4-w9xw",
+            "GHSA-673q-mjm6-r5xr",
+            "CVE-2026-94482"
+          ],
+          "severity": "CRITICAL",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "sharp",
+          "installedVersion": "0.35.4",
+          "recommendedSafeVersion": "0.35.5",
+          "cveIds": [
+            "CVE-2026-114111"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "nanoid",
+          "installedVersion": "3.3.16",
+          "recommendedSafeVersion": "3.3.18",
+          "cveIds": [
+            "CVE-2026-67213"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "flatted",
+          "installedVersion": "3.4.0",
+          "recommendedSafeVersion": "3.4.2",
+          "cveIds": [
+            "CVE-2026-33228"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "dompurify",
+          "installedVersion": "3.4.16",
+          "recommendedSafeVersion": "3.4.17",
+          "cveIds": [
+            "CVE-2026-116804",
+            "CVE-2026-116803",
+            "CVE-2026-116802"
+          ],
+          "severity": "CRITICAL",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "fast-uri",
+          "installedVersion": "3.1.8",
+          "recommendedSafeVersion": "3.1.9",
+          "cveIds": [
+            "CVE-2026-110306",
+            "CVE-2026-110180",
+            "CVE-2026-110725",
+            "CVE-2026-110095"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "@vitest/ui",
+          "installedVersion": "5.0.3",
+          "recommendedSafeVersion": "5.0.5",
+          "cveIds": [
+            "CVE-2026-112948"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "zod",
+          "installedVersion": "4.6.5",
+          "recommendedSafeVersion": "4.6.6",
+          "cveIds": [
+            "CVE-2023-54404"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "vite",
+          "installedVersion": "8.3.2",
+          "recommendedSafeVersion": "8.3.3",
+          "cveIds": [
+            "CVE-2026-112942",
+            "CVE-2026-112943",
+            "CVE-2026-112944",
+            "CVE-2026-112946",
+            "CVE-2026-112947",
+            "CVE-2026-112945"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "next",
+          "installedVersion": "16.3.8",
+          "recommendedSafeVersion": "16.4.1",
+          "cveIds": [
+            "GHSA-2464-fhr4-w9xw",
+            "GHSA-673q-mjm6-r5xr",
+            "CVE-2026-94482"
+          ],
+          "severity": "CRITICAL",
+          "fixedInThisRun": true
+        }
+      ],
+      "fixes": [
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "packageName": "org.jsoup:jsoup",
+          "fromVersion": "1.23.1",
+          "toSafeVersion": "1.23.2",
+          "cveIds": [
+            "CVE-2026-75140"
+          ],
+          "commitRef": "fix(security): auto-merge verified org.jsoup:jsoup from 1.23.1 to 1.23.2",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "packageName": "org.postgresql:postgresql",
+          "fromVersion": "42.7.5",
+          "toSafeVersion": "42.7.12",
+          "cveIds": [
+            "CVE-2026-42198",
+            "CVE-2025-49146",
+            "CVE-2026-54291"
+          ],
+          "commitRef": "fix(security): auto-merge verified org.postgresql:postgresql from 42.7.5 to 42.7.12",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "dompurify",
+          "fromVersion": "3.4.13",
+          "toSafeVersion": "3.4.17",
+          "cveIds": [
+            "CVE-2026-116804",
+            "CVE-2026-116803",
+            "CVE-2026-109345",
+            "CVE-2026-116802",
+            "CVE-2026-109344"
+          ],
+          "commitRef": "fix(security): auto-merge verified dompurify from 3.4.13 to 3.4.17",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "body-parser",
+          "fromVersion": "1.20.6",
+          "toSafeVersion": "1.20.9",
+          "cveIds": [
+            "CVE-2026-111181"
+          ],
+          "commitRef": "fix(security): auto-merge verified body-parser from 1.20.6 to 1.20.9",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "sharp",
+          "fromVersion": "0.35.4",
+          "toSafeVersion": "0.35.5",
+          "cveIds": [
+            "CVE-2026-114111"
+          ],
+          "commitRef": "fix(security): auto-merge verified sharp from 0.35.4 to 0.35.5",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "qs",
+          "fromVersion": "6.16.0",
+          "toSafeVersion": "6.16.1",
+          "cveIds": [
+            "CVE-2026-110816"
+          ],
+          "commitRef": "fix(security): auto-merge verified qs from 6.16.0 to 6.16.1",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "undici",
+          "fromVersion": "7.29.0",
+          "toSafeVersion": "7.30.1",
+          "cveIds": [
+            "CVE-2026-109383",
+            "CVE-2026-109829",
+            "CVE-2026-87018",
+            "CVE-2026-19534",
+            "CVE-2026-84961",
+            "CVE-2026-109869",
+            "CVE-2026-84933",
+            "CVE-2026-85024",
+            "CVE-2026-84890",
+            "CVE-2026-109924",
+            "CVE-2026-87029",
+            "CVE-2026-109932",
+            "CVE-2026-109841",
+            "CVE-2026-18149",
+            "CVE-2026-85014",
+            "CVE-2026-84947",
+            "CVE-2026-85008",
+            "CVE-2026-18540"
+          ],
+          "commitRef": "fix(security): auto-merge verified undici from 7.29.0 to 7.30.1",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "lodash-es",
+          "fromVersion": "4.17.24",
+          "toSafeVersion": "4.18.0",
+          "cveIds": [
+            "CVE-2026-4800",
+            "CVE-2026-2950"
+          ],
+          "commitRef": "fix(security): auto-merge verified lodash-es from 4.17.24 to 4.18.0",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "lodash",
+          "fromVersion": "4.17.24",
+          "toSafeVersion": "4.18.0",
+          "cveIds": [
+            "CVE-2026-4800",
+            "CVE-2026-2950"
+          ],
+          "commitRef": "fix(security): auto-merge verified lodash from 4.17.24 to 4.18.0",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "path-to-regexp",
+          "fromVersion": "8.0.0",
+          "toSafeVersion": "8.4.0",
+          "cveIds": [
+            "CVE-2026-4926",
+            "CVE-2026-4923"
+          ],
+          "commitRef": "fix(security): auto-merge verified path-to-regexp from 8.0.0 to 8.4.0",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "basic-ftp",
+          "fromVersion": "6.0.0",
+          "toSafeVersion": "6.2.1",
+          "cveIds": [
+            "CVE-2026-102990"
+          ],
+          "commitRef": "fix(security): auto-merge verified basic-ftp from 6.0.0 to 6.2.1",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "picomatch",
+          "fromVersion": "4.0.2",
+          "toSafeVersion": "4.0.4",
+          "cveIds": [
+            "CVE-2026-33671",
+            "CVE-2026-33672"
+          ],
+          "commitRef": "fix(security): auto-merge verified picomatch from 4.0.2 to 4.0.4",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "ip-address",
+          "fromVersion": "10.5.0",
+          "toSafeVersion": "10.7.4",
+          "cveIds": [
+            "CVE-2026-101910",
+            "CVE-2026-101911",
+            "CVE-2026-101912",
+            "CVE-2026-101913",
+            "CVE-2026-111997"
+          ],
+          "commitRef": "fix(security): auto-merge verified ip-address from 10.5.0 to 10.7.4",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "fast-uri",
+          "fromVersion": "3.1.8",
+          "toSafeVersion": "3.1.9",
+          "cveIds": [
+            "CVE-2026-110306",
+            "CVE-2026-110180",
+            "CVE-2026-110725",
+            "CVE-2026-110095"
+          ],
+          "commitRef": "fix(security): auto-merge verified fast-uri from 3.1.8 to 3.1.9",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "@vitest/ui",
+          "fromVersion": "5.0.3",
+          "toSafeVersion": "5.0.5",
+          "cveIds": [
+            "CVE-2026-112948"
+          ],
+          "commitRef": "fix(security): auto-merge verified @vitest/ui from 5.0.3 to 5.0.5",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "zod",
+          "fromVersion": "4.6.5",
+          "toSafeVersion": "4.6.6",
+          "cveIds": [
+            "CVE-2023-54404"
+          ],
+          "commitRef": "fix(security): auto-merge verified zod from 4.6.5 to 4.6.6",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant",
+          "packageName": "next",
+          "fromVersion": "16.3.8",
+          "toSafeVersion": "16.4.1",
+          "cveIds": [
+            "GHSA-2464-fhr4-w9xw",
+            "GHSA-673q-mjm6-r5xr",
+            "CVE-2026-94482"
+          ],
+          "commitRef": "fix(security): auto-merge verified next from 16.3.8 to 16.4.1",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "sharp",
+          "fromVersion": "0.35.4",
+          "toSafeVersion": "0.35.5",
+          "cveIds": [
+            "CVE-2026-114111"
+          ],
+          "commitRef": "fix(security): auto-merge verified sharp from 0.35.4 to 0.35.5",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "nanoid",
+          "fromVersion": "3.3.16",
+          "toSafeVersion": "3.3.18",
+          "cveIds": [
+            "CVE-2026-67213"
+          ],
+          "commitRef": "fix(security): auto-merge verified nanoid from 3.3.16 to 3.3.18",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "flatted",
+          "fromVersion": "3.4.0",
+          "toSafeVersion": "3.4.2",
+          "cveIds": [
+            "CVE-2026-33228"
+          ],
+          "commitRef": "fix(security): auto-merge verified flatted from 3.4.0 to 3.4.2",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "dompurify",
+          "fromVersion": "3.4.16",
+          "toSafeVersion": "3.4.17",
+          "cveIds": [
+            "CVE-2026-116804",
+            "CVE-2026-116803",
+            "CVE-2026-116802"
+          ],
+          "commitRef": "fix(security): auto-merge verified dompurify from 3.4.16 to 3.4.17",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "fast-uri",
+          "fromVersion": "3.1.8",
+          "toSafeVersion": "3.1.9",
+          "cveIds": [
+            "CVE-2026-110306",
+            "CVE-2026-110180",
+            "CVE-2026-110725",
+            "CVE-2026-110095"
+          ],
+          "commitRef": "fix(security): auto-merge verified fast-uri from 3.1.8 to 3.1.9",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "@vitest/ui",
+          "fromVersion": "5.0.3",
+          "toSafeVersion": "5.0.5",
+          "cveIds": [
+            "CVE-2026-112948"
+          ],
+          "commitRef": "fix(security): auto-merge verified @vitest/ui from 5.0.3 to 5.0.5",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "zod",
+          "fromVersion": "4.6.5",
+          "toSafeVersion": "4.6.6",
+          "cveIds": [
+            "CVE-2023-54404"
+          ],
+          "commitRef": "fix(security): auto-merge verified zod from 4.6.5 to 4.6.6",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "vite",
+          "fromVersion": "8.3.2",
+          "toSafeVersion": "8.3.3",
+          "cveIds": [
+            "CVE-2026-112942",
+            "CVE-2026-112943",
+            "CVE-2026-112944",
+            "CVE-2026-112946",
+            "CVE-2026-112947",
+            "CVE-2026-112945"
+          ],
+          "commitRef": "fix(security): auto-merge verified vite from 8.3.2 to 8.3.3",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "next",
+          "fromVersion": "16.3.8",
+          "toSafeVersion": "16.4.1",
+          "cveIds": [
+            "GHSA-2464-fhr4-w9xw",
+            "GHSA-673q-mjm6-r5xr",
+            "CVE-2026-94482"
+          ],
+          "commitRef": "fix(security): auto-merge verified next from 16.3.8 to 16.4.1",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        }
+      ]
+    },
+    {
+      "id": "scan-hist-2026-10-26-init",
+      "timestamp": "2026-10-26T18:45:00.000Z",
+      "dateKey": "2026-10-26",
+      "trigger": "AUTO_REMEDIATE",
+      "triggerLabel": "İlk Kurulum Taraması & Override Güvenlik Yaması",
+      "outcome": "ISSUES_FOUND_AND_FIXED",
+      "verdictTitle": "2 Bulguda 2 Paket Otomatik Yamalandı — 0 Açık Sorun Kaldı",
+      "dailyNote": "VulnGuardian ilk kurulum taramasında elly-backend (commons-lang3 CVE-2025-48924) ve elly-admin (dompurify GHSA-mmhx-hmjr-r674) zafiyetleri tespit edilerek güvenli sürümlerine sabitlendi.",
+      "notes": [
+        "4 kayıtlı proje (240 bağımlılık paketi) OSV.dev ve GitHub Security Advisories veritabanlarına karşı tarandı.",
+        "elly-admin: 1 zafiyet/uyumsuzluk tespit edildi → 1 paket güvenli sürüme yükseltildi [dompurify (3.1.2 → 3.4.16)].",
+        "elly-tenant (huseyindolcom) (npm): 108 paket tarandı, hiçbir güvenlik zafiyeti bulunmadı (Temiz).",
+        "elly-backend: 1 zafiyet/uyumsuzluk tespit edildi → 1 paket güvenli sürüme yükseltildi [org.apache.commons:commons-lang3 (3.14.0 → 3.20.0)].",
+        "elly-mobile-app (Pub): 16 paket tarandı, hiçbir güvenlik zafiyeti bulunmadı (Temiz)."
+      ],
+      "scannedProjectsCount": 4,
+      "totalPackagesScanned": 240,
+      "detectedVulnCount": 2,
+      "detectedPackageCount": 2,
+      "fixedPackageCount": 2,
+      "remainingVulnCount": 0,
+      "projectSummaries": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "ecosystem": "npm",
+          "totalPackages": 86,
+          "detectedVulnCount": 1,
+          "fixedPackageCount": 1,
+          "remainingVulnCount": 0,
+          "status": "FIXED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "ecosystem": "npm",
+          "totalPackages": 108,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "ecosystem": "Maven",
+          "totalPackages": 30,
+          "detectedVulnCount": 1,
+          "fixedPackageCount": 1,
+          "remainingVulnCount": 0,
+          "status": "FIXED"
+        },
+        {
+          "projectId": "elly-mobile-app",
+          "projectName": "elly-mobile-app",
+          "ecosystem": "Pub",
+          "totalPackages": 16,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        }
+      ],
+      "findings": [
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "packageName": "org.apache.commons:commons-lang3",
+          "installedVersion": "3.14.0",
+          "recommendedSafeVersion": "3.20.0",
+          "cveIds": [
+            "CVE-2025-48924"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "dompurify",
+          "installedVersion": "3.1.2",
+          "recommendedSafeVersion": "3.4.16",
+          "cveIds": [
+            "GHSA-mmhx-hmjr-r674"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": true
+        }
+      ],
+      "fixes": [
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "packageName": "org.apache.commons:commons-lang3",
+          "fromVersion": "3.14.0",
+          "toSafeVersion": "3.20.0",
+          "cveIds": [
+            "CVE-2025-48924"
+          ],
+          "commitRef": "fix(security): pin commons-lang3 to 3.20.0 for CVE-2025-48924",
+          "deployStatus": "DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "dompurify",
+          "fromVersion": "3.1.2",
+          "toSafeVersion": "3.4.16",
+          "cveIds": [
+            "GHSA-mmhx-hmjr-r674"
+          ],
+          "commitRef": "fix(security): bump dompurify override to ^3.4.16",
+          "deployStatus": "DEPLOYED"
+        }
       ]
     }
   ]

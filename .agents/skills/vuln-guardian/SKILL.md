@@ -18,7 +18,7 @@ Bu skill, kayıtlı projelerin bağımlılık ağaçlarını (`package.json`, `p
 
 - **CLI & Otomasyon Motoru:** [scan-cli.mjs](./scripts/scan-cli.mjs)
 - **Ekosistem Yama & Rollback Rehberi:** [remediation-playbook.md](./references/remediation-playbook.md)
-- **Durum & Telemetri Kaynağı:** `src/data/guardian-state.json` (Web Dashboard ile gerçek zamanlı senkronize)
+- **Durum & Telemetri Kaynağı:** `src/data/guardian-state.json` (Web Dashboard `/` ve Günlük Tarama Geçmişi `/history` ile gerçek zamanlı senkronize; her taramanın tarih/saatini, sorun çıkıp çıkmadığını, bulunan CVE'leri, düzeltilen paketleri ve günlük güvenlik notlarını `scanHistory` altında saklar)
 
 ---
 

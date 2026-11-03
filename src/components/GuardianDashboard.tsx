@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useMemo, useEffect } from "react";
+import Link from "next/link";
 import {
   ShieldAlert,
   ShieldCheck,
@@ -30,6 +31,7 @@ import {
   Unlock,
   KeyRound,
   LogOut,
+  FileText,
 } from "lucide-react";
 import type {
   Ecosystem,
@@ -980,10 +982,19 @@ export default function GuardianDashboard({ initialState }: Props) {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#121418] border border-[#232730] text-xs font-mono text-zinc-300">
-              <Clock className="w-3.5 h-3.5 text-[#d83a26]" />
-              <span>Son Tarama: {formatDateTime(state.lastGlobalScanAt)}</span>
-            </div>
+            <Link
+              href="/history"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/40 text-xs font-semibold text-sky-300 transition"
+              title="En son hangi gün tarandı, taramada neler çıktı ve neler düzeldi — Günlük Tarama Geçmişi"
+            >
+              <CalendarClock className="w-3.5 h-3.5 text-sky-400" aria-hidden="true" />
+              <span>Tarama Geçmişi & Günlük Notlar</span>
+              {Array.isArray(state.scanHistory) && state.scanHistory.length > 0 && (
+                <span className="px-1.5 py-0.2 rounded bg-sky-950/90 text-[10px] font-mono text-sky-200 border border-sky-500/30">
+                  {state.scanHistory.length}
+                </span>
+              )}
+            </Link>
 
             {authState.authenticated ? (
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/15 text-emerald-300 text-xs font-mono">
@@ -1111,6 +1122,178 @@ export default function GuardianDashboard({ initialState }: Props) {
 
       {/* Main Content Container */}
       <main className="max-w-[1580px] w-full mx-auto px-4 sm:px-6 py-6 flex-1 flex flex-col gap-6">
+        {/* SON TARAMA DURUMU & GÜNLÜK ÖZET KARTI (En Son Hangi Gün Tarandı & Sorun Var mıydı?) */}
+        {(() => {
+          const latestRun = state.scanHistory?.[0];
+          const totalActiveVulns = state.projects.reduce(
+            (acc, p) => acc + p.vulnerabilities.length,
+            0
+          );
+          const totalPackagesAll = state.projects.reduce(
+            (acc, p) => acc + p.packages.length,
+            0
+          );
+          const lastScanIso =
+            latestRun?.timestamp || state.lastGlobalScanAt || null;
+          const outcome =
+            latestRun?.outcome ||
+            (totalActiveVulns > 0 ? "ISSUES_REMAINING" : "CLEAN_NO_ISSUES");
+
+          let fullTurkishDay = "Henüz taranmadı";
+          let timeStr = "";
+          if (lastScanIso) {
+            try {
+              const d = new Date(lastScanIso);
+              fullTurkishDay = d.toLocaleDateString("tr-TR", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                timeZone: "Europe/Istanbul",
+              });
+              timeStr = d.toLocaleTimeString("tr-TR", {
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "Europe/Istanbul",
+              });
+            } catch {
+              fullTurkishDay = formatDateTime(lastScanIso);
+            }
+          }
+
+          return (
+            <section
+              aria-label="En Son Tarama Günü ve Sonuç Özeti"
+              className={`p-4 sm:p-5 rounded-2xl border shadow-md ${
+                outcome === "CLEAN_NO_ISSUES"
+                  ? "border-emerald-500/40 bg-gradient-to-r from-emerald-950/35 via-[#121418] to-[#121418]"
+                  : outcome === "ISSUES_FOUND_AND_FIXED"
+                    ? "border-sky-500/40 bg-gradient-to-r from-sky-950/35 via-[#121418] to-[#121418]"
+                    : "border-[#d83a26]/50 bg-gradient-to-r from-red-950/40 via-[#121418] to-[#121418]"
+              }`}
+            >
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded bg-white/10 text-white">
+                      SON TARAMA RAPORU
+                    </span>
+                    <span className="text-xs font-mono text-zinc-400">
+                      {latestRun?.triggerLabel || "Otonom Güvenlik Tarayıcısı"}
+                    </span>
+                  </div>
+                  <div className="text-base sm:text-xl font-extrabold text-white flex flex-wrap items-center gap-2">
+                    <span>
+                      En Son Tarama Günü:{" "}
+                      <span className="text-emerald-400">{fullTurkishDay}</span>
+                      {timeStr ? ` · Saat ${timeStr}` : ""}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Net Sorun Var mıydı / Yok muydu Rozeti */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <div
+                    className={`px-3.5 py-2 rounded-xl border flex items-center gap-2.5 font-mono text-xs font-bold ${
+                      outcome === "CLEAN_NO_ISSUES"
+                        ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-300"
+                        : outcome === "ISSUES_FOUND_AND_FIXED"
+                          ? "border-sky-500/50 bg-sky-500/20 text-sky-200"
+                          : "border-[#d83a26]/60 bg-[#d83a26]/20 text-[#ff6b57]"
+                    }`}
+                  >
+                    {outcome === "CLEAN_NO_ISSUES" ? (
+                      <>
+                        <ShieldCheck
+                          className="w-5 h-5 text-emerald-400 shrink-0"
+                          aria-hidden="true"
+                        />
+                        <div>
+                          <div className="text-[10px] uppercase text-emerald-300/80">
+                            SORUN VAR MIYDI?
+                          </div>
+                          <div className="text-xs sm:text-sm font-extrabold text-white">
+                            HAYIR — SORUN YOK (0 Zafiyet Çıktı)
+                          </div>
+                        </div>
+                      </>
+                    ) : outcome === "ISSUES_FOUND_AND_FIXED" ? (
+                      <>
+                        <CheckCircle2
+                          className="w-5 h-5 text-sky-400 shrink-0"
+                          aria-hidden="true"
+                        />
+                        <div>
+                          <div className="text-[10px] uppercase text-sky-300/80">
+                            SORUN VAR MIYDI?
+                          </div>
+                          <div className="text-xs sm:text-sm font-extrabold text-white">
+                            EVET ({latestRun?.detectedVulnCount || 0} Bulgu) →{" "}
+                            {latestRun?.fixedPackageCount || 0} PAKET DÜZELTİLDİ (Kalan: 0)
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <AlertTriangle
+                          className="w-5 h-5 text-[#ff6b57] shrink-0"
+                          aria-hidden="true"
+                        />
+                        <div>
+                          <div className="text-[10px] uppercase text-red-300/80">
+                            SORUN VAR MIYDI?
+                          </div>
+                          <div className="text-xs sm:text-sm font-extrabold text-white">
+                            EVET — {totalActiveVulns} AÇIK ZAFİYET MEVCUT
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  <Link
+                    href="/history"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#d83a26] hover:bg-[#c0301d] text-white text-xs font-bold transition shadow-sm"
+                  >
+                    <FileText className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Günlük Tarama Geçmişi (/history)</span>
+                    <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="mt-3.5 pt-3 border-t border-[#232730] flex flex-col lg:flex-row lg:items-center justify-between gap-3 text-xs">
+                <div className="text-zinc-200 flex items-start gap-2">
+                  <FileText
+                    className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"
+                    aria-hidden="true"
+                  />
+                  <span>
+                    <strong className="text-white">Son Günlük Not:</strong>{" "}
+                    {latestRun?.dailyNote ||
+                      `${state.projects.length} proje (${totalPackagesAll} paket) tarandı. Açık güvenlik zafiyeti: ${totalActiveVulns}.`}
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 shrink-0 font-mono text-[11px]">
+                  <span className="px-2.5 py-1 rounded bg-[#0b0c0e] border border-[#2c313d] text-zinc-300">
+                    Kapsam: {state.projects.length} Proje · {totalPackagesAll} Paket
+                  </span>
+                  <span className="px-2.5 py-1 rounded bg-[#0b0c0e] border border-[#2c313d] text-amber-300">
+                    Çıkan: {latestRun?.detectedVulnCount ?? 0} Bulgu
+                  </span>
+                  <span className="px-2.5 py-1 rounded bg-[#0b0c0e] border border-[#2c313d] text-sky-300">
+                    Düzeltilen: {latestRun?.fixedPackageCount ?? 0} Paket
+                  </span>
+                  <span className="px-2.5 py-1 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-bold">
+                    Şu Anki Açık Zafiyet: {totalActiveVulns}
+                  </span>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
+
         {/* LANGUAGE / STACK & PROJECT SELECTOR CARDS (Üst Birleşik Alan) */}
         <section aria-label="Proje Dillerine Göre Ayrım">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3">

@@ -15,6 +15,7 @@ import {
   verifyAndMergeBatchCanaryBranchOnGithub,
 } from "@/lib/github-sync";
 import { verifyRequestAdminAuth } from "@/lib/auth";
+import { recordScanHistoryRun } from "@/lib/scan-history";
 
 export async function GET(request: Request) {
   const isVercelCron = request.headers.get("x-vercel-cron") === "1";
@@ -37,6 +38,7 @@ export async function GET(request: Request) {
   }
 
   const state = getGuardianState();
+  const beforeRemIds = new Set(state.remediationHistory.map((r) => r.id));
   const scannedIds: string[] = [];
   const autoPatchedPackages: string[] = [];
   const preRemediationProjects = [];
@@ -250,7 +252,11 @@ export async function GET(request: Request) {
       const hist = state.remediationHistory.find(
         (r) =>
           r.projectId === p.id &&
-          r.packageName === up.name &&
+          (r.packageName === up.name ||
+            r.packageName
+              .split(/[,\s+&()]+/)
+              .map((s) => s.trim())
+              .includes(up.name)) &&
           r.toSafeVersion === up.cleanVersion
       );
       if (hist && up.status === "SAFE") {
@@ -276,6 +282,17 @@ export async function GET(request: Request) {
 
   if (scannedIds.length > 0) {
     state.lastGlobalScanAt = new Date().toISOString();
+    const newRemediations = state.remediationHistory.filter(
+      (r) => !beforeRemIds.has(r.id)
+    );
+    recordScanHistoryRun({
+      state,
+      trigger: "SCHEDULED_CRON",
+      triggerLabel: "Her Akşam 20:30 Otonom Günlük Tarama (Cron)",
+      preScanProjects: preRemediationProjects,
+      postScanProjects: state.projects,
+      newRemediations,
+    });
     const freshNews = await buildSecurityNewsFeed(preRemediationProjects);
     if (freshNews.length > 0) {
       state.newsFeed = freshNews;

@@ -1058,6 +1058,88 @@ async function runCli() {
       state.projects[i] = updated;
     }
     state.lastGlobalScanAt = new Date().toISOString();
+    if (!Array.isArray(state.scanHistory)) {
+      state.scanHistory = [];
+    }
+    const nowIso = state.lastGlobalScanAt;
+    const tzOffsetMs = 3 * 60 * 60 * 1000;
+    const dateKey = new Date(new Date(nowIso).getTime() + tzOffsetMs)
+      .toISOString()
+      .slice(0, 10);
+    const totalPackagesScanned = state.projects.reduce(
+      (acc, p) => acc + (p.packages?.length || 0),
+      0
+    );
+    const remainingVulnCount = state.projects.reduce(
+      (acc, p) => acc + (p.vulnerabilities?.length || 0),
+      0
+    );
+    const detectedVulnCount = preRemediationProjects.reduce(
+      (acc, p) => acc + (p.vulnerabilities?.length || 0),
+      0
+    );
+    const projectSummaries = state.projects.map((postProj) => {
+      const preProj =
+        preRemediationProjects.find((pr) => pr.id === postProj.id) || postProj;
+      const det = preProj.vulnerabilities?.length || 0;
+      const rem = postProj.vulnerabilities?.length || 0;
+      const fixedCnt = det > rem ? det - rem : 0;
+      return {
+        projectId: postProj.id,
+        projectName: postProj.name,
+        ecosystem: postProj.ecosystem,
+        totalPackages: postProj.packages?.length || 0,
+        detectedVulnCount: det,
+        fixedPackageCount: fixedCnt,
+        remainingVulnCount: rem,
+        status: rem > 0 ? "VULNERABLE" : det > 0 ? "FIXED" : "CLEAN",
+      };
+    });
+    const fixedPackageCount = projectSummaries.reduce(
+      (acc, p) => acc + p.fixedPackageCount,
+      0
+    );
+    const outcome =
+      remainingVulnCount > 0
+        ? "ISSUES_REMAINING"
+        : detectedVulnCount > 0
+          ? "ISSUES_FOUND_AND_FIXED"
+          : "CLEAN_NO_ISSUES";
+    state.scanHistory.unshift({
+      id: `cli-scan-${Date.now()}`,
+      timestamp: nowIso,
+      dateKey,
+      trigger: "CLI_SCAN",
+      triggerLabel: targetId
+        ? `CLI Proje Taraması (${targetId})`
+        : "CLI Tam Kapsamlı Zafiyet Taraması",
+      outcome,
+      verdictTitle:
+        outcome === "CLEAN_NO_ISSUES"
+          ? "Sorun Yok — Taranan Tüm Projeler Güvenli (0 Zafiyet)"
+          : outcome === "ISSUES_FOUND_AND_FIXED"
+            ? `${detectedVulnCount} Bulgu Tespit Edildi ve Otomatik Yamalandı (0 Açık Sorun)`
+            : `${remainingVulnCount} Açık Zafiyet Tespit Edildi`,
+      dailyNote:
+        outcome === "CLEAN_NO_ISSUES"
+          ? `CLI üzerinden ${state.projects.length} proje (${totalPackagesScanned} paket) tarandı; hiçbir güvenlik zafiyeti tespit edilmedi.`
+          : `CLI taramasında ${detectedVulnCount} bulgu işlendi, kalan açık zafiyet: ${remainingVulnCount}.`,
+      notes: projectSummaries.map((ps) =>
+        ps.status === "CLEAN"
+          ? `✅ ${ps.projectName} (${ps.ecosystem}): ${ps.totalPackages} paket tarandı — sorun yok.`
+          : `🛠️ ${ps.projectName} (${ps.ecosystem}): ${ps.detectedVulnCount} bulgu, kalan: ${ps.remainingVulnCount}.`
+      ),
+      scannedProjectsCount: state.projects.length,
+      totalPackagesScanned,
+      detectedVulnCount,
+      detectedPackageCount: detectedVulnCount,
+      fixedPackageCount,
+      remainingVulnCount,
+      projectSummaries,
+      findings: [],
+      fixes: [],
+    });
+    state.scanHistory = state.scanHistory.slice(0, 90);
     const freshNews = await buildSecurityNewsFeed(preRemediationProjects);
     if (freshNews.length > 0) {
       state.newsFeed = freshNews;
