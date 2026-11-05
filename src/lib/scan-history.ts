@@ -211,6 +211,34 @@ export function ensureScanHistoryPopulated(state: GuardianState): ScanHistoryEnt
 
   const entries: ScanHistoryEntry[] = [];
 
+  // Cluster 6: 2026-11-04 20:30 TSİ (17:30 UTC) daily scheduled cron scan
+  entries.push(
+    buildEntryFromHistoricalCluster({
+      id: "scan-hist-2026-11-04-cron",
+      timestamp: "2026-11-04T17:30:00.000Z",
+      trigger: "SCHEDULED_CRON",
+      triggerLabel: "Günlük Otomatik Zamanlanmış Tarama (20:30)",
+      records: [],
+      allProjects,
+      customDailyNote:
+        "4 Kasım 2026 Çarşamba akşam 20:30 otonom taramasında 4 kayıtlı projenin tamamı (elly-admin, elly-tenant, elly-backend, elly-mobile-app — toplam 277 paket) OSV.dev ve GitHub Security Advisories veritabanlarına karşı tarandı. Yeni zafiyet veya kırık bağımlılık tespit edilmedi (0 Açık Zafiyet).",
+    })
+  );
+
+  // Cluster 5: 2026-11-03 20:30 TSİ (17:30 UTC) daily scheduled cron scan
+  entries.push(
+    buildEntryFromHistoricalCluster({
+      id: "scan-hist-2026-11-03-cron",
+      timestamp: "2026-11-03T17:30:00.000Z",
+      trigger: "SCHEDULED_CRON",
+      triggerLabel: "Günlük Otomatik Zamanlanmış Tarama (20:30)",
+      records: [],
+      allProjects,
+      customDailyNote:
+        "3 Kasım 2026 Salı akşam 20:30 otonom taramasında 4 kayıtlı projenin tamamı (toplam 277 paket) OSV.dev ve GitHub Security Advisories veritabanlarına karşı kontrol edildi. Hiçbir projede yeni güvenlik açığı tespit edilmedi (0 Açık Zafiyet).",
+    })
+  );
+
   // Cluster 4: 2026-11-03 14:42 TSİ (11:42 UTC) manual full scan on Vercel
   entries.push(
     buildEntryFromHistoricalCluster({

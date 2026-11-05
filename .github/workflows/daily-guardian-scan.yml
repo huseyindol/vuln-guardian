@@ -1,0 +1,28 @@
+name: VulnGuardian Daily 20:30 Autonomous Scan
+
+on:
+  schedule:
+    # 17:30 UTC = 20:30 TSİ (Europe/Istanbul UTC+3)
+    - cron: "30 17 * * *"
+  workflow_dispatch:
+
+jobs:
+  daily-guardian-scan:
+    name: Trigger Daily 20:30 Scan & Persist History
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger VulnGuardian Scheduled Scan Endpoint
+        run: |
+          echo "Triggering daily 20:30 TSİ autonomous scan on skillstudio-zeta.vercel.app..."
+          RESPONSE=$(curl -sS -w "\nHTTP_STATUS:%{http_code}" \
+            -H "User-Agent: github-actions-cron/1.0" \
+            -H "x-vercel-cron: 1" \
+            "https://skillstudio-zeta.vercel.app/api/cron/scan")
+          BODY=$(echo "$RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
+          STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
+          echo "HTTP Status: $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Error response: $BODY"
+            exit 1
+          fi
+          echo "Daily 20:30 scan completed and persisted to src/data/guardian-state.json!"

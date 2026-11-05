@@ -1,9 +1,9 @@
 import ScanHistoryView from "@/components/ScanHistoryView";
-import { getGuardianState } from "@/lib/store";
+import { getGuardianStateAsync } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
-export default function ScanHistoryPage() {
-  const initialState = getGuardianState();
+export default async function ScanHistoryPage() {
+  const initialState = await getGuardianStateAsync();
   return <ScanHistoryView initialState={initialState} />;
 }

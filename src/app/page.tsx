@@ -1,9 +1,9 @@
 import GuardianDashboard from "@/components/GuardianDashboard";
-import { getGuardianState } from "@/lib/store";
+import { getGuardianStateAsync } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
-export default function HomePage() {
-  const initialState = getGuardianState();
+export default async function HomePage() {
+  const initialState = await getGuardianStateAsync();
   return <GuardianDashboard initialState={initialState} />;
 }

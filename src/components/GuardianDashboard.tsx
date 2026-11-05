@@ -921,22 +921,19 @@ export default function GuardianDashboard({ initialState }: Props) {
 
   // Auto-watch for 20:30 scheduled scan and periodic state sync
   useEffect(() => {
-    const timer = setInterval(async () => {
+    let cancelled = false;
+    async function checkAndSyncScheduledScan() {
       try {
         const nextIso = state.projects[0]?.nextScanAt;
-        if (
-          authState.authenticated &&
-          nextIso &&
-          Date.now() >= new Date(nextIso).getTime()
-        ) {
+        if (nextIso && Date.now() >= new Date(nextIso).getTime()) {
           const cronResp = await fetch("/api/cron/scan", { cache: "no-store" });
           if (cronResp.ok) {
             const cronData = await cronResp.json();
-            if (cronData.state) {
+            if (!cancelled && cronData.state) {
               setState(cronData.state);
               setBannerMessage({
                 type: "success",
-                text: "⏰ Saat 20:30 Otomatik Günlük Tarama çalıştı — GitHub ve OSV.dev üzerinden tüm Elly zafiyetleri güncellendi!",
+                text: "⏰ Saat 20:30 Otomatik Günlük Tarama çalıştı — GitHub ve OSV.dev üzerinden tüm projeler güncellendi ve Tarama Geçmişine kaydedildi!",
               });
               return;
             }
@@ -945,16 +942,22 @@ export default function GuardianDashboard({ initialState }: Props) {
         const r = await fetch("/api/guardian", { cache: "no-store" });
         if (r.ok) {
           const fresh = (await r.json()) as GuardianState;
-          if (fresh.lastGlobalScanAt !== state.lastGlobalScanAt) {
+          if (!cancelled && fresh.lastGlobalScanAt !== state.lastGlobalScanAt) {
             setState(fresh);
           }
         }
       } catch {
         // Ignore transient network poll error
       }
-    }, 15000);
-    return () => clearInterval(timer);
-  }, [authState.authenticated, state.lastGlobalScanAt, state.projects]);
+    }
+
+    void checkAndSyncScheduledScan();
+    const timer = setInterval(checkAndSyncScheduledScan, 15000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [state.lastGlobalScanAt, state.projects]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0b0c0e] text-[#f3f4f6]">

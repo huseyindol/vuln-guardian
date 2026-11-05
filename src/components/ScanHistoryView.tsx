@@ -349,6 +349,46 @@ export default function ScanHistoryView({ initialState }: Props) {
       .catch(() => {});
   }, []);
 
+  // Auto-watch for overdue 20:30 scheduled scan and periodic state sync on /history
+  useEffect(() => {
+    let cancelled = false;
+    async function checkAndSyncScheduledScan() {
+      try {
+        const nextIso = state.projects[0]?.nextScanAt;
+        if (nextIso && Date.now() >= new Date(nextIso).getTime()) {
+          const cronResp = await fetch("/api/cron/scan", { cache: "no-store" });
+          if (cronResp.ok) {
+            const cronData = await cronResp.json();
+            if (!cancelled && cronData.state) {
+              setState(cronData.state);
+              setBanner({
+                type: "success",
+                text: "⏰ Saat 20:30 Otomatik Günlük Tarama çalıştı — yeni günlük tarama raporu geçmişe eklendi.",
+              });
+              return;
+            }
+          }
+        }
+        const r = await fetch("/api/guardian", { cache: "no-store" });
+        if (r.ok) {
+          const fresh = (await r.json()) as GuardianState;
+          if (!cancelled && fresh.lastGlobalScanAt !== state.lastGlobalScanAt) {
+            setState(fresh);
+          }
+        }
+      } catch {
+        // Ignore transient network error
+      }
+    }
+
+    void checkAndSyncScheduledScan();
+    const timer = setInterval(checkAndSyncScheduledScan, 20000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [state.lastGlobalScanAt, state.projects]);
+
   const scanHistory: ScanHistoryEntry[] = useMemo(() => {
     return state.scanHistory || [];
   }, [state.scanHistory]);

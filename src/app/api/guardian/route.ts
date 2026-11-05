@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { NextResponse } from "next/server";
-import { getGuardianState, saveGuardianState } from "@/lib/store";
+import { getGuardianStateAsync, saveGuardianState } from "@/lib/store";
 import {
   applySafeVersionToManifest,
   buildSecurityNewsFeed,
@@ -263,7 +263,7 @@ async function rescanProjectObject(
 }
 
 export async function GET() {
-  const state = getGuardianState();
+  const state = await getGuardianStateAsync();
   return NextResponse.json(state);
 }
 
@@ -283,7 +283,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const { action } = body;
-    const state = getGuardianState();
+    const state = await getGuardianStateAsync(true);
 
     if (action === "scan-project") {
       const { projectId } = body;
@@ -316,7 +316,7 @@ export async function POST(request: Request) {
       if (freshNews.length > 0) {
         state.newsFeed = freshNews;
       }
-      saveGuardianState(state);
+      await saveGuardianState(state);
       return NextResponse.json(state);
     }
 
@@ -346,7 +346,7 @@ export async function POST(request: Request) {
       if (freshNews.length > 0) {
         state.newsFeed = freshNews;
       }
-      saveGuardianState(state);
+      await saveGuardianState(state);
       return NextResponse.json(state);
     }
 
@@ -609,7 +609,7 @@ export async function POST(request: Request) {
       if (freshNews.length > 0) {
         state.newsFeed = freshNews;
       }
-      saveGuardianState(state);
+      await saveGuardianState(state);
       return NextResponse.json(state);
     }
 
@@ -637,7 +637,7 @@ export async function POST(request: Request) {
         state.scanHistory[0].dailyNote = cleanNote;
         state.scanHistory[0].notes.unshift(`📝 Yönetici Notu: ${cleanNote}`);
       }
-      saveGuardianState(state);
+      await saveGuardianState(state);
       return NextResponse.json(state);
     }
 
@@ -665,7 +665,7 @@ export async function POST(request: Request) {
       if (typeof autoDeploy === "boolean") p.autoDeploy = autoDeploy;
       if (deployTarget) p.deployTarget = deployTarget;
 
-      saveGuardianState(state);
+      await saveGuardianState(state);
       return NextResponse.json(state);
     }
 
@@ -775,7 +775,7 @@ export async function POST(request: Request) {
       if (freshNews.length > 0) {
         state.newsFeed = freshNews;
       }
-      saveGuardianState(state);
+      await saveGuardianState(state);
       return NextResponse.json(state);
     }
 
@@ -792,7 +792,7 @@ export async function POST(request: Request) {
       state.remediationHistory = state.remediationHistory.filter(
         (r) => r.projectId !== projectId
       );
-      saveGuardianState(state);
+      await saveGuardianState(state);
       return NextResponse.json(state);
     }
 

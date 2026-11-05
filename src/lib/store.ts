@@ -11,6 +11,8 @@ const LOCAL_STATE_PATH = path.join(
 const TMP_STATE_PATH = "/tmp/vuln-guardian-state.json";
 
 let memoryState: GuardianState | null = null;
+let lastGithubFetchMs = 0;
+const GITHUB_FETCH_TTL_MS = 10_000;
 
 export function getGuardianState(): GuardianState {
   const candidates: GuardianState[] = [];
@@ -53,22 +55,104 @@ export function getGuardianState(): GuardianState {
   return memoryState;
 }
 
-export function saveGuardianState(state: GuardianState): void {
+export async function getGuardianStateAsync(
+  forceRemote = false
+): Promise<GuardianState> {
+  const localBest = getGuardianState();
+  const now = Date.now();
+
+  if (!forceRemote && now - lastGithubFetchMs < GITHUB_FETCH_TTL_MS) {
+    return localBest;
+  }
+
+  const remoteState = await fetchStateFromGithubRepo();
+  lastGithubFetchMs = now;
+
+  if (remoteState) {
+    const remoteTime = new Date(remoteState.lastGlobalScanAt || 0).getTime();
+    const localTime = new Date(localBest.lastGlobalScanAt || 0).getTime();
+    const remoteHistLen = remoteState.scanHistory?.length || 0;
+    const localHistLen = localBest.scanHistory?.length || 0;
+
+    if (remoteTime >= localTime && remoteHistLen >= localHistLen) {
+      ensureScanHistoryPopulated(remoteState);
+      memoryState = remoteState;
+      try {
+        fs.writeFileSync(
+          TMP_STATE_PATH,
+          JSON.stringify(remoteState, null, 2),
+          "utf8"
+        );
+      } catch {
+        // Ignore if /tmp is unavailable
+      }
+      return remoteState;
+    }
+  }
+
+  return localBest;
+}
+
+export async function saveGuardianState(state: GuardianState): Promise<void> {
   state.lastGlobalScanAt = new Date().toISOString();
+  ensureScanHistoryPopulated(state);
   memoryState = state;
+  lastGithubFetchMs = Date.now();
   const serialized = JSON.stringify(state, null, 2);
 
+  let wroteLocal = false;
   try {
     fs.writeFileSync(LOCAL_STATE_PATH, serialized, "utf8");
+    wroteLocal = true;
   } catch {
-    // Read-only filesystem on Vercel serverless — write to /tmp and sync to GitHub state repo
+    // Read-only filesystem on Vercel serverless — write to /tmp
     try {
       fs.writeFileSync(TMP_STATE_PATH, serialized, "utf8");
     } catch {
       // Ignore if /tmp is unavailable
     }
-    void persistStateToGithubRepo(serialized);
   }
+
+  // Always await GitHub persistence on serverless (or when GITHUB_TOKEN is configured in production)
+  if (!wroteLocal || process.env.VERCEL) {
+    await persistStateToGithubRepo(serialized);
+  }
+}
+
+async function fetchStateFromGithubRepo(): Promise<GuardianState | null> {
+  const repoSlug =
+    process.env.GUARDIAN_STATE_REPO?.trim() || "huseyindol/vuln-guardian";
+  const filePath = "src/data/guardian-state.json";
+  const token = process.env.GITHUB_TOKEN?.trim();
+
+  try {
+    if (token) {
+      const apiUrl = `https://api.github.com/repos/${repoSlug}/contents/${filePath}?ref=main`;
+      const resp = await fetch(apiUrl, {
+        headers: {
+          Accept: "application/vnd.github.raw+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "Elly-VulnGuardian-Studio",
+          Authorization: `Bearer ${token}`,
+        },
+        cache: "no-store",
+      });
+      if (resp.ok) {
+        const text = await resp.text();
+        return JSON.parse(text) as GuardianState;
+      }
+    }
+
+    const rawUrl = `https://raw.githubusercontent.com/${repoSlug}/main/${filePath}?t=${Date.now()}`;
+    const rawResp = await fetch(rawUrl, { cache: "no-store" });
+    if (rawResp.ok) {
+      const text = await rawResp.text();
+      return JSON.parse(text) as GuardianState;
+    }
+  } catch {
+    // Fallback to local state if GitHub is unreachable
+  }
+  return null;
 }
 
 async function persistStateToGithubRepo(serialized: string): Promise<void> {
@@ -99,7 +183,8 @@ async function persistStateToGithubRepo(serialized: string): Promise<void> {
       method: "PUT",
       headers,
       body: JSON.stringify({
-        message: "chore(state): sync guardian-state.json after scan/remediation [skip ci]",
+        message:
+          "chore(state): sync guardian-state.json after scan/remediation [skip ci]",
         content: Buffer.from(serialized, "utf8").toString("base64"),
         sha: current.sha,
         branch: "main",

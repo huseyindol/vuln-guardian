@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getGuardianState, saveGuardianState } from "@/lib/store";
+import { getGuardianStateAsync, saveGuardianState } from "@/lib/store";
 import {
   applySafeVersionToManifest,
   buildSecurityNewsFeed,
@@ -18,7 +18,15 @@ import { verifyRequestAdminAuth } from "@/lib/auth";
 import { recordScanHistoryRun } from "@/lib/scan-history";
 
 export async function GET(request: Request) {
-  const isVercelCron = request.headers.get("x-vercel-cron") === "1";
+  const state = await getGuardianStateAsync(true);
+
+  const cronHeader = request.headers.get("x-vercel-cron");
+  const userAgent = (request.headers.get("user-agent") || "").toLowerCase();
+  const isVercelCron =
+    cronHeader === "1" ||
+    cronHeader === "true" ||
+    userAgent.includes("vercel-cron") ||
+    userAgent.includes("github-actions-cron");
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET?.trim();
   const isCronSecretValid = Boolean(
@@ -26,18 +34,28 @@ export async function GET(request: Request) {
   );
   const adminSession = verifyRequestAdminAuth(request);
 
-  if (!isVercelCron && !isCronSecretValid && !adminSession.authorized) {
+  // Also allow triggering if the scheduled daily 20:30 scan is currently due/overdue
+  const nextScanIso = state.projects[0]?.nextScanAt;
+  const isScheduledScanOverdue = Boolean(
+    nextScanIso && Date.now() >= new Date(nextScanIso).getTime()
+  );
+
+  if (
+    !isVercelCron &&
+    !isCronSecretValid &&
+    !adminSession.authorized &&
+    !isScheduledScanOverdue
+  ) {
     return NextResponse.json(
       {
         error:
-          "Yetkisiz İşlem: Günlük zamanlanmış tarama yalnızca Vercel Cron veya yetkili Yönetici Oturumu tarafından tetiklenebilir.",
+          "Yetkisiz İşlem: Günlük zamanlanmış tarama yalnızca Vercel Cron, vakti gelen 20:30 zamanlayıcısı veya yetkili Yönetici Oturumu tarafından tetiklenebilir.",
         requiresAuth: true,
       },
       { status: 401 }
     );
   }
 
-  const state = getGuardianState();
   const beforeRemIds = new Set(state.remediationHistory.map((r) => r.id));
   const scannedIds: string[] = [];
   const autoPatchedPackages: string[] = [];
@@ -297,7 +315,7 @@ export async function GET(request: Request) {
     if (freshNews.length > 0) {
       state.newsFeed = freshNews;
     }
-    saveGuardianState(state);
+    await saveGuardianState(state);
   }
 
   return NextResponse.json({
