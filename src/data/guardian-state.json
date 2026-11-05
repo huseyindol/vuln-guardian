@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "lastGlobalScanAt": "2026-11-05T09:21:57.146Z",
+  "lastGlobalScanAt": "2026-11-05T18:23:05.033Z",
   "schedulerActive": true,
   "dailyScheduleCron": "30 20 * * *",
   "dailyScheduleLabel": "Her Akşam 20:30 (TSİ / UTC+3)",
@@ -22,8 +22,8 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run test:ci",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-11-05T09:21:55.489Z",
-      "nextScanAt": "2026-11-05T17:30:00.000Z",
+      "lastScanAt": "2026-11-05T18:23:03.389Z",
+      "nextScanAt": "2026-11-06T17:30:00.000Z",
       "lastDeployAt": "2026-10-28T17:45:35.000Z",
       "status": "HEALTHY",
       "packages": [
@@ -245,7 +245,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "16.3.8"
         },
         {
           "name": "next-themes",
@@ -375,7 +376,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "8.3.2"
         },
         {
           "name": "zod",
@@ -385,7 +387,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "4.6.5"
         },
         {
           "name": "zustand",
@@ -555,7 +558,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "@vitest/ui",
@@ -565,7 +569,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "dotenv",
@@ -715,7 +720,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "fast-uri",
@@ -725,7 +731,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "3.1.8"
         },
         {
           "name": "dompurify",
@@ -735,7 +742,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "3.4.16"
         },
         {
           "name": "postcss",
@@ -765,7 +773,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "3.4.0"
         },
         {
           "name": "picomatch",
@@ -835,7 +844,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "3.3.16"
         },
         {
           "name": "sharp",
@@ -845,7 +855,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "0.35.4"
         },
         {
           "name": "@babel/core",
@@ -907,8 +918,8 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run format:check",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-11-05T09:21:56.310Z",
-      "nextScanAt": "2026-11-05T17:30:00.000Z",
+      "lastScanAt": "2026-11-05T18:23:04.231Z",
+      "nextScanAt": "2026-11-06T17:30:00.000Z",
       "lastDeployAt": "2026-10-28T17:47:20.000Z",
       "status": "HEALTHY",
       "packages": [
@@ -1190,7 +1201,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "16.3.8"
         },
         {
           "name": "next-mdx-remote",
@@ -1330,7 +1342,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "4.6.5"
         },
         {
           "name": "@eslint/eslintrc",
@@ -1500,7 +1513,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "@vitest/ui",
@@ -1510,7 +1524,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "beasties",
@@ -1720,7 +1735,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "5.0.3"
         },
         {
           "name": "web-vitals",
@@ -1740,7 +1756,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "3.1.8"
         },
         {
           "name": "ip-address",
@@ -1750,7 +1767,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "10.5.0"
         },
         {
           "name": "postcss",
@@ -1770,7 +1788,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "4.0.2"
         },
         {
           "name": "flatted",
@@ -1790,7 +1809,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "6.0.0"
         },
         {
           "name": "tmp",
@@ -1820,7 +1840,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "8.0.0"
         },
         {
           "name": "lodash",
@@ -1870,7 +1891,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "7.29.0"
         },
         {
           "name": "qs",
@@ -1880,7 +1902,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "6.16.0"
         },
         {
           "name": "@opentelemetry/core",
@@ -1930,7 +1953,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "0.35.4"
         },
         {
           "name": "body-parser",
@@ -1940,7 +1964,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "1.20.6"
         },
         {
           "name": "dompurify",
@@ -1950,7 +1975,8 @@
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "3.4.13"
         },
         {
           "name": "@humanfs/node",
@@ -2012,8 +2038,8 @@
       "verifyCommand": "./mvnw -q -DskipTests compile",
       "deployCommand": "kubectl rollout restart deployment/elly-backend",
       "deployTarget": "Kubernetes / Server",
-      "lastScanAt": "2026-11-05T09:21:56.701Z",
-      "nextScanAt": "2026-11-05T17:30:00.000Z",
+      "lastScanAt": "2026-11-05T18:23:04.665Z",
+      "nextScanAt": "2026-11-06T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
       "packages": [
@@ -2165,7 +2191,8 @@
           "ecosystem": "Maven",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "42.7.5"
         },
         {
           "name": "org.projectlombok:lombok",
@@ -2265,7 +2292,8 @@
           "ecosystem": "Maven",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "1.23.1"
         },
         {
           "name": "org.springframework.boot:spring-boot-starter-security",
@@ -2315,7 +2343,8 @@
           "ecosystem": "Maven",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "3.14.0"
         }
       ],
       "vulnerabilities": [],
@@ -2337,8 +2366,8 @@
       "verifyCommand": "flutter analyze --no-fatal-infos && flutter test",
       "deployCommand": "gh workflow run release-mobile.yml",
       "deployTarget": "GitHub Actions",
-      "lastScanAt": "2026-11-05T09:21:57.146Z",
-      "nextScanAt": "2026-11-05T17:30:00.000Z",
+      "lastScanAt": "2026-11-05T18:23:05.032Z",
+      "nextScanAt": "2026-11-06T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
       "packages": [
@@ -4753,6 +4782,73 @@
     }
   ],
   "scanHistory": [
+    {
+      "id": "scan-run-1793902985032-biwd",
+      "timestamp": "2026-11-05T18:23:05.032Z",
+      "dateKey": "2026-11-05",
+      "trigger": "SCHEDULED_CRON",
+      "triggerLabel": "Her Akşam 20:30 Otonom Günlük Tarama (Cron)",
+      "outcome": "CLEAN_NO_ISSUES",
+      "verdictTitle": "Sorun Yok — Taranan Tüm Projeler Güvenli (0 Zafiyet)",
+      "dailyNote": "Taranan 4 projedeki toplam 240 paketin tamamı güncel OSV.dev ve GHSA kayıtlarına karşı kontrol edildi; hiçbir güvenlik açığı veya kırık bağımlılık tespit edilmedi.",
+      "notes": [
+        "4 proje (240 bağımlılık paketi) canlı OSV.dev ve GitHub Advisory veritabanlarına karşı tarandı.",
+        "✅ elly-admin (npm): 86 paket kontrol edildi — sorun çıkmadı (0 aktif zafiyet).",
+        "✅ elly-tenant (huseyindolcom) (npm): 108 paket kontrol edildi — sorun çıkmadı (0 aktif zafiyet).",
+        "✅ elly-backend (Maven): 30 paket kontrol edildi — sorun çıkmadı (0 aktif zafiyet).",
+        "✅ elly-mobile-app (Pub): 16 paket kontrol edildi — sorun çıkmadı (0 aktif zafiyet)."
+      ],
+      "scannedProjectsCount": 4,
+      "totalPackagesScanned": 240,
+      "detectedVulnCount": 0,
+      "detectedPackageCount": 0,
+      "fixedPackageCount": 0,
+      "remainingVulnCount": 0,
+      "projectSummaries": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "ecosystem": "npm",
+          "totalPackages": 86,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "ecosystem": "npm",
+          "totalPackages": 108,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "ecosystem": "Maven",
+          "totalPackages": 30,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-mobile-app",
+          "projectName": "elly-mobile-app",
+          "ecosystem": "Pub",
+          "totalPackages": 16,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        }
+      ],
+      "findings": [],
+      "fixes": []
+    },
     {
       "id": "scan-run-1793870517148-q804",
       "timestamp": "2026-11-05T09:21:57.148Z",
