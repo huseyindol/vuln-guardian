@@ -185,6 +185,15 @@ function buildEntryFromHistoricalCluster(params: {
 }
 
 export function ensureScanHistoryPopulated(state: GuardianState): ScanHistoryEntry[] {
+  if (!Array.isArray(state.newsFeed)) {
+    state.newsFeed = [];
+  }
+  if (!Array.isArray(state.projects)) {
+    state.projects = [];
+  }
+  if (!Array.isArray(state.remediationHistory)) {
+    state.remediationHistory = [];
+  }
   if (Array.isArray(state.scanHistory) && state.scanHistory.length > 0) {
     return state.scanHistory;
   }
