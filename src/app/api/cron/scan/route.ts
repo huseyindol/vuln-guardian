@@ -56,6 +56,23 @@ export async function GET(request: Request) {
     );
   }
 
+  // Deduplicate if a SCHEDULED_CRON scan already completed within the last 30 minutes
+  const latestHistory = state.scanHistory?.[0];
+  if (
+    !adminSession.authorized &&
+    latestHistory?.trigger === "SCHEDULED_CRON" &&
+    Date.now() - new Date(latestHistory.timestamp).getTime() < 30 * 60 * 1000 &&
+    !isScheduledScanOverdue
+  ) {
+    return NextResponse.json({
+      ok: true,
+      deduplicated: true,
+      schedule: "Her Akşam 20:30 (TSİ / UTC+3)",
+      lastScanAt: latestHistory.timestamp,
+      state,
+    });
+  }
+
   const beforeRemIds = new Set(state.remediationHistory.map((r) => r.id));
   const scannedIds: string[] = [];
   const autoPatchedPackages: string[] = [];

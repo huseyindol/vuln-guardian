@@ -502,6 +502,27 @@ export function recordScanHistoryRun(params: {
     fixes,
   };
 
+  const existingTop = (state.scanHistory || [])[0];
+  if (
+    trigger === "SCHEDULED_CRON" &&
+    existingTop &&
+    existingTop.trigger === "SCHEDULED_CRON" &&
+    existingTop.dateKey === entry.dateKey &&
+    Math.abs(
+      new Date(entry.timestamp).getTime() -
+        new Date(existingTop.timestamp).getTime()
+    ) <
+      45 * 60 * 1000 &&
+    entry.fixedPackageCount === 0 &&
+    existingTop.fixedPackageCount === 0
+  ) {
+    state.scanHistory = [entry, ...(state.scanHistory || []).slice(1)].slice(
+      0,
+      90
+    );
+    return entry;
+  }
+
   state.scanHistory = [entry, ...(state.scanHistory || [])].slice(0, 90);
   return entry;
 }
