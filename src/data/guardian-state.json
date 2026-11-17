@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "lastGlobalScanAt": "2026-11-17T18:23:04.442Z",
+  "lastGlobalScanAt": "2026-11-17T23:54:54.849Z",
   "schedulerActive": true,
   "dailyScheduleCron": "30 20 * * *",
   "dailyScheduleLabel": "Her Akşam 20:30 (TSİ / UTC+3)",
@@ -22,7 +22,7 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run test:ci",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-11-17T18:23:03.156Z",
+      "lastScanAt": "2026-11-17T23:54:53.443Z",
       "nextScanAt": "2026-11-18T17:30:00.000Z",
       "lastDeployAt": "2026-11-17T00:56:15.951Z",
       "status": "VULNERABLE",
@@ -966,7 +966,7 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run format:check",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-11-17T18:23:03.773Z",
+      "lastScanAt": "2026-11-17T23:54:54.174Z",
       "nextScanAt": "2026-11-18T17:30:00.000Z",
       "lastDeployAt": "2026-11-17T00:56:21.588Z",
       "status": "VULNERABLE",
@@ -2090,7 +2090,7 @@
       "verifyCommand": "./mvnw -q -DskipTests compile",
       "deployCommand": "kubectl rollout restart deployment/elly-backend",
       "deployTarget": "Kubernetes / Server",
-      "lastScanAt": "2026-11-17T18:23:04.117Z",
+      "lastScanAt": "2026-11-17T23:54:54.514Z",
       "nextScanAt": "2026-11-18T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
@@ -2418,7 +2418,7 @@
       "verifyCommand": "flutter analyze --no-fatal-infos && flutter test",
       "deployCommand": "gh workflow run release-mobile.yml",
       "deployTarget": "GitHub Actions",
-      "lastScanAt": "2026-11-17T18:23:04.440Z",
+      "lastScanAt": "2026-11-17T23:54:54.847Z",
       "nextScanAt": "2026-11-18T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
@@ -4587,6 +4587,98 @@
     }
   ],
   "scanHistory": [
+    {
+      "id": "scan-run-1794959694848-oqzr",
+      "timestamp": "2026-11-17T23:54:54.848Z",
+      "dateKey": "2026-11-18",
+      "trigger": "SCHEDULED_CRON",
+      "triggerLabel": "Her Akşam 20:30 Otonom Günlük Tarama (Cron)",
+      "outcome": "ISSUES_REMAINING",
+      "verdictTitle": "2 Açık Zafiyet Tespit Edildi",
+      "dailyNote": "Tarama sonucunda 2 aktif güvenlik zafiyeti tespit edildi. İlgili paketlerin güvenli sürüme yükseltilmesi önerilir.",
+      "notes": [
+        "4 proje (238 bağımlılık paketi) canlı OSV.dev ve GitHub Advisory veritabanlarına karşı tarandı.",
+        "⚠️ elly-admin (npm): 1 aktif zafiyet müdahale bekliyor.",
+        "⚠️ elly-tenant (huseyindolcom) (npm): 1 aktif zafiyet müdahale bekliyor.",
+        "✅ elly-backend (Maven): 30 paket kontrol edildi — sorun çıkmadı (0 aktif zafiyet).",
+        "✅ elly-mobile-app (Pub): 16 paket kontrol edildi — sorun çıkmadı (0 aktif zafiyet)."
+      ],
+      "scannedProjectsCount": 4,
+      "totalPackagesScanned": 238,
+      "detectedVulnCount": 2,
+      "detectedPackageCount": 2,
+      "fixedPackageCount": 0,
+      "remainingVulnCount": 2,
+      "projectSummaries": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "ecosystem": "npm",
+          "totalPackages": 87,
+          "detectedVulnCount": 1,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 1,
+          "status": "VULNERABLE"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "ecosystem": "npm",
+          "totalPackages": 105,
+          "detectedVulnCount": 1,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 1,
+          "status": "VULNERABLE"
+        },
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "ecosystem": "Maven",
+          "totalPackages": 30,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-mobile-app",
+          "projectName": "elly-mobile-app",
+          "ecosystem": "Pub",
+          "totalPackages": 16,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        }
+      ],
+      "findings": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "picomatch",
+          "installedVersion": "2.3.2",
+          "recommendedSafeVersion": null,
+          "cveIds": [
+            "CVE-2026-112366"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": false
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "packageName": "picomatch",
+          "installedVersion": "4.0.4",
+          "recommendedSafeVersion": null,
+          "cveIds": [
+            "CVE-2026-112366"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": false
+        }
+      ],
+      "fixes": []
+    },
     {
       "id": "scan-run-1794939784441-f1wk",
       "timestamp": "2026-11-17T18:23:04.441Z",
