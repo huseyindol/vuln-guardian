@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "lastGlobalScanAt": "2026-11-16T18:23:08.420Z",
+  "lastGlobalScanAt": "2026-11-17T00:56:22.622Z",
   "schedulerActive": true,
   "dailyScheduleCron": "30 20 * * *",
   "dailyScheduleLabel": "Her Akşam 20:30 (TSİ / UTC+3)",
@@ -22,9 +22,9 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run test:ci",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-11-16T18:23:06.566Z",
+      "lastScanAt": "2026-11-17T00:56:16.301Z",
       "nextScanAt": "2026-11-17T17:30:00.000Z",
-      "lastDeployAt": "2026-10-28T17:45:35.000Z",
+      "lastDeployAt": "2026-11-17T00:56:15.951Z",
       "status": "HEALTHY",
       "packages": [
         {
@@ -239,14 +239,14 @@
         },
         {
           "name": "next",
-          "rawSpec": "16.4.1",
-          "cleanVersion": "16.4.1",
+          "rawSpec": "16.4.5",
+          "cleanVersion": "16.4.5",
           "section": "dependencies",
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
           "recommendedSafeVersion": null,
-          "previousVersion": "16.3.8"
+          "previousVersion": "16.4.1"
         },
         {
           "name": "next-themes",
@@ -792,9 +792,10 @@
           "cleanVersion": "14.0.0",
           "section": "overrides",
           "ecosystem": "npm",
-          "status": "SAFE",
+          "status": "PATCHED",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "recommendedSafeVersion": null,
+          "previousVersion": "14.0.2"
         },
         {
           "name": "ws",
@@ -900,7 +901,7 @@
         }
       ],
       "vulnerabilities": [],
-      "manifestRaw": "{\n  \"name\": \"elly-admin-panel\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"build\": \"next build\",\n    \"start\": \"next start\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@monaco-editor/react\": \"^4.7.0\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@tiptap/extension-image\": \"^3.31.4\",\n    \"@tiptap/pm\": \"^3.31.4\",\n    \"@tiptap/react\": \"^3.31.4\",\n    \"@tiptap/starter-kit\": \"^3.31.4\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"framer-motion\": \"^14.0.0\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.1\",\n    \"next-themes\": \"^0.4.6\",\n    \"qrcode.react\": \"^4.2.0\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"uuid\": \"^14.0.2\",\n    \"vite\": \"^8.3.3\",\n    \"zod\": \"^4.6.6\",\n    \"zustand\": \"^5.0.15\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@types/uuid\": \"^11.0.0\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.5\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.5\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"postcss\": \"^8.5.23\",\n    \"yaml\": \"^2.8.3\",\n    \"flatted\": \"^3.4.2\",\n    \"picomatch\": \"^2.3.2\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"esbuild\": \"^0.28.1\",\n    \"js-yaml\": \"^4.3.2\",\n    \"nanoid\": \"^3.3.18\",\n    \"sharp\": \"^0.35.5\",\n    \"@babel/core\": \"^7.29.6\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
+      "manifestRaw": "{\n  \"name\": \"elly-admin-panel\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"build\": \"next build\",\n    \"start\": \"next start\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@monaco-editor/react\": \"^4.7.0\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@tiptap/extension-image\": \"^3.31.4\",\n    \"@tiptap/pm\": \"^3.31.4\",\n    \"@tiptap/react\": \"^3.31.4\",\n    \"@tiptap/starter-kit\": \"^3.31.4\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"framer-motion\": \"^14.0.0\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.5\",\n    \"next-themes\": \"^0.4.6\",\n    \"qrcode.react\": \"^4.2.0\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"uuid\": \"^14.0.2\",\n    \"vite\": \"^8.3.3\",\n    \"zod\": \"^4.6.6\",\n    \"zustand\": \"^5.0.15\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@types/uuid\": \"^11.0.0\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.5\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.5\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"postcss\": \"^8.5.23\",\n    \"yaml\": \"^2.8.3\",\n    \"flatted\": \"^3.4.2\",\n    \"picomatch\": \"^2.3.2\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"esbuild\": \"^0.28.1\",\n    \"js-yaml\": \"^4.3.2\",\n    \"nanoid\": \"^3.3.18\",\n    \"sharp\": \"^0.35.5\",\n    \"@babel/core\": \"^7.29.6\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
     },
     {
       "id": "elly-tenant",
@@ -918,9 +919,9 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run format:check",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-11-16T18:23:07.147Z",
+      "lastScanAt": "2026-11-17T00:56:21.969Z",
       "nextScanAt": "2026-11-17T17:30:00.000Z",
-      "lastDeployAt": "2026-11-12T22:48:50.160Z",
+      "lastDeployAt": "2026-11-17T00:56:21.588Z",
       "status": "HEALTHY",
       "packages": [
         {
@@ -1195,14 +1196,14 @@
         },
         {
           "name": "next",
-          "rawSpec": "16.4.1",
-          "cleanVersion": "16.4.1",
+          "rawSpec": "16.4.5",
+          "cleanVersion": "16.4.5",
           "section": "dependencies",
           "ecosystem": "npm",
           "status": "PATCHED",
           "vulnerabilityCount": 0,
           "recommendedSafeVersion": null,
-          "previousVersion": "16.3.8"
+          "previousVersion": "16.4.1"
         },
         {
           "name": "next-mdx-remote",
@@ -2020,7 +2021,7 @@
         }
       ],
       "vulnerabilities": [],
-      "manifestRaw": "{\n  \"name\": \"huseyindolcom\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"build\": \"next build\",\n    \"build:standalone\": \"next build && cp -r public .next/standalone/ && cp -r .next/static/* .next/standalone/.next/static/\",\n    \"start\": \"next start\",\n    \"start:standalone\": \"node .next/standalone/server.js\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"lighthouse\": \"lhci autorun\",\n    \"lighthouse:local\": \"mkdir -p reports && lighthouse http://localhost:3000 --output=html --output-path=./reports/lighthouse.html --chrome-flags='--headless --no-sandbox'\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@next/third-parties\": \"^16.3.8\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@react-email/components\": \"^1.0.12\",\n    \"@react-email/render\": \"^2.1.0\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tailwindcss/typography\": \"^0.5.20\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"@vercel/analytics\": \"^2.0.1\",\n    \"@vercel/speed-insights\": \"^2.0.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"date-fns\": \"^4.4.0\",\n    \"framer-motion\": \"^14.0.0\",\n    \"gray-matter\": \"^4.0.3\",\n    \"html-react-parser\": \"^6.1.8\",\n    \"isomorphic-dompurify\": \"^4.4.0\",\n    \"js-yaml\": \"^5.4.2\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.1\",\n    \"next-mdx-remote\": \"^6.0.0\",\n    \"next-themes\": \"^0.4.6\",\n    \"nextjs-toploader\": \"^3.9.17\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"resend\": \"^6.32.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"zod\": \"^4.6.6\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@lhci/cli\": \"^0.15.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/js-yaml\": \"^4.0.9\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.5\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"beasties\": \"^0.5.4\",\n    \"critters\": \"npm:beasties@^0.5.4\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lighthouse\": \"^13.5.0\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"rehype-pretty-code\": \"^0.14.5\",\n    \"remark-gfm\": \"^4.0.1\",\n    \"shiki\": \"^4.5.0\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.5\",\n    \"web-vitals\": \"^6.2.2\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"ip-address\": \"^10.7.4\",\n    \"postcss\": \"^8.5.26\",\n    \"picomatch\": \"^4.0.4\",\n    \"flatted\": \"^3.4.2\",\n    \"basic-ftp\": \"^6.2.4\",\n    \"tmp\": \"^0.2.7\",\n    \"yaml\": \"^2.8.3\",\n    \"path-to-regexp\": \"^8.4.0\",\n    \"lodash\": \"^4.18.1\",\n    \"lodash-es\": \"^4.18.1\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"undici\": \"^7.30.1\",\n    \"qs\": \"^6.16.1\",\n    \"@opentelemetry/core\": \"^2.8.0\",\n    \"@babel/core\": \"^7.29.7\",\n    \"nanoid\": \"^3.3.18\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"sharp\": \"^0.35.5\",\n    \"body-parser\": \"^1.20.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"fflate\": \"^0.8.3\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
+      "manifestRaw": "{\n  \"name\": \"huseyindolcom\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"build\": \"next build\",\n    \"build:standalone\": \"next build && cp -r public .next/standalone/ && cp -r .next/static/* .next/standalone/.next/static/\",\n    \"start\": \"next start\",\n    \"start:standalone\": \"node .next/standalone/server.js\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"lighthouse\": \"lhci autorun\",\n    \"lighthouse:local\": \"mkdir -p reports && lighthouse http://localhost:3000 --output=html --output-path=./reports/lighthouse.html --chrome-flags='--headless --no-sandbox'\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@next/third-parties\": \"^16.3.8\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@react-email/components\": \"^1.0.12\",\n    \"@react-email/render\": \"^2.1.0\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tailwindcss/typography\": \"^0.5.20\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"@vercel/analytics\": \"^2.0.1\",\n    \"@vercel/speed-insights\": \"^2.0.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"date-fns\": \"^4.4.0\",\n    \"framer-motion\": \"^14.0.0\",\n    \"gray-matter\": \"^4.0.3\",\n    \"html-react-parser\": \"^6.1.8\",\n    \"isomorphic-dompurify\": \"^4.4.0\",\n    \"js-yaml\": \"^5.4.2\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.5\",\n    \"next-mdx-remote\": \"^6.0.0\",\n    \"next-themes\": \"^0.4.6\",\n    \"nextjs-toploader\": \"^3.9.17\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"resend\": \"^6.32.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"zod\": \"^4.6.6\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@lhci/cli\": \"^0.15.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/js-yaml\": \"^4.0.9\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.5\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"beasties\": \"^0.5.4\",\n    \"critters\": \"npm:beasties@^0.5.4\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lighthouse\": \"^13.5.0\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"rehype-pretty-code\": \"^0.14.5\",\n    \"remark-gfm\": \"^4.0.1\",\n    \"shiki\": \"^4.5.0\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.5\",\n    \"web-vitals\": \"^6.2.2\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"ip-address\": \"^10.7.4\",\n    \"postcss\": \"^8.5.26\",\n    \"picomatch\": \"^4.0.4\",\n    \"flatted\": \"^3.4.2\",\n    \"basic-ftp\": \"^6.2.4\",\n    \"tmp\": \"^0.2.7\",\n    \"yaml\": \"^2.8.3\",\n    \"path-to-regexp\": \"^8.4.0\",\n    \"lodash\": \"^4.18.1\",\n    \"lodash-es\": \"^4.18.1\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"undici\": \"^7.30.1\",\n    \"qs\": \"^6.16.1\",\n    \"@opentelemetry/core\": \"^2.8.0\",\n    \"@babel/core\": \"^7.29.7\",\n    \"nanoid\": \"^3.3.18\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"sharp\": \"^0.35.5\",\n    \"body-parser\": \"^1.20.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"fflate\": \"^0.8.3\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
     },
     {
       "id": "elly-backend",
@@ -2038,7 +2039,7 @@
       "verifyCommand": "./mvnw -q -DskipTests compile",
       "deployCommand": "kubectl rollout restart deployment/elly-backend",
       "deployTarget": "Kubernetes / Server",
-      "lastScanAt": "2026-11-16T18:23:08.066Z",
+      "lastScanAt": "2026-11-17T00:56:22.280Z",
       "nextScanAt": "2026-11-17T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
@@ -2366,7 +2367,7 @@
       "verifyCommand": "flutter analyze --no-fatal-infos && flutter test",
       "deployCommand": "gh workflow run release-mobile.yml",
       "deployTarget": "GitHub Actions",
-      "lastScanAt": "2026-11-16T18:23:08.419Z",
+      "lastScanAt": "2026-11-17T00:56:22.620Z",
       "nextScanAt": "2026-11-17T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
@@ -2538,45 +2539,167 @@
   ],
   "newsFeed": [
     {
-      "id": "GHSA-5pm8-86m8-9m6r",
-      "cveId": "CVE-2026-126345",
-      "title": "basic-ftp: basic-ftp: Uncaught TypeError in MLSD directory-listing parser via __proto__ fact name causes DoS in Client.list()",
-      "summary": "### Summary\n\nbasic-ftp's MLSD directory-listing parser (src/parseListMLSD.ts) looks up fact-handler functions in a plain object literal keyed directly by fact names taken from the FTP server's response, with no validation. A directory-listing line containing the fact name \"__proto__\" resolves this lookup to Object.prototype (inherited, non-own, non-function) instead of undefined, so the \"not a function\" guard is bypassed and the code throws `TypeError: factHandler is not a function`.\n\nThis TypeError is not an FTPError, so it is not caught by Client.list()'s retry logic and propagates as a rejected promise out of list() and every API built on top of it (list, downloadToDir, uploadFromDir, clearWorkingDir, removeDir). Any FTP server the client connects to — or any on-path attacker on a plaintext (non-TLS) FTP session — can crash the calling application by returning one crafted line in a directory listing. If the application does not wrap every one of these calls in try/catch, the rejection is unhandled and crashes the Node.js process (default behavior since Node 15).\n\n### Details\n\nFile: src/parseListMLSD.ts\n```\nconst factHandlersByName: {[key: string]: FactHandler} = {\n    \"size\": parseSize,\n    \"sizd\": parseSize,\n    \"unique\": (value, info) => { info.uniqueID = value },\n    \"modify\": (value, info) => { ... },\n    \"type\": (value, info) => { ... },\n    \"unix.mode\": (value, info) => { ... },\n    ...\n}\n\nexport function parseLine(line: string): FileInfo | undefined {\n    const [ packedFacts, name ] = splitStringOnce(line, \" \")\n    ...\n    const facts = packedFacts.split(\";\")\n    for (const fact of facts) {\n        const [ factName, factValue ] = splitStringOnce(fact, \"=\")\n        if (!factValue) { continue }\n        const factHandler = factHandlersByName[factName.toLowerCase()]   // <-- unsafe lookup\n        if (!factHandler) { continue }\n        const result = factHandler(factValue, info)                     // <-- throws here\n        ...\n    }\n    return info\n}\n```\nfactHandlersByName is a plain `{}` object literal, so it inherits from Object.prototype. Property access does not distinguish own keys from inherited ones. When factName.toLowerCase() === \"__proto__\", the bracket lookup factHandlersByName[\"__proto__\"] returns Object.prototype itself — a truthy, non-undefined value — so the `if (!factHandler) continue` guard does not fire. The code then tries to call Object.prototype as a function: `factHandler(factValue, info)`, which throws `TypeError: factHandler is not a function`.\n\nThis line runs inside parseList() (src/parseList.ts), called synchronously from a `.map()` over every line of the listing, which in turn is called from Client._requestListWithCommand() -> Client.list() (src/Client.ts). list()'s only error handling is:\n```\n    catch (err) {\n        const shouldTryNext = err instanceof FTPError\n        if (!shouldTryNext) { throw err }\n        lastError = err\n    }\n```\nA plain TypeError is not an FTPError, so it is immediately rethrown instead of being retried or suppressed, and the Promise returned by list() rejects with it.\n\nAffected call paths (all eventually call Client.list()):\n- Client.list()\n- Client.downloadToDir() / _downloadFromWorkingDir()\n- Client.clearWorkingDir()\n- Client.removeDir()\n\nOnly \"__proto__\" triggers the crash this way; other reserved Object.prototype property names tested (\"constructor\", \"toString\", \"hasOwnProperty\", \"valueOf\", \"__defineGetter__\") happen to resolve to actual functions on Object.prototype, so they are called without throwing (silently ineffective, not a crash). This confirms the root cause is the use of an unguarded object literal as a dictionary keyed by untrusted server input, rather than something specific to one property.\n\n### Proof of concept\n\nPrerequisites: Node.js, a clone/checkout of basic-ftp, `npm install` then `npm run buildOnly` (or `npx tsc`) to produce dist/.\n\nStep 1 — Minimal reproduction of the parser bug alone:\n\n    node -e '\n    const { parseList } = require(\"./dist/parseList\");\n    parseList(\"__proto__=x;type=file;size=10; evil.txt\");\n    '\n\nExpected result:\n    Uncaught TypeError: factHandler is not a function\n        at parseLine (.../dist/parseListMLSD.js:...)\n\nStep 2 — End-to-end reproduction through the public Client API, proving a real FTP server can trigger this over the wire with no client modification:\n\n    Save as poc.js in the repo root and run `node poc.js`:\n\n    const net = require(\"net\")\n    const { Client } = require(\"./dist/index\")\n\n    co",
-      "details": "### Summary\n\nbasic-ftp's MLSD directory-listing parser (src/parseListMLSD.ts) looks up fact-handler functions in a plain object literal keyed directly by fact names taken from the FTP server's response, with no validation. A directory-listing line containing the fact name \"__proto__\" resolves this lookup to Object.prototype (inherited, non-own, non-function) instead of undefined, so the \"not a function\" guard is bypassed and the code throws `TypeError: factHandler is not a function`.\n\nThis TypeError is not an FTPError, so it is not caught by Client.list()'s retry logic and propagates as a rejected promise out of list() and every API built on top of it (list, downloadToDir, uploadFromDir, clearWorkingDir, removeDir). Any FTP server the client connects to — or any on-path attacker on a plaintext (non-TLS) FTP session — can crash the calling application by returning one crafted line in a directory listing. If the application does not wrap every one of these calls in try/catch, the rejection is unhandled and crashes the Node.js process (default behavior since Node 15).\n\n### Details\n\nFile: src/parseListMLSD.ts\n```\nconst factHandlersByName: {[key: string]: FactHandler} = {\n    \"size\": parseSize,\n    \"sizd\": parseSize,\n    \"unique\": (value, info) => { info.uniqueID = value },\n    \"modify\": (value, info) => { ... },\n    \"type\": (value, info) => { ... },\n    \"unix.mode\": (value, info) => { ... },\n    ...\n}\n\nexport function parseLine(line: string): FileInfo | undefined {\n    const [ packedFacts, name ] = splitStringOnce(line, \" \")\n    ...\n    const facts = packedFacts.split(\";\")\n    for (const fact of facts) {\n        const [ factName, factValue ] = splitStringOnce(fact, \"=\")\n        if (!factValue) { continue }\n        const factHandler = factHandlersByName[factName.toLowerCase()]   // <-- unsafe lookup\n        if (!factHandler) { continue }\n        const result = factHandler(factValue, info)                     // <-- throws here\n        ...\n    }\n    return info\n}\n```\nfactHandlersByName is a plain `{}` object literal, so it inherits from Object.prototype. Property access does not distinguish own keys from inherited ones. When factName.toLowerCase() === \"__proto__\", the bracket lookup factHandlersByName[\"__proto__\"] returns Object.prototype itself — a truthy, non-undefined value — so the `if (!factHandler) continue` guard does not fire. The code then tries to call Object.prototype as a function: `factHandler(factValue, info)`, which throws `TypeError: factHandler is not a function`.\n\nThis line runs inside parseList() (src/parseList.ts), called synchronously from a `.map()` over every line of the listing, which in turn is called from Client._requestListWithCommand() -> Client.list() (src/Client.ts). list()'s only error handling is:\n```\n    catch (err) {\n        const shouldTryNext = err instanceof FTPError\n        if (!shouldTryNext) { throw err }\n        lastError = err\n    }\n```\nA plain TypeError is not an FTPError, so it is immediately rethrown instead of being retried or suppressed, and the Promise returned by list() rejects with it.\n\nAffected call paths (all eventually call Client.list()):\n- Client.list()\n- Client.downloadToDir() / _downloadFromWorkingDir()\n- Client.clearWorkingDir()\n- Client.removeDir()\n\nOnly \"__proto__\" triggers the crash this way; other reserved Object.prototype property names tested (\"constructor\", \"toString\", \"hasOwnProperty\", \"valueOf\", \"__defineGetter__\") happen to resolve to actual functions on Object.prototype, so they are called without throwing (silently ineffective, not a crash). This confirms the root cause is the use of an unguarded object literal as a dictionary keyed by untrusted server input, rather than something specific to one property.\n\n### Proof of concept\n\nPrerequisites: Node.js, a clone/checkout of basic-ftp, `npm install` then `npm run buildOnly` (or `npx tsc`) to produce dist/.\n\nStep 1 — Minimal reproduction of the parser bug alone:\n\n    node -e '\n    const { parseList } = require(\"./dist/parseList\");\n    parseList(\"__proto__=x;type=file;size=10; evil.txt\");\n    '\n\nExpected result:\n    Uncaught TypeError: factHandler is not a function\n        at parseLine (.../dist/parseListMLSD.js:...)\n\nStep 2 — End-to-end reproduction through the public Client API, proving a real FTP server can trigger this over the wire with no client modification:\n\n    Save as poc.js in the repo root and run `node poc.js`:\n\n    const net = require(\"net\")\n    const { Client } = require(\"./dist/index\")\n\n    co",
+      "id": "GHSA-mfr8-8qww-v76h",
+      "cveId": "CVE-2026-119790",
+      "title": "next: Next.js: Information disclosure across root params when a 'use cache' function is called through unstable_cache()",
+      "summary": "Next.js applications with `'use cache'` can disclose cached data across root params when the same `'use cache'` function is called both directly during rendering and through `unstable_cache()`, and that function reads a root param. Root params are route parameters of the root layout, and applications commonly use them to scope data, for example per locale.\n\nDuring a cold process start, a cross-request deduplication race allowed an `unstable_cache()` call to join the in-flight fill of a concurrent direct call and receive its result, bypassing the root param check that would normally reject it. `unstable_cache()` then stored that result under a cache key without root params, so subsequent requests for other root param values received the same entry until it is revalidated or evicted. Cached data produced for one root param value is returned to requests for other values.\n\nExploitation requires the `unstable_cache()` request to arrive while the function's first fill after a process start is still in flight. Outside this race, the nesting already throws an error: `'use cache' inside unstable_cache() is unsupported`, and avoiding it is a complete workaround.",
+      "details": "Next.js applications with `'use cache'` can disclose cached data across root params when the same `'use cache'` function is called both directly during rendering and through `unstable_cache()`, and that function reads a root param. Root params are route parameters of the root layout, and applications commonly use them to scope data, for example per locale.\n\nDuring a cold process start, a cross-request deduplication race allowed an `unstable_cache()` call to join the in-flight fill of a concurrent direct call and receive its result, bypassing the root param check that would normally reject it. `unstable_cache()` then stored that result under a cache key without root params, so subsequent requests for other root param values received the same entry until it is revalidated or evicted. Cached data produced for one root param value is returned to requests for other values.\n\nExploitation requires the `unstable_cache()` request to arrive while the function's first fill after a process start is still in flight. Outside this race, the nesting already throws an error: `'use cache' inside unstable_cache() is unsupported`, and avoiding it is a complete workaround.",
       "ecosystem": "npm",
-      "affectedPackage": "basic-ftp",
-      "vulnerableRange": "< 6.2.4",
-      "safeVersion": "6.2.4",
+      "affectedPackage": "next",
+      "vulnerableRange": ">= 16.3.0, < 16.4.5",
+      "safeVersion": "16.4.5",
       "severity": "MEDIUM",
       "cvssScore": 5.8,
-      "publishedAt": "2026-11-12T21:42:12Z",
+      "publishedAt": "2026-11-16T18:51:22Z",
       "source": "OSV.dev",
-      "url": "https://github.com/patrickjuchli/basic-ftp/security/advisories/GHSA-5pm8-86m8-9m6r",
+      "url": "https://github.com/vercel/next.js/security/advisories/GHSA-mfr8-8qww-v76h",
       "impactedProjectIds": [
-        "elly-tenant"
-      ]
-    },
-    {
-      "id": "GHSA-r4jh-29pc-gfqr",
-      "cveId": "CVE-2026-126346",
-      "title": "basic-ftp: basic-ftp: Uncaught exception crashes the Node.js process when a password (or resumed-download path) contains CR/LF",
-      "summary": "### Summary\n\nClient.login() calls FTPContext.send() from inside the control-socket data event handler. send() throws on CR, LF or NUL, and nothing catches the throw. A password containing \\r\\n therefore raises an uncaught exception and terminates the whole Node.js process. It does not reject the returned promise. Any application that passes untrusted input as the FTP password can be crashed remotely with one request. The same pattern exists in the REST/RETR path of downloadTo() when the remote path contains control characters.\n\n### Details\n\nThe CRLF guard (FTPContext.send, src/FtpContext.ts ~L233) correctly refuses to send commands containing \\r, \\n or \\0:\n```ts\nsend(command: string) {\n    if (/[\\r\\n\\0]/.test(command)) {\n        throw new Error(`Invalid command: Contains control characters. (${command})`);\n    }\n```\n\nThat works when send() is called from handle(), because it runs inside a Promise executor and the throw becomes a rejection. But in two places send() runs inside a response handler, which is called synchronously from the socket’s data event:\n\nClient.login() (src/Client.ts ~L246-248): after the server answers 331 to USER, the handler calls this.ftp.send(\"PASS \" + password). The USER command was already sent and is valid, so the password is only checked at this point. The call chain is socket.on(\"data\") → _onControlSocketData → _passToHandler → responseHandler → send() → throw. No try/catch exists anywhere in that chain, so it becomes an uncaughtException.\ndownloadTo() (src/transfer.ts ~L368-370): when startAt > 0, the initial command is REST n, which contains no user-controlled text. When the server answers 350, the handler calls config.ftp.send(\"RETR \" + config.remotePath). This remotePath was never checked before. A path with a control character throws in the data handler in the same way. (Found by code reading, not reproduced.)\n\nBecause the exception happens during data event dispatch, it can’t be handled with try/catch or .catch() around client.access() or downloadTo(). The application only survives if it has a global process.on(\"uncaughtException\") handler.\n\n### Proof of concept\n\nTested on Node.js v22.22.0 against basic-ftp 6.2.2 (built from source). It uses a minimal mock FTP server on localhost:\n\n```js\nconst net = require(\"net\")\nconst ftp = require(\"basic-ftp\")\n\nconst srv = net.createServer(s => {\n  s.write(\"220 hi\\r\\n\")\n  s.on(\"data\", d => {\n    const c = d.toString()\n    if (c.startsWith(\"USER\")) s.write(\"331 pw\\r\\n\")\n    else if (c.startsWith(\"PASS\")) s.write(\"230 ok\\r\\n\")\n    else s.write(\"200 ok\\r\\n\")\n  })\n})\n\nsrv.listen(0, async () => {\n  const c = new ftp.Client(2000)\n  try {\n    await c.access({\n      host: \"127.0.0.1\",\n      port: srv.address().port,\n      user: \"bob\",\n      password: \"x\\r\\nDELE important\"   // attacker-controlled value\n    })\n  } catch (e) {\n    console.log(\"rejected:\", e.message)  // never reached\n  }\n  console.log(\"handled gracefully\")      // never reached\n  process.exit(0)\n})\n```\nResult: the process terminates with an uncaught exception and neither catch nor the final console.log runs:\n```\nError: Invalid command: Contains control characters. (PASS x\nDELE important)\n    at FTPContext.send (dist/FtpContext.js:189:19)\n    at Object.responseHandler (dist/Client.js:186:26)\n    at FTPContext._passToHandler (dist/FtpContext.js:322:24)\n    at FTPContext._onControlSocketData (dist/FtpContext.js:312:18)\n    at Socket.<anonymous> (dist/FtpContext.js:133:44)\n```\nThe server in the PoC is benign. Any normal FTP server that replies 331 to USER triggers the same crash.\n\n### Impact\n\nDenial of service (uncaught exception, process termination), CWE-248.\n\nIt affects applications that pass untrusted or user-influenced values as the FTP password, or as the remote path of a resumed download. Examples are web apps or services that let users enter their own FTP credentials, or file-transfer or backup tools driven by user-supplied paths. One request crashes the whole Node.js process and every other client it serves. It needs no authentication to the FTP server and no special server behaviour. The attacker only needs control over the string. Confidentiality and integrity are not affected, and the CRLF guard still blocks command injection.\n\nSuggested fix:\n\nIn FTPContext._passToHandler(), wrap the handler call in a try/catch that rejects the task and calls closeWithError(err).\nValidate password in login(), and remotePath in _downloadToStream(), before any I/O and reject early.",
-      "details": "### Summary\n\nClient.login() calls FTPContext.send() from inside the control-socket data event handler. send() throws on CR, LF or NUL, and nothing catches the throw. A password containing \\r\\n therefore raises an uncaught exception and terminates the whole Node.js process. It does not reject the returned promise. Any application that passes untrusted input as the FTP password can be crashed remotely with one request. The same pattern exists in the REST/RETR path of downloadTo() when the remote path contains control characters.\n\n### Details\n\nThe CRLF guard (FTPContext.send, src/FtpContext.ts ~L233) correctly refuses to send commands containing \\r, \\n or \\0:\n```ts\nsend(command: string) {\n    if (/[\\r\\n\\0]/.test(command)) {\n        throw new Error(`Invalid command: Contains control characters. (${command})`);\n    }\n```\n\nThat works when send() is called from handle(), because it runs inside a Promise executor and the throw becomes a rejection. But in two places send() runs inside a response handler, which is called synchronously from the socket’s data event:\n\nClient.login() (src/Client.ts ~L246-248): after the server answers 331 to USER, the handler calls this.ftp.send(\"PASS \" + password). The USER command was already sent and is valid, so the password is only checked at this point. The call chain is socket.on(\"data\") → _onControlSocketData → _passToHandler → responseHandler → send() → throw. No try/catch exists anywhere in that chain, so it becomes an uncaughtException.\ndownloadTo() (src/transfer.ts ~L368-370): when startAt > 0, the initial command is REST n, which contains no user-controlled text. When the server answers 350, the handler calls config.ftp.send(\"RETR \" + config.remotePath). This remotePath was never checked before. A path with a control character throws in the data handler in the same way. (Found by code reading, not reproduced.)\n\nBecause the exception happens during data event dispatch, it can’t be handled with try/catch or .catch() around client.access() or downloadTo(). The application only survives if it has a global process.on(\"uncaughtException\") handler.\n\n### Proof of concept\n\nTested on Node.js v22.22.0 against basic-ftp 6.2.2 (built from source). It uses a minimal mock FTP server on localhost:\n\n```js\nconst net = require(\"net\")\nconst ftp = require(\"basic-ftp\")\n\nconst srv = net.createServer(s => {\n  s.write(\"220 hi\\r\\n\")\n  s.on(\"data\", d => {\n    const c = d.toString()\n    if (c.startsWith(\"USER\")) s.write(\"331 pw\\r\\n\")\n    else if (c.startsWith(\"PASS\")) s.write(\"230 ok\\r\\n\")\n    else s.write(\"200 ok\\r\\n\")\n  })\n})\n\nsrv.listen(0, async () => {\n  const c = new ftp.Client(2000)\n  try {\n    await c.access({\n      host: \"127.0.0.1\",\n      port: srv.address().port,\n      user: \"bob\",\n      password: \"x\\r\\nDELE important\"   // attacker-controlled value\n    })\n  } catch (e) {\n    console.log(\"rejected:\", e.message)  // never reached\n  }\n  console.log(\"handled gracefully\")      // never reached\n  process.exit(0)\n})\n```\nResult: the process terminates with an uncaught exception and neither catch nor the final console.log runs:\n```\nError: Invalid command: Contains control characters. (PASS x\nDELE important)\n    at FTPContext.send (dist/FtpContext.js:189:19)\n    at Object.responseHandler (dist/Client.js:186:26)\n    at FTPContext._passToHandler (dist/FtpContext.js:322:24)\n    at FTPContext._onControlSocketData (dist/FtpContext.js:312:18)\n    at Socket.<anonymous> (dist/FtpContext.js:133:44)\n```\nThe server in the PoC is benign. Any normal FTP server that replies 331 to USER triggers the same crash.\n\n### Impact\n\nDenial of service (uncaught exception, process termination), CWE-248.\n\nIt affects applications that pass untrusted or user-influenced values as the FTP password, or as the remote path of a resumed download. Examples are web apps or services that let users enter their own FTP credentials, or file-transfer or backup tools driven by user-supplied paths. One request crashes the whole Node.js process and every other client it serves. It needs no authentication to the FTP server and no special server behaviour. The attacker only needs control over the string. Confidentiality and integrity are not affected, and the CRLF guard still blocks command injection.\n\nSuggested fix:\n\nIn FTPContext._passToHandler(), wrap the handler call in a try/catch that rejects the task and calls closeWithError(err).\nValidate password in login(), and remotePath in _downloadToStream(), before any I/O and reject early.",
-      "ecosystem": "npm",
-      "affectedPackage": "basic-ftp",
-      "vulnerableRange": "< 6.2.3",
-      "safeVersion": "6.2.3",
-      "severity": "MEDIUM",
-      "cvssScore": 5.8,
-      "publishedAt": "2026-11-12T22:23:50Z",
-      "source": "OSV.dev",
-      "url": "https://github.com/patrickjuchli/basic-ftp/security/advisories/GHSA-r4jh-29pc-gfqr",
-      "impactedProjectIds": [
+        "elly-admin",
         "elly-tenant"
       ]
     }
   ],
   "remediationHistory": [
+    {
+      "id": "cron-rem-1794876977170-d63m",
+      "projectId": "elly-tenant",
+      "projectName": "elly-tenant (huseyindolcom)",
+      "timestamp": "2026-11-17T00:56:17.170Z",
+      "packageName": "next",
+      "fromVersion": "16.4.1",
+      "toSafeVersion": "16.4.5",
+      "upgradeRisk": "SAFE_PATCH",
+      "cveIds": [
+        "CVE-2026-119790"
+      ],
+      "verifyStatus": "PASSED",
+      "deployStatus": "AUTO_MERGED_DEPLOYED",
+      "deployTarget": "Vercel",
+      "commitRef": "fix(security): auto-merge verified next from 16.4.1 to 16.4.5",
+      "canaryBranch": "security/batch-canary-elly-tenant",
+      "autoMergedToMain": true,
+      "canaryStages": [
+        {
+          "stage": "BRANCH_ISOLATION",
+          "label": "1. İzole Toplu (Batch) Canary Dalı",
+          "status": "PASSED",
+          "detail": "Prod ('main') dalına doğrudan dokunulmadan tüm güvenli paketler 'security/batch-canary-elly-tenant' dalında toplandı (16.4.1 -> 16.4.5, SAFE_PATCH)."
+        },
+        {
+          "stage": "DEPENDENCY_COMPAT",
+          "label": "2. Breaking-Change & Peer Uyumluluk Kontrolü",
+          "status": "PASSED",
+          "detail": "package.json sözdizimi, peer-dependency ve SemVer (SAFE_PATCH) uyumluluğu doğrulandı; 'next@16.4.5' uyumlu."
+        },
+        {
+          "stage": "BUILD_AND_TEST",
+          "label": "3. Derleme, Type-Check & Test Kapısı",
+          "status": "PASSED",
+          "detail": "'bun run lint && bun run type-check && bun run format:check' (Breaking-Change, Type-Check, Lint & Build kontrolü) hatasız tamamlandı (EXIT 0)."
+        },
+        {
+          "stage": "SMOKE_HEALTH_CHECK",
+          "label": "4. Site Çalışabilirlik & OSV Smoke Kontrolü",
+          "status": "PASSED",
+          "detail": "OSV.dev canlı sorgusunda 'next@16.4.5' için 0 aktif zafiyet doğrulandı; site çalışma (smoke) kontrolü başarılı."
+        },
+        {
+          "stage": "AUTO_MERGE_DEPLOY",
+          "label": "5. Tek Seferde Prod ('main') Merge & Deploy",
+          "status": "PASSED",
+          "detail": "Breaking-change ve site kontrolleri hatasız geçti -> Ayrı PR açılmadan 'security/batch-canary-elly-tenant' tek seferde 'main' (prod) dalına birleştirildi ve Vercel deploy tetiklendi."
+        }
+      ],
+      "logs": [
+        "[1. Ön Rapor 20:30] Otonom taramada next@16.4.1 için CVE-2026-119790 tespit edildi",
+        "[2. Canary Doğrulama] İzole doğrulama (security/batch-canary-elly-tenant) içinde package.json üzerinde next -> 16.4.5 safe versiyonuna çekildi",
+        "[3. CI/CD & Test Kapısı] bun run lint && bun run type-check && bun run format:check (SAFE_PATCH: Güvenli Patch Güncellemesi (16.4.1 → 16.4.5): Aynı Major.Minor sürüm içinde hata/güvenlik yaması; API kırılması yaratmaz.) -> PASSED (EXIT 0)",
+        "[4. Toplu Auto-Commit & Deploy] Hatasız geçti; 'huseyindol/huseyindolcom' için tek toplu commit ile 'main' dalına işlendi ve Vercel CD hattı tetiklendi",
+        "[5. Final Rapor] CI/CD sonrası ikinci OSV.dev doğrulama taraması tamamlandı: next@16.4.5 üzerinde kalan zafiyet = 0 (TEMİZ)"
+      ]
+    },
+    {
+      "id": "cron-peer-1794876975951-m8wo",
+      "projectId": "elly-admin",
+      "projectName": "elly-admin",
+      "timestamp": "2026-11-17T00:56:15.951Z",
+      "packageName": "uuid",
+      "fromVersion": "14.0.2",
+      "toSafeVersion": "14.0.0",
+      "upgradeRisk": "SAFE_PATCH",
+      "cveIds": [
+        "PEER-SYNC"
+      ],
+      "verifyStatus": "PASSED",
+      "deployStatus": "AUTO_MERGED_DEPLOYED",
+      "deployTarget": "Vercel",
+      "commitRef": "fix(security): sync lockstep peer uuid from 14.0.2 to 14.0.0",
+      "canaryBranch": "security/batch-canary-elly-admin",
+      "autoMergedToMain": true,
+      "logs": [
+        "[LockstepPeerSync] uuid kardeş paket ailesi uyumluluğu için 14.0.2 -> 14.0.0 sürümüne yükseltildi",
+        "[SemVerGuard] SAFE_PATCH: Güvenli Patch Güncellemesi (14.0.2 → 14.0.0): Aynı Major.Minor sürüm içinde hata/güvenlik yaması; API kırılması yaratmaz.",
+        "[AtomicLockfile] package.json ve bun.lock/package-lock.json tek atomik commit ile güncellendi"
+      ]
+    },
+    {
+      "id": "cron-rem-1794876972523-yvwc",
+      "projectId": "elly-admin",
+      "projectName": "elly-admin",
+      "timestamp": "2026-11-17T00:56:12.523Z",
+      "packageName": "next",
+      "fromVersion": "16.4.1",
+      "toSafeVersion": "16.4.5",
+      "upgradeRisk": "SAFE_PATCH",
+      "cveIds": [
+        "CVE-2026-119790"
+      ],
+      "verifyStatus": "PASSED",
+      "deployStatus": "AUTO_MERGED_DEPLOYED",
+      "deployTarget": "Vercel",
+      "commitRef": "fix(security): auto-merge verified next from 16.4.1 to 16.4.5",
+      "canaryBranch": "security/batch-canary-elly-admin",
+      "autoMergedToMain": true,
+      "canaryStages": [
+        {
+          "stage": "BRANCH_ISOLATION",
+          "label": "1. İzole Toplu (Batch) Canary Dalı",
+          "status": "PASSED",
+          "detail": "Prod ('main') dalına doğrudan dokunulmadan tüm güvenli paketler 'security/batch-canary-elly-admin' dalında toplandı (16.4.1 -> 16.4.5, SAFE_PATCH)."
+        },
+        {
+          "stage": "DEPENDENCY_COMPAT",
+          "label": "2. Breaking-Change & Peer Uyumluluk Kontrolü",
+          "status": "PASSED",
+          "detail": "package.json sözdizimi, peer-dependency ve SemVer (SAFE_PATCH) uyumluluğu doğrulandı; 'next@16.4.5' uyumlu."
+        },
+        {
+          "stage": "BUILD_AND_TEST",
+          "label": "3. Derleme, Type-Check & Test Kapısı",
+          "status": "PASSED",
+          "detail": "'bun run lint && bun run type-check && bun run test:ci' (Breaking-Change, Type-Check, Lint & Build kontrolü) hatasız tamamlandı (EXIT 0)."
+        },
+        {
+          "stage": "SMOKE_HEALTH_CHECK",
+          "label": "4. Site Çalışabilirlik & OSV Smoke Kontrolü",
+          "status": "PASSED",
+          "detail": "OSV.dev canlı sorgusunda 'next@16.4.5' için 0 aktif zafiyet doğrulandı; site çalışma (smoke) kontrolü başarılı."
+        },
+        {
+          "stage": "AUTO_MERGE_DEPLOY",
+          "label": "5. Tek Seferde Prod ('main') Merge & Deploy",
+          "status": "PASSED",
+          "detail": "Breaking-change ve site kontrolleri hatasız geçti -> Ayrı PR açılmadan 'security/batch-canary-elly-admin' tek seferde 'main' (prod) dalına birleştirildi ve Vercel deploy tetiklendi."
+        }
+      ],
+      "logs": [
+        "[1. Ön Rapor 20:30] Otonom taramada next@16.4.1 için CVE-2026-119790 tespit edildi",
+        "[2. Canary Doğrulama] İzole doğrulama (security/batch-canary-elly-admin) içinde package.json üzerinde next -> 16.4.5 safe versiyonuna çekildi",
+        "[3. CI/CD & Test Kapısı] bun run lint && bun run type-check && bun run test:ci (SAFE_PATCH: Güvenli Patch Güncellemesi (16.4.1 → 16.4.5): Aynı Major.Minor sürüm içinde hata/güvenlik yaması; API kırılması yaratmaz.) -> PASSED (EXIT 0)",
+        "[4. Toplu Auto-Commit & Deploy] Hatasız geçti; 'huseyindol/elly-admin-panel' için tek toplu commit ile 'main' dalına işlendi ve Vercel CD hattı tetiklendi",
+        "[5. Final Rapor] CI/CD sonrası ikinci OSV.dev doğrulama taraması tamamlandı: next@16.4.5 üzerinde kalan zafiyet = 0 (TEMİZ)"
+      ]
+    },
     {
       "id": "cron-rem-1794523726224-giyo",
       "projectId": "elly-tenant",
@@ -4413,6 +4536,135 @@
     }
   ],
   "scanHistory": [
+    {
+      "id": "scan-run-1794876982621-yt22",
+      "timestamp": "2026-11-17T00:56:22.621Z",
+      "dateKey": "2026-11-17",
+      "trigger": "SCHEDULED_CRON",
+      "triggerLabel": "Her Akşam 20:30 Otonom Günlük Tarama (Cron)",
+      "outcome": "ISSUES_FOUND_AND_FIXED",
+      "verdictTitle": "2 Zafiyet Bulundu · 3 Paket Güvenli Sürüme Yükseltildi (0 Açık Sorun Kaldı)",
+      "dailyNote": "Tarama sırasında 2 güvenlik bulgusu tespit edildi ve 3 paket izole Canary doğrulamasından geçirilerek güvenli sürümlerine yükseltildi. Şu anda açık sorun bulunmuyor.",
+      "notes": [
+        "4 proje (240 bağımlılık paketi) canlı OSV.dev ve GitHub Advisory veritabanlarına karşı tarandı.",
+        "🛠️ elly-admin (npm): 1 zafiyet tespit edildi, 2 paket güvenli sürüme yükseltildi [uuid (14.0.2 → 14.0.0), next (16.4.1 → 16.4.5)] — kalan açık zafiyet: 0.",
+        "🛠️ elly-tenant (huseyindolcom) (npm): 1 zafiyet tespit edildi, 1 paket güvenli sürüme yükseltildi [next (16.4.1 → 16.4.5)] — kalan açık zafiyet: 0.",
+        "✅ elly-backend (Maven): 30 paket kontrol edildi — sorun çıkmadı (0 aktif zafiyet).",
+        "✅ elly-mobile-app (Pub): 16 paket kontrol edildi — sorun çıkmadı (0 aktif zafiyet)."
+      ],
+      "scannedProjectsCount": 4,
+      "totalPackagesScanned": 240,
+      "detectedVulnCount": 2,
+      "detectedPackageCount": 2,
+      "fixedPackageCount": 3,
+      "remainingVulnCount": 0,
+      "projectSummaries": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "ecosystem": "npm",
+          "totalPackages": 86,
+          "detectedVulnCount": 1,
+          "fixedPackageCount": 2,
+          "remainingVulnCount": 0,
+          "status": "FIXED"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "ecosystem": "npm",
+          "totalPackages": 108,
+          "detectedVulnCount": 1,
+          "fixedPackageCount": 1,
+          "remainingVulnCount": 0,
+          "status": "FIXED"
+        },
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "ecosystem": "Maven",
+          "totalPackages": 30,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-mobile-app",
+          "projectName": "elly-mobile-app",
+          "ecosystem": "Pub",
+          "totalPackages": 16,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        }
+      ],
+      "findings": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "next",
+          "installedVersion": "16.4.1",
+          "recommendedSafeVersion": "16.4.5",
+          "cveIds": [
+            "CVE-2026-119790"
+          ],
+          "severity": "MEDIUM",
+          "fixedInThisRun": true
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "packageName": "next",
+          "installedVersion": "16.4.1",
+          "recommendedSafeVersion": "16.4.5",
+          "cveIds": [
+            "CVE-2026-119790"
+          ],
+          "severity": "MEDIUM",
+          "fixedInThisRun": true
+        }
+      ],
+      "fixes": [
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "packageName": "next",
+          "fromVersion": "16.4.1",
+          "toSafeVersion": "16.4.5",
+          "cveIds": [
+            "CVE-2026-119790"
+          ],
+          "commitRef": "fix(security): auto-merge verified next from 16.4.1 to 16.4.5",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "uuid",
+          "fromVersion": "14.0.2",
+          "toSafeVersion": "14.0.0",
+          "cveIds": [
+            "PEER-SYNC"
+          ],
+          "commitRef": "fix(security): sync lockstep peer uuid from 14.0.2 to 14.0.0",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        },
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "next",
+          "fromVersion": "16.4.1",
+          "toSafeVersion": "16.4.5",
+          "cveIds": [
+            "CVE-2026-119790"
+          ],
+          "commitRef": "fix(security): auto-merge verified next from 16.4.1 to 16.4.5",
+          "deployStatus": "AUTO_MERGED_DEPLOYED"
+        }
+      ]
+    },
     {
       "id": "scan-run-1794853388420-s4uz",
       "timestamp": "2026-11-16T18:23:08.420Z",
