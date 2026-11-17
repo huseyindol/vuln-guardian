@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "lastGlobalScanAt": "2026-11-17T00:56:22.622Z",
+  "lastGlobalScanAt": "2026-11-17T18:23:04.442Z",
   "schedulerActive": true,
   "dailyScheduleCron": "30 20 * * *",
   "dailyScheduleLabel": "Her Akşam 20:30 (TSİ / UTC+3)",
@@ -22,10 +22,10 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run test:ci",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-11-17T00:56:16.301Z",
-      "nextScanAt": "2026-11-17T17:30:00.000Z",
+      "lastScanAt": "2026-11-17T18:23:03.156Z",
+      "nextScanAt": "2026-11-18T17:30:00.000Z",
       "lastDeployAt": "2026-11-17T00:56:15.951Z",
-      "status": "HEALTHY",
+      "status": "VULNERABLE",
       "packages": [
         {
           "name": "@hookform/resolvers",
@@ -119,8 +119,8 @@
         },
         {
           "name": "@tiptap/pm",
-          "rawSpec": "^3.31.4",
-          "cleanVersion": "3.31.4",
+          "rawSpec": "^3.34.0",
+          "cleanVersion": "3.34.0",
           "section": "dependencies",
           "ecosystem": "npm",
           "status": "SAFE",
@@ -782,9 +782,11 @@
           "cleanVersion": "2.3.2",
           "section": "overrides",
           "ecosystem": "npm",
-          "status": "SAFE",
-          "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
+          "status": "VULNERABLE",
+          "vulnerabilityCount": 1,
+          "recommendedSafeVersion": null,
+          "upgradeRisk": "MANUAL_ONLY",
+          "upgradeRiskReason": "Henüz resmi yamalı sürüm yayınlanmadı; manuel inceleme gerekir."
         },
         {
           "name": "uuid",
@@ -849,6 +851,16 @@
           "previousVersion": "3.3.16"
         },
         {
+          "name": "prosemirror-view",
+          "rawSpec": "^1.42.3",
+          "cleanVersion": "1.42.3",
+          "section": "overrides",
+          "ecosystem": "npm",
+          "status": "SAFE",
+          "vulnerabilityCount": 0,
+          "recommendedSafeVersion": null
+        },
+        {
           "name": "sharp",
           "rawSpec": "^0.35.5",
           "cleanVersion": "0.35.5",
@@ -900,8 +912,43 @@
           "recommendedSafeVersion": null
         }
       ],
-      "vulnerabilities": [],
-      "manifestRaw": "{\n  \"name\": \"elly-admin-panel\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"build\": \"next build\",\n    \"start\": \"next start\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@monaco-editor/react\": \"^4.7.0\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@tiptap/extension-image\": \"^3.31.4\",\n    \"@tiptap/pm\": \"^3.31.4\",\n    \"@tiptap/react\": \"^3.31.4\",\n    \"@tiptap/starter-kit\": \"^3.31.4\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"framer-motion\": \"^14.0.0\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.5\",\n    \"next-themes\": \"^0.4.6\",\n    \"qrcode.react\": \"^4.2.0\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"uuid\": \"^14.0.2\",\n    \"vite\": \"^8.3.3\",\n    \"zod\": \"^4.6.6\",\n    \"zustand\": \"^5.0.15\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@types/uuid\": \"^11.0.0\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.5\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.5\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"postcss\": \"^8.5.23\",\n    \"yaml\": \"^2.8.3\",\n    \"flatted\": \"^3.4.2\",\n    \"picomatch\": \"^2.3.2\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"esbuild\": \"^0.28.1\",\n    \"js-yaml\": \"^4.3.2\",\n    \"nanoid\": \"^3.3.18\",\n    \"sharp\": \"^0.35.5\",\n    \"@babel/core\": \"^7.29.6\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
+      "vulnerabilities": [
+        {
+          "id": "GHSA-fc5q-39xc-vjpf",
+          "cveId": "CVE-2026-112366",
+          "aliases": [
+            "CVE-2026-112366"
+          ],
+          "packageName": "picomatch",
+          "ecosystem": "npm",
+          "installedVersion": "2.3.2",
+          "introducedVersion": null,
+          "fixedVersion": null,
+          "upgradeRisk": "MANUAL_ONLY",
+          "upgradeRiskReason": "Henüz resmi yamalı sürüm yayınlanmadı; manuel inceleme gerekir.",
+          "affectedRangeText": "<= 2.3.2",
+          "cweIds": [
+            "CWE-1333"
+          ],
+          "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "severity": "HIGH",
+          "cvssScore": 8.1,
+          "summary": "picomatch vulnerable to ReDoS through single-branch repeated extglobs",
+          "details": "Picomatch through 4.0.7 contains a regular expression denial of service vulnerability that allows attackers to block the event loop by supplying single-branch repeated extglob patterns. Attackers can provide globs like +(*) or +(*a), which analyzeRepeatedExtglob in lib/parse.js skips, causing exponential backtracking against short crafted strings and denying service to Node.js applications.",
+          "publishedAt": "2026-10-19T18:32:12Z",
+          "modifiedAt": "2026-11-17T16:00:03.999173557Z",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-112366",
+            "https://github.com/micromatch/picomatch/pull/194",
+            "https://github.com/micromatch/picomatch",
+            "https://github.com/micromatch/picomatch/blob/4.0.7/lib/parse.js#L287-L307",
+            "https://www.vulncheck.com/advisories/picomatch-through-4.0.7-redos-via-single-branch-repeated-extglob-patterns"
+          ],
+          "isDirect": false,
+          "dependencySection": "overrides"
+        }
+      ],
+      "manifestRaw": "{\n  \"name\": \"elly-admin-panel\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev --port 3333\",\n    \"build\": \"next build\",\n    \"start\": \"next start\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@monaco-editor/react\": \"^4.7.0\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@tiptap/extension-image\": \"^3.31.4\",\n    \"@tiptap/pm\": \"^3.34.0\",\n    \"@tiptap/react\": \"^3.31.4\",\n    \"@tiptap/starter-kit\": \"^3.31.4\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"framer-motion\": \"^14.0.0\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.5\",\n    \"next-themes\": \"^0.4.6\",\n    \"qrcode.react\": \"^4.2.0\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"uuid\": \"^14.0.2\",\n    \"vite\": \"^8.3.3\",\n    \"zod\": \"^4.6.6\",\n    \"zustand\": \"^5.0.15\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@types/uuid\": \"^11.0.0\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.5\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.5\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"postcss\": \"^8.5.23\",\n    \"yaml\": \"^2.8.3\",\n    \"flatted\": \"^3.4.2\",\n    \"picomatch\": \"^2.3.2\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"esbuild\": \"^0.28.1\",\n    \"js-yaml\": \"^4.3.2\",\n    \"nanoid\": \"^3.3.18\",\n    \"prosemirror-view\": \"^1.42.3\",\n    \"sharp\": \"^0.35.5\",\n    \"@babel/core\": \"^7.29.6\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
     },
     {
       "id": "elly-tenant",
@@ -919,10 +966,10 @@
       "verifyCommand": "bun run lint && bun run type-check && bun run format:check",
       "deployCommand": "vercel --prod --yes",
       "deployTarget": "Vercel",
-      "lastScanAt": "2026-11-17T00:56:21.969Z",
-      "nextScanAt": "2026-11-17T17:30:00.000Z",
+      "lastScanAt": "2026-11-17T18:23:03.773Z",
+      "nextScanAt": "2026-11-18T17:30:00.000Z",
       "lastDeployAt": "2026-11-17T00:56:21.588Z",
-      "status": "HEALTHY",
+      "status": "VULNERABLE",
       "packages": [
         {
           "name": "@hookform/resolvers",
@@ -968,26 +1015,6 @@
           "name": "@radix-ui/react-slot",
           "rawSpec": "^1.3.3",
           "cleanVersion": "1.3.3",
-          "section": "dependencies",
-          "ecosystem": "npm",
-          "status": "SAFE",
-          "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
-        },
-        {
-          "name": "@react-email/components",
-          "rawSpec": "^1.0.12",
-          "cleanVersion": "1.0.12",
-          "section": "dependencies",
-          "ecosystem": "npm",
-          "status": "SAFE",
-          "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
-        },
-        {
-          "name": "@react-email/render",
-          "rawSpec": "^2.1.0",
-          "cleanVersion": "2.1.0",
           "section": "dependencies",
           "ecosystem": "npm",
           "status": "SAFE",
@@ -1196,14 +1223,13 @@
         },
         {
           "name": "next",
-          "rawSpec": "16.4.5",
-          "cleanVersion": "16.4.5",
+          "rawSpec": "16.4.6",
+          "cleanVersion": "16.4.6",
           "section": "dependencies",
           "ecosystem": "npm",
-          "status": "PATCHED",
+          "status": "SAFE",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null,
-          "previousVersion": "16.4.1"
+          "recommendedSafeVersion": null
         },
         {
           "name": "next-mdx-remote",
@@ -1276,16 +1302,6 @@
           "recommendedSafeVersion": null
         },
         {
-          "name": "resend",
-          "rawSpec": "^6.32.0",
-          "cleanVersion": "6.32.0",
-          "section": "dependencies",
-          "ecosystem": "npm",
-          "status": "SAFE",
-          "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null
-        },
-        {
           "name": "sockjs-client",
           "rawSpec": "^1.6.1",
           "cleanVersion": "1.6.1",
@@ -1337,14 +1353,13 @@
         },
         {
           "name": "zod",
-          "rawSpec": "^4.6.6",
-          "cleanVersion": "4.6.6",
+          "rawSpec": "^4.6.7",
+          "cleanVersion": "4.6.7",
           "section": "dependencies",
           "ecosystem": "npm",
-          "status": "PATCHED",
+          "status": "SAFE",
           "vulnerabilityCount": 0,
-          "recommendedSafeVersion": null,
-          "previousVersion": "4.6.5"
+          "recommendedSafeVersion": null
         },
         {
           "name": "@eslint/eslintrc",
@@ -1787,10 +1802,11 @@
           "cleanVersion": "4.0.4",
           "section": "overrides",
           "ecosystem": "npm",
-          "status": "PATCHED",
-          "vulnerabilityCount": 0,
+          "status": "VULNERABLE",
+          "vulnerabilityCount": 1,
           "recommendedSafeVersion": null,
-          "previousVersion": "4.0.2"
+          "upgradeRisk": "MANUAL_ONLY",
+          "upgradeRiskReason": "Henüz resmi yamalı sürüm yayınlanmadı; manuel inceleme gerekir."
         },
         {
           "name": "flatted",
@@ -2020,8 +2036,43 @@
           "recommendedSafeVersion": null
         }
       ],
-      "vulnerabilities": [],
-      "manifestRaw": "{\n  \"name\": \"huseyindolcom\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"build\": \"next build\",\n    \"build:standalone\": \"next build && cp -r public .next/standalone/ && cp -r .next/static/* .next/standalone/.next/static/\",\n    \"start\": \"next start\",\n    \"start:standalone\": \"node .next/standalone/server.js\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"lighthouse\": \"lhci autorun\",\n    \"lighthouse:local\": \"mkdir -p reports && lighthouse http://localhost:3000 --output=html --output-path=./reports/lighthouse.html --chrome-flags='--headless --no-sandbox'\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@next/third-parties\": \"^16.3.8\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@react-email/components\": \"^1.0.12\",\n    \"@react-email/render\": \"^2.1.0\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tailwindcss/typography\": \"^0.5.20\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"@vercel/analytics\": \"^2.0.1\",\n    \"@vercel/speed-insights\": \"^2.0.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"date-fns\": \"^4.4.0\",\n    \"framer-motion\": \"^14.0.0\",\n    \"gray-matter\": \"^4.0.3\",\n    \"html-react-parser\": \"^6.1.8\",\n    \"isomorphic-dompurify\": \"^4.4.0\",\n    \"js-yaml\": \"^5.4.2\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.5\",\n    \"next-mdx-remote\": \"^6.0.0\",\n    \"next-themes\": \"^0.4.6\",\n    \"nextjs-toploader\": \"^3.9.17\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"resend\": \"^6.32.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"zod\": \"^4.6.6\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@lhci/cli\": \"^0.15.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/js-yaml\": \"^4.0.9\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.5\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"beasties\": \"^0.5.4\",\n    \"critters\": \"npm:beasties@^0.5.4\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lighthouse\": \"^13.5.0\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"rehype-pretty-code\": \"^0.14.5\",\n    \"remark-gfm\": \"^4.0.1\",\n    \"shiki\": \"^4.5.0\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.5\",\n    \"web-vitals\": \"^6.2.2\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"ip-address\": \"^10.7.4\",\n    \"postcss\": \"^8.5.26\",\n    \"picomatch\": \"^4.0.4\",\n    \"flatted\": \"^3.4.2\",\n    \"basic-ftp\": \"^6.2.4\",\n    \"tmp\": \"^0.2.7\",\n    \"yaml\": \"^2.8.3\",\n    \"path-to-regexp\": \"^8.4.0\",\n    \"lodash\": \"^4.18.1\",\n    \"lodash-es\": \"^4.18.1\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"undici\": \"^7.30.1\",\n    \"qs\": \"^6.16.1\",\n    \"@opentelemetry/core\": \"^2.8.0\",\n    \"@babel/core\": \"^7.29.7\",\n    \"nanoid\": \"^3.3.18\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"sharp\": \"^0.35.5\",\n    \"body-parser\": \"^1.20.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"fflate\": \"^0.8.3\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
+      "vulnerabilities": [
+        {
+          "id": "GHSA-fc5q-39xc-vjpf",
+          "cveId": "CVE-2026-112366",
+          "aliases": [
+            "CVE-2026-112366"
+          ],
+          "packageName": "picomatch",
+          "ecosystem": "npm",
+          "installedVersion": "4.0.4",
+          "introducedVersion": null,
+          "fixedVersion": null,
+          "upgradeRisk": "MANUAL_ONLY",
+          "upgradeRiskReason": "Henüz resmi yamalı sürüm yayınlanmadı; manuel inceleme gerekir.",
+          "affectedRangeText": "<= 4.0.4",
+          "cweIds": [
+            "CWE-1333"
+          ],
+          "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "severity": "HIGH",
+          "cvssScore": 8.1,
+          "summary": "picomatch vulnerable to ReDoS through single-branch repeated extglobs",
+          "details": "Picomatch through 4.0.7 contains a regular expression denial of service vulnerability that allows attackers to block the event loop by supplying single-branch repeated extglob patterns. Attackers can provide globs like +(*) or +(*a), which analyzeRepeatedExtglob in lib/parse.js skips, causing exponential backtracking against short crafted strings and denying service to Node.js applications.",
+          "publishedAt": "2026-10-19T18:32:12Z",
+          "modifiedAt": "2026-11-17T16:00:03.999173557Z",
+          "references": [
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-112366",
+            "https://github.com/micromatch/picomatch/pull/194",
+            "https://github.com/micromatch/picomatch",
+            "https://github.com/micromatch/picomatch/blob/4.0.7/lib/parse.js#L287-L307",
+            "https://www.vulncheck.com/advisories/picomatch-through-4.0.7-redos-via-single-branch-repeated-extglob-patterns"
+          ],
+          "isDirect": false,
+          "dependencySection": "overrides"
+        }
+      ],
+      "manifestRaw": "{\n  \"name\": \"huseyindolcom\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"dev:turbo\": \"NODE_OPTIONS='--inspect' next dev\",\n    \"build\": \"next build\",\n    \"build:standalone\": \"next build && cp -r public .next/standalone/ && cp -r .next/static/* .next/standalone/.next/static/\",\n    \"start\": \"next start\",\n    \"start:standalone\": \"node .next/standalone/server.js\",\n    \"lint\": \"eslint src\",\n    \"lint:fix\": \"eslint src --fix\",\n    \"type-check\": \"tsc --noEmit\",\n    \"format\": \"prettier --write .\",\n    \"format:check\": \"prettier --check .\",\n    \"test\": \"vitest\",\n    \"test:ui\": \"vitest --ui\",\n    \"test:run\": \"vitest run\",\n    \"test:watch\": \"vitest watch\",\n    \"test:coverage\": \"vitest run --coverage\",\n    \"test:ci\": \"vitest run --coverage --reporter=verbose\",\n    \"prepare\": \"husky\",\n    \"analyze\": \"ANALYZE=true next build\",\n    \"lighthouse\": \"lhci autorun\",\n    \"lighthouse:local\": \"mkdir -p reports && lighthouse http://localhost:3000 --output=html --output-path=./reports/lighthouse.html --chrome-flags='--headless --no-sandbox'\",\n    \"perf:audit\": \"node scripts/performance-audit.mjs\",\n    \"perf:build\": \"ANALYZE=true next build && node scripts/performance-audit.mjs\",\n    \"load-test\": \"k6 run scripts/load-test.k6.js\",\n    \"load-test:local\": \"BASE_URL=http://localhost:3000 k6 run scripts/load-test.k6.js\",\n    \"load-test:quick\": \"k6 run --vus 10 --duration 30s scripts/load-test.k6.js\",\n    \"sonar\": \"bunx sonar-scanner\",\n    \"sbom:generate\": \"bunx @cyclonedx/cdxgen -o bom.json --format json\",\n    \"sbom:upload\": \"bash scripts/upload-sbom.sh\"\n  },\n  \"lint-staged\": {\n    \"*.{js,jsx,ts,tsx,json,css,scss,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"dependencies\": {\n    \"@hookform/resolvers\": \"^5.9.1\",\n    \"@next/third-parties\": \"^16.3.8\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.24\",\n    \"@radix-ui/react-label\": \"^2.1.15\",\n    \"@radix-ui/react-slot\": \"^1.3.3\",\n    \"@stomp/stompjs\": \"^7.3.0\",\n    \"@tailwindcss/typography\": \"^0.5.20\",\n    \"@tanstack/react-query\": \"^5.104.1\",\n    \"@tanstack/react-query-devtools\": \"^5.104.1\",\n    \"@types/jsonwebtoken\": \"^9.0.10\",\n    \"@types/swagger-jsdoc\": \"^6.0.4\",\n    \"@types/swagger-ui-react\": \"^5.18.0\",\n    \"@vercel/analytics\": \"^2.0.1\",\n    \"@vercel/speed-insights\": \"^2.0.0\",\n    \"ajv\": \"^8.20.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"date-fns\": \"^4.4.0\",\n    \"framer-motion\": \"^14.0.0\",\n    \"gray-matter\": \"^4.0.3\",\n    \"html-react-parser\": \"^6.1.8\",\n    \"isomorphic-dompurify\": \"^4.4.0\",\n    \"js-yaml\": \"^5.4.2\",\n    \"jsonwebtoken\": \"^9.0.3\",\n    \"lucide-react\": \"^1.52.0\",\n    \"next\": \"16.4.6\",\n    \"next-mdx-remote\": \"^6.0.0\",\n    \"next-themes\": \"^0.4.6\",\n    \"nextjs-toploader\": \"^3.9.17\",\n    \"react\": \"^19.3.0\",\n    \"react-dom\": \"^19.3.0\",\n    \"react-hook-form\": \"^7.89.0\",\n    \"react-icons\": \"^5.7.0\",\n    \"sockjs-client\": \"^1.6.1\",\n    \"sonner\": \"^2.0.8\",\n    \"tailwind-merge\": \"^3.7.0\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"tw-animate-css\": \"^1.4.0\",\n    \"zod\": \"^4.6.7\"\n  },\n  \"devDependencies\": {\n    \"@eslint/eslintrc\": \"^3.3.7\",\n    \"@eslint/js\": \"^10.0.1\",\n    \"@lhci/cli\": \"^0.15.1\",\n    \"@next/bundle-analyzer\": \"^16.3.8\",\n    \"@next/eslint-plugin-next\": \"^16.3.8\",\n    \"@tailwindcss/postcss\": \"^4.3.3\",\n    \"@tanstack/eslint-plugin-query\": \"^5.104.1\",\n    \"@testing-library/jest-dom\": \"^7.0.1\",\n    \"@testing-library/react\": \"^16.3.3\",\n    \"@testing-library/user-event\": \"^14.6.7\",\n    \"@types/js-yaml\": \"^4.0.9\",\n    \"@types/node\": \"^26.6.4\",\n    \"@types/react\": \"^19.3.0\",\n    \"@types/react-dom\": \"^19.3.0\",\n    \"@types/sockjs-client\": \"^1.5.4\",\n    \"@vitejs/plugin-react\": \"^6.1.1\",\n    \"@vitest/coverage-v8\": \"^5.0.5\",\n    \"@vitest/ui\": \"^5.0.5\",\n    \"beasties\": \"^0.5.4\",\n    \"critters\": \"npm:beasties@^0.5.4\",\n    \"dotenv\": \"^18.0.5\",\n    \"eslint\": \"^9.39.4\",\n    \"eslint-config-next\": \"16.3.8\",\n    \"eslint-plugin-react\": \"^7.37.5\",\n    \"eslint-plugin-react-hooks\": \"^7.1.1\",\n    \"husky\": \"^9.1.7\",\n    \"jsdom\": \"^30.1.2\",\n    \"lighthouse\": \"^13.5.0\",\n    \"lint-staged\": \"^17.6.0\",\n    \"prettier\": \"^3.9.9\",\n    \"prettier-plugin-tailwindcss\": \"^0.8.1\",\n    \"rehype-pretty-code\": \"^0.14.5\",\n    \"remark-gfm\": \"^4.0.1\",\n    \"shiki\": \"^4.5.0\",\n    \"tailwindcss\": \"^4.3.3\",\n    \"tsx\": \"^4.23.15\",\n    \"typescript\": \"~6.0.3\",\n    \"typescript-eslint\": \"^8.71.0\",\n    \"vitest\": \"^5.0.5\",\n    \"web-vitals\": \"^6.2.2\"\n  },\n  \"overrides\": {\n    \"fast-uri\": \"^3.1.9\",\n    \"ip-address\": \"^10.7.4\",\n    \"postcss\": \"^8.5.26\",\n    \"picomatch\": \"^4.0.4\",\n    \"flatted\": \"^3.4.2\",\n    \"basic-ftp\": \"^6.2.4\",\n    \"tmp\": \"^0.2.7\",\n    \"yaml\": \"^2.8.3\",\n    \"path-to-regexp\": \"^8.4.0\",\n    \"lodash\": \"^4.18.1\",\n    \"lodash-es\": \"^4.18.1\",\n    \"uuid\": \"^14.0.0\",\n    \"ws\": \"^8.21.0\",\n    \"undici\": \"^7.30.1\",\n    \"qs\": \"^6.16.1\",\n    \"@opentelemetry/core\": \"^2.8.0\",\n    \"@babel/core\": \"^7.29.7\",\n    \"nanoid\": \"^3.3.18\",\n    \"websocket-driver\": \"^0.7.5\",\n    \"sharp\": \"^0.35.5\",\n    \"body-parser\": \"^1.20.9\",\n    \"dompurify\": \"^3.4.17\",\n    \"@humanfs/node\": \"^0.17.0\",\n    \"baseline-browser-mapping\": \"^2.11.25\",\n    \"fflate\": \"^0.8.3\",\n    \"browserslist\": \"^4.29.0\"\n  }\n}\n"
     },
     {
       "id": "elly-backend",
@@ -2039,8 +2090,8 @@
       "verifyCommand": "./mvnw -q -DskipTests compile",
       "deployCommand": "kubectl rollout restart deployment/elly-backend",
       "deployTarget": "Kubernetes / Server",
-      "lastScanAt": "2026-11-17T00:56:22.280Z",
-      "nextScanAt": "2026-11-17T17:30:00.000Z",
+      "lastScanAt": "2026-11-17T18:23:04.117Z",
+      "nextScanAt": "2026-11-18T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
       "packages": [
@@ -2367,8 +2418,8 @@
       "verifyCommand": "flutter analyze --no-fatal-infos && flutter test",
       "deployCommand": "gh workflow run release-mobile.yml",
       "deployTarget": "GitHub Actions",
-      "lastScanAt": "2026-11-17T00:56:22.620Z",
-      "nextScanAt": "2026-11-17T17:30:00.000Z",
+      "lastScanAt": "2026-11-17T18:23:04.440Z",
+      "nextScanAt": "2026-11-18T17:30:00.000Z",
       "lastDeployAt": null,
       "status": "HEALTHY",
       "packages": [
@@ -2539,20 +2590,20 @@
   ],
   "newsFeed": [
     {
-      "id": "GHSA-mfr8-8qww-v76h",
-      "cveId": "CVE-2026-119790",
-      "title": "next: Next.js: Information disclosure across root params when a 'use cache' function is called through unstable_cache()",
-      "summary": "Next.js applications with `'use cache'` can disclose cached data across root params when the same `'use cache'` function is called both directly during rendering and through `unstable_cache()`, and that function reads a root param. Root params are route parameters of the root layout, and applications commonly use them to scope data, for example per locale.\n\nDuring a cold process start, a cross-request deduplication race allowed an `unstable_cache()` call to join the in-flight fill of a concurrent direct call and receive its result, bypassing the root param check that would normally reject it. `unstable_cache()` then stored that result under a cache key without root params, so subsequent requests for other root param values received the same entry until it is revalidated or evicted. Cached data produced for one root param value is returned to requests for other values.\n\nExploitation requires the `unstable_cache()` request to arrive while the function's first fill after a process start is still in flight. Outside this race, the nesting already throws an error: `'use cache' inside unstable_cache() is unsupported`, and avoiding it is a complete workaround.",
-      "details": "Next.js applications with `'use cache'` can disclose cached data across root params when the same `'use cache'` function is called both directly during rendering and through `unstable_cache()`, and that function reads a root param. Root params are route parameters of the root layout, and applications commonly use them to scope data, for example per locale.\n\nDuring a cold process start, a cross-request deduplication race allowed an `unstable_cache()` call to join the in-flight fill of a concurrent direct call and receive its result, bypassing the root param check that would normally reject it. `unstable_cache()` then stored that result under a cache key without root params, so subsequent requests for other root param values received the same entry until it is revalidated or evicted. Cached data produced for one root param value is returned to requests for other values.\n\nExploitation requires the `unstable_cache()` request to arrive while the function's first fill after a process start is still in flight. Outside this race, the nesting already throws an error: `'use cache' inside unstable_cache() is unsupported`, and avoiding it is a complete workaround.",
+      "id": "GHSA-fc5q-39xc-vjpf",
+      "cveId": "CVE-2026-112366",
+      "title": "picomatch: picomatch vulnerable to ReDoS through single-branch repeated extglobs",
+      "summary": "Picomatch through 4.0.7 contains a regular expression denial of service vulnerability that allows attackers to block the event loop by supplying single-branch repeated extglob patterns. Attackers can provide globs like +(*) or +(*a), which analyzeRepeatedExtglob in lib/parse.js skips, causing exponential backtracking against short crafted strings and denying service to Node.js applications.",
+      "details": "Picomatch through 4.0.7 contains a regular expression denial of service vulnerability that allows attackers to block the event loop by supplying single-branch repeated extglob patterns. Attackers can provide globs like +(*) or +(*a), which analyzeRepeatedExtglob in lib/parse.js skips, causing exponential backtracking against short crafted strings and denying service to Node.js applications.",
       "ecosystem": "npm",
-      "affectedPackage": "next",
-      "vulnerableRange": ">= 16.3.0, < 16.4.5",
-      "safeVersion": "16.4.5",
-      "severity": "MEDIUM",
-      "cvssScore": 5.8,
-      "publishedAt": "2026-11-16T18:51:22Z",
+      "affectedPackage": "picomatch",
+      "vulnerableRange": "<= 2.3.2",
+      "safeVersion": "Latest",
+      "severity": "HIGH",
+      "cvssScore": 8.1,
+      "publishedAt": "2026-10-19T18:32:12Z",
       "source": "OSV.dev",
-      "url": "https://github.com/vercel/next.js/security/advisories/GHSA-mfr8-8qww-v76h",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-112366",
       "impactedProjectIds": [
         "elly-admin",
         "elly-tenant"
@@ -4536,6 +4587,98 @@
     }
   ],
   "scanHistory": [
+    {
+      "id": "scan-run-1794939784441-f1wk",
+      "timestamp": "2026-11-17T18:23:04.441Z",
+      "dateKey": "2026-11-17",
+      "trigger": "SCHEDULED_CRON",
+      "triggerLabel": "Her Akşam 20:30 Otonom Günlük Tarama (Cron)",
+      "outcome": "ISSUES_REMAINING",
+      "verdictTitle": "2 Açık Zafiyet Tespit Edildi",
+      "dailyNote": "Tarama sonucunda 2 aktif güvenlik zafiyeti tespit edildi. İlgili paketlerin güvenli sürüme yükseltilmesi önerilir.",
+      "notes": [
+        "4 proje (238 bağımlılık paketi) canlı OSV.dev ve GitHub Advisory veritabanlarına karşı tarandı.",
+        "⚠️ elly-admin (npm): 1 aktif zafiyet müdahale bekliyor.",
+        "⚠️ elly-tenant (huseyindolcom) (npm): 1 aktif zafiyet müdahale bekliyor.",
+        "✅ elly-backend (Maven): 30 paket kontrol edildi — sorun çıkmadı (0 aktif zafiyet).",
+        "✅ elly-mobile-app (Pub): 16 paket kontrol edildi — sorun çıkmadı (0 aktif zafiyet)."
+      ],
+      "scannedProjectsCount": 4,
+      "totalPackagesScanned": 238,
+      "detectedVulnCount": 2,
+      "detectedPackageCount": 2,
+      "fixedPackageCount": 0,
+      "remainingVulnCount": 2,
+      "projectSummaries": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "ecosystem": "npm",
+          "totalPackages": 87,
+          "detectedVulnCount": 1,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 1,
+          "status": "VULNERABLE"
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "ecosystem": "npm",
+          "totalPackages": 105,
+          "detectedVulnCount": 1,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 1,
+          "status": "VULNERABLE"
+        },
+        {
+          "projectId": "elly-backend",
+          "projectName": "elly-backend",
+          "ecosystem": "Maven",
+          "totalPackages": 30,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        },
+        {
+          "projectId": "elly-mobile-app",
+          "projectName": "elly-mobile-app",
+          "ecosystem": "Pub",
+          "totalPackages": 16,
+          "detectedVulnCount": 0,
+          "fixedPackageCount": 0,
+          "remainingVulnCount": 0,
+          "status": "CLEAN"
+        }
+      ],
+      "findings": [
+        {
+          "projectId": "elly-admin",
+          "projectName": "elly-admin",
+          "packageName": "picomatch",
+          "installedVersion": "2.3.2",
+          "recommendedSafeVersion": null,
+          "cveIds": [
+            "CVE-2026-112366"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": false
+        },
+        {
+          "projectId": "elly-tenant",
+          "projectName": "elly-tenant (huseyindolcom)",
+          "packageName": "picomatch",
+          "installedVersion": "4.0.4",
+          "recommendedSafeVersion": null,
+          "cveIds": [
+            "CVE-2026-112366"
+          ],
+          "severity": "HIGH",
+          "fixedInThisRun": false
+        }
+      ],
+      "fixes": []
+    },
     {
       "id": "scan-run-1794876982621-yt22",
       "timestamp": "2026-11-17T00:56:22.621Z",
