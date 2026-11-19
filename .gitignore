@@ -14,9 +14,11 @@ build/
 # Environment variables (keep .env.example)
 .env
 .env.local
+.env.*.local
 .env.development.local
 .env.test.local
 .env.production.local
+.octohall/
 
 # Logs & OS files
 npm-debug.log*

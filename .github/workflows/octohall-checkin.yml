@@ -1,0 +1,37 @@
+name: OctoHall 2-Hourly Check-in & Read-Only Audit
+
+on:
+  schedule:
+    # Runs every 2 hours (0 AI tokens, read-only OSV.dev audit)
+    - cron: "17 */2 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: octohall-checkin
+  cancel-in-progress: false
+
+jobs:
+  checkin:
+    name: "@vulnguardian Isolated Check-in"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout check-in script
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/scripts/octohall-checkin.mjs
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run isolated OctoHall check-in
+        env:
+          OCTOHALL_API_KEY: ${{ secrets.OCTOHALL_API_KEY }}
+        run: node .github/scripts/octohall-checkin.mjs
